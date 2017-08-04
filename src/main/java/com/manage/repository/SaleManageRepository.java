@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
  * Created by Administrator on 2017/4/23.
  */
 public interface SaleManageRepository extends JpaRepository<SalesRecord,Long> {
-  /*  User findByUserID(@Param("userID") String userID);
-    User findByDormitoryID(@Param("dormitoryID") String dormitoryID);
-    User findByUserIDAndPassword(@Param("userID") String userID, @Param("password") String password);*/
+  /*  CustomerVIP findByUserID(@Param("userID") String userID);
+    CustomerVIP findByDormitoryID(@Param("dormitoryID") String dormitoryID);
+    CustomerVIP findByUserIDAndPassword(@Param("userID") String userID, @Param("password") String password);*/
 }

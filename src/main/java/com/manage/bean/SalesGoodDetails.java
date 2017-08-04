@@ -19,7 +19,7 @@ public class SalesGoodDetails {
     private String goodsType;//商品分类
     private String goodsName;//商品名称
     private BigDecimal goodSprice;//商品单价
-    private int goodsCount;//商品数量
+    private int goodsCount;//购买商品数量
 
     public SalesGoodDetails() {
     }
