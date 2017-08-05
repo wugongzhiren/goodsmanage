@@ -18,16 +18,16 @@ public class SalesRecord {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;//自增ID
     private long salesId;//销售编号
-    private long customerID;//顾客编号
+    private String customerID;//顾客编号
     private BigDecimal originPrice;//本次销售员商品原价
     private int saleCount;//本次销售商品件数
     private BigDecimal favorablePrice;//本次销售优惠价格
-    private BigDecimal receiveMoney;//本次销售原价格
+    //private BigDecimal receiveMoney;//本次销售原价格
     private BigDecimal payMoney;//本次销售实收价格
-    private int payWay;//支付方式：1；现金，2：支付宝；3：微信
+    private String payWay;//支付方式：1；现金，2：支付宝；3：微信
     private String salsGoodDetails;//销售商品详情的JSON数据
 
-    private Date creatDate;//销售时间
+    private String creatDate;//销售时间
 
     public SalesRecord() {
     }
@@ -48,11 +48,11 @@ public class SalesRecord {
         this.salesId = salesId;
     }
 
-    public long getCustomerID() {
+    public String getCustomerID() {
         return customerID;
     }
 
-    public void setCustomerID(long customerID) {
+    public void setCustomerID(String customerID) {
         this.customerID = customerID;
     }
 
@@ -80,14 +80,6 @@ public class SalesRecord {
         this.favorablePrice = favorablePrice;
     }
 
-    public BigDecimal getReceiveMoney() {
-        return receiveMoney;
-    }
-
-    public void setReceiveMoney(BigDecimal receiveMoney) {
-        this.receiveMoney = receiveMoney;
-    }
-
     public BigDecimal getPayMoney() {
         return payMoney;
     }
@@ -96,11 +88,11 @@ public class SalesRecord {
         this.payMoney = payMoney;
     }
 
-    public int getPayWay() {
+    public String getPayWay() {
         return payWay;
     }
 
-    public void setPayWay(int payWay) {
+    public void setPayWay(String payWay) {
         this.payWay = payWay;
     }
 
@@ -112,11 +104,11 @@ public class SalesRecord {
         this.salsGoodDetails = salsGoodDetails;
     }
 
-    public Date getCreatDate() {
+    public String getCreatDate() {
         return creatDate;
     }
 
-    public void setCreatDate(Date creatDate) {
+    public void setCreatDate(String creatDate) {
         this.creatDate = creatDate;
     }
 }
