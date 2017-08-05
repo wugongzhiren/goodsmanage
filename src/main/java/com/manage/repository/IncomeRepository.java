@@ -8,5 +8,5 @@ import org.springframework.data.repository.query.Param;
  * Created by Administrator on 2017/4/23.
  */
 public interface IncomeRepository extends JpaRepository<Income,Long> {
-    Income findByCurrentDate(@Param("currentDate") String currentDate);
+    Income findByCurrentDateStr(@Param("currentDate") String currentDate);
 }

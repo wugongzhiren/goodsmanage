@@ -1,12 +1,19 @@
 package com.manage.bean;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.util.Date;
 
 /**
  * 会员
  * Created by Administrator on 2017/8/4.
  */
+@Entity
 public class CustomerVIP {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;//自增ID
     private long vipID;//会员ID
     private long score;//会员积分

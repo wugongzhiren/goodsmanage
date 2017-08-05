@@ -16,7 +16,7 @@ public class Income {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;//自增ID
-    private String currentDate;//当天日期
+    private String currentDateStr;//当天日期
     private BigDecimal cashMoney;//现金收入
     private BigDecimal weChatMoney;//微信收入
     private BigDecimal payBabyMoney;//支付宝收入
@@ -32,12 +32,12 @@ public class Income {
         this.id = id;
     }
 
-    public String getCurrentDate() {
-        return currentDate;
+    public String getCurrentDateStr() {
+        return currentDateStr;
     }
 
-    public void setCurrentDate(String currentDate) {
-        this.currentDate = currentDate;
+    public void setCurrentDateStr(String currentDateStr) {
+        this.currentDateStr = currentDateStr;
     }
 
     public BigDecimal getCashMoney() {

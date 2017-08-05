@@ -56,6 +56,6 @@ public class Salesmanage {
 
         LocalDate todaydate=LocalDate.now();
 
-        return incomeRepository.findByCurrentDate(todaydate.toString());
+        return incomeRepository.findByCurrentDateStr(todaydate.toString());
     }
 }
