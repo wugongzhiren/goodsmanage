@@ -81,11 +81,17 @@ public class Salesmanage {
     /**
      * 获取当天收入
      */
-    @RequestMapping(value = "/getCurrentDateIncome", method = RequestMethod.GET)
-    public Income getCurrentDateIncome(){
-
+    @RequestMapping(value = "/getDayIncome", method = RequestMethod.GET)
+    public Income getDayIncome(){
+System.out.print("测试");
         LocalDate todaydate=LocalDate.now();
-
-        return incomeRepository.findByCurrentDateStr(todaydate.toString());
+        System.out.print(todaydate.toString());
+        Income income=incomeRepository.findByCurrentDateStr(todaydate.toString());
+if(income==null) {
+    return null;
+}
+else {
+    return income;
+}
     }
 }

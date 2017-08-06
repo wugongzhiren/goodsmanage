@@ -1,0 +1,67 @@
+*{
+    margin: 0px;
+    padding: 0px;
+}
+
+.font-size-16{
+    font-size: 16px;
+}
+
+.width-1200{
+    width:1200px;
+    margin: 0 auto;
+}
+
+.float-left{
+    float: left;
+}
+.float-right{
+    float: right;
+}
+
+.color-bk{
+    color: #9d9d9d;
+}
+
+.bk-222{
+    background: #222;
+}
+
+.clearfix:after{  /*最简方式*/
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.clearfix{ /*兼容 IE*/
+    zoom: 1;
+}
+
+#head{
+    height: 50px;
+    line-height: 50px;
+}
+
+.navbar{
+    border-radius: 0px !important;
+    border:none !important;
+    margin-bottom: 0px !important;
+}
+
+#nav-list{
+    width:1000px;
+}
+
+#user-op{
+    width:200px;
+    text-align: right;
+}
+
+#container{
+    min-height: 400px;
+}
+
+#foot{
+   height: 50px;
+
+}

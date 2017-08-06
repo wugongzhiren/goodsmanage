@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<!--    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/ui.jqgrid.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/jquery-ui.min.css"/>
+    <script src="/js/jquery-3.1.1.min.js"></script>
+    &lt;!&ndash; 包括所有已编译的插件 &ndash;&gt;
+    <script src="/js/jquery-ui.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/grid.locale-cn.js"></script>
+    <script src="/js/grid.jqueryui.js"></script>
+    <script src="/js/jquery.jqGrid.min.js"></script>-->
+
+</head>
+<body>
+<div>
+    <Button value="当天收入分析" onclick="dayIncome()">当天收入分析</Button>
+    <Button value="当月收入" onclick="monthIncome()">当月收入</Button>
+    <Button value="总收入分析" onclick="monthIncome()">总收入分析</Button>
+</div>
+<div id="canvasDiv">
+
+</div>
+<script src="/js/ichart.1.2.min.js"></script>
+    <script>
+
+
+        $(function() {
+
+            $.ajax({
+                url: '/getDayIncome',
+                type: "get",
+                //data: {dormiid:dormitoryID},
+                error:function (error) {
+                    alert("请重试")
+                },
+                success: function (data) {
+                    //var jsonData=JSON.parse(data);
+                    //alert(jsonData);
+                    if (data != ""||data!=null) {
+                        alert(data.cashMoney);
+                        // alert("当前宿舍用电总量为："+data.sumUse);
+                        //定义数据
+                       var chartdata = [
+                            {name : '总收入',value : 0,color:'#a5c2d5'},
+                            {name : '现金支付',value : 0,color:'#cbab4f'},
+                            {name : '支付宝',value : 0,color:'#76a871'},
+                            {name : '微信',value : 0,color:'#a56f8f'}
+                        ];
+                        bar2d(chartdata);
+                    }
+                    else{
+                        alert(data.cashMoney);
+                        var chartdata = [
+                            {name : '总收入',value : data.cashMoney+data.payBabyMoney+data.weChatMoney,color:'#a5c2d5'},
+                            {name : '现金支付',value :data.cashMoney,color:'#cbab4f'},
+                            {name : '支付宝',value : data.payBabyMoney,color:'#76a871'},
+                            {name : '微信',value : data.weChatMoney,color:'#a56f8f'}
+                        ];
+                        bar2d(chartdata);
+                    }
+                }
+            });
+
+           // alert('1');
+//默认加载当天的收入分析
+
+        })
+
+
+
+       function bar2d(data){
+          var chart = new iChart.Column2D({
+               render : 'canvasDiv',//渲染的Dom目标,canvasDiv为Dom的ID
+               data: data,//绑定数据
+               animation:true,//过渡动画
+               title : '收入分析',//设置标题
+               width : 800,//设置宽度，默认单位为px
+               height : 400,//设置高度，默认单位为px
+               shadow:true,//激活阴影
+               shadow_color:'#c7c7c7',//设置阴影颜色
+               coordinate:{//配置自定义坐标轴
+                   scale:[{//配置自定义值轴
+                       position:'left',//配置左值轴
+                       start_scale:0,//设置开始刻度为0
+                       end_scale:26,//设置结束刻度为26
+                       scale_space:2,//设置刻度间距
+                       listeners:{//配置事件
+                           parseText:function(t,x,y){//设置解析值轴文本
+                               return {text:t+" cm"}
+                           }
+                       }
+                   }]
+               }
+           });
+          chart.draw();
+       }
+    </script>
+</body>
+
+</html>
