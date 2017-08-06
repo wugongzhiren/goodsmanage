@@ -7,7 +7,8 @@ import org.springframework.data.repository.query.Param;
 /**
  * Created by Administrator on 2017/4/23.
  */
-public interface UserRepository extends JpaRepository<CustomerVIP,Long> {
+public interface CustomerVIPRepository extends JpaRepository<CustomerVIP,Long> {
+    CustomerVIP findByVipID(@Param("vipID") String vipID);
    /* CustomerVIP findByUserID(@Param("userID") String userID);
     CustomerVIP findByDormitoryID(@Param("dormitoryID") String dormitoryID);
     CustomerVIP findByUserIDAndPassword(@Param("userID") String userID, @Param("password") String password);*/

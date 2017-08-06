@@ -66,7 +66,7 @@ public class Salesmanage {
             return Constant.RESULT_FAIL;
         }
         //2.打印小票
-
+        printTick();
         //3.返回处理结果
         return Constant.RESULT_SUCCESS;
     }

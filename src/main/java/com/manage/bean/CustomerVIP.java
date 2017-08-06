@@ -15,7 +15,7 @@ public class CustomerVIP {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;//自增ID
-    private long vipID;//会员ID
+    private String vipID;//会员ID
     private long score;//会员积分
     private String creatDate;//注册时间
 
@@ -30,11 +30,11 @@ public class CustomerVIP {
         this.id = id;
     }
 
-    public long getVipID() {
+    public String getVipID() {
         return vipID;
     }
 
-    public void setVipID(long vipID) {
+    public void setVipID(String vipID) {
         this.vipID = vipID;
     }
 
