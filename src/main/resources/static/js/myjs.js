@@ -5,7 +5,7 @@ $(function(){
     $("#navhead-ul a").click(function(){
         var that = this.id;
         if(that === 'shouyin'){
-            urlLoad('#content','/index1');
+            urlLoad('#content','/sale');
         }else if(that === 'ruku'){
             urlLoad('#content','/income');
         }else if(that === 'kucun'){

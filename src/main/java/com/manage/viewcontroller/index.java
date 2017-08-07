@@ -18,4 +18,9 @@ public class index {
     public String income(){
         return "income";
     }
+
+    @RequestMapping(value = "/sale",method = RequestMethod.GET)
+    public String sale(){
+        return "sale";
+    }
     }

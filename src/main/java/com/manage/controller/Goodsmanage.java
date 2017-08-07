@@ -22,8 +22,8 @@ public class Goodsmanage {
      * 根据商品条码查询对应商品的信息，主要是查库存
      * @return
      */
-
-    public Goods findGoodsInfo(@RequestParam long zxingCode){
+    @RequestMapping(value = "/getGoodsInfo", method = RequestMethod.GET)
+    public Goods getGoodsInfo(@RequestParam long zxingCode){
 return goodsRepository.findByZxingCode(zxingCode);
     }
     /**
