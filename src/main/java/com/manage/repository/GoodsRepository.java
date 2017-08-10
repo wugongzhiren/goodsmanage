@@ -8,5 +8,5 @@ import org.springframework.data.repository.query.Param;
  * Created by Administrator on 2017/4/23.
  */
 public interface GoodsRepository extends JpaRepository<Goods,Long> {
-    Goods findByZxingCode(@Param("zxingCode") long zxingCode);
+    Goods findByZxingCode(@Param("zxingCode") String zxingCode);
 }

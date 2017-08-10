@@ -41,6 +41,24 @@ public class CustomerVIPManage {
     }
 
     /**
+     * 会员登录
+     * @param identityCode
+     * @return
+     */
+    @RequestMapping(value = "/vipLogin", method = RequestMethod.GET)
+    public CustomerVIP vipLogin(@RequestParam String identityCode) {
+        CustomerVIP vip=repository.findByVipID(identityCode);
+        if(vip==null){
+            vip=new CustomerVIP();
+            vip.setResultCode(Constant.RESULT_FAIL);
+            return vip;
+        }
+        else {
+            vip.setResultCode(Constant.RESULT_SUCCESS);
+            return vip;
+        }
+    }
+    /**
      * 查询会员积分
      * @param identityCode 会员识别码
      * @return

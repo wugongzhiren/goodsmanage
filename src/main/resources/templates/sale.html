@@ -1,27 +1,27 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title></title>
     <!-- jqGrid组件基础样式包-必要 -->
-    <link rel="stylesheet" href="/css/ui.jqgrid.css" />
+    <link rel="stylesheet" href="/css/ui.jqgrid.css"/>
     <!-- jqGrid主题包-非必要 -->
     <!-- 在jqgrid/css/css这个目录下还有其他的主题包，可以尝试更换看效果 -->
-    <link rel="stylesheet" href="/css/hot-sneaks/jquery-ui-1.8.16.custom.css" />
+    <link rel="stylesheet" href="/css/hot-sneaks/jquery-ui-1.8.16.custom.css"/>
     <link rel="stylesheet" type="text/css" href="/css/my.css"/>
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="/css/jquery-ui.min.css"/>
 
 
     <script src="/js/jquery-3.1.1.min.js"></script>
-    <script type="text/javascript" src="/js/jquery.jqGrid.src.js"></script>
+    <script type="text/javascript" src="/js/jquery.jqGrid.min.js"></script>
 
     <!-- 包括所有已编译的插件 -->
-   <!-- <script src="/js/jquery-ui.min.js"></script>-->
+    <!-- <script src="/js/jquery-ui.min.js"></script>-->
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/grid.locale-cn.js"></script>
-<!--    <script src="/js/grid.jqueryui.js"></script>-->
+    <!--    <script src="/js/grid.jqueryui.js"></script>-->
     <!--<script src="./js/jquery.jqGrid.min.js"></script>-->
     <script src="/js/myjs.js"></script>
     <!-- jquery插件包-必要 -->
@@ -32,127 +32,227 @@
 
 </head>
 <body>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">×
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    会员登录
+                </h4>
+            </div>
+            <div class="modal-body">
+               <input id="vipID" type="text" placeholder="扫码或者输入会员ID"/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal">关闭
+                </button>
+                <button type="button" class="btn btn-primary" onclick="vipLogin()">
+                   会员登录（Login）
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 <div>
 
 
     <label>应付款合计：</label>
-    <label style="color: red">1888.00</label>
+    <label id="tatalPrice" style="color: red">0.00</label>
+
     <label>元</label>
     <Button class="btn" onclick="monthIncome()">结账（F2）</Button>
 
     <input id="zxingCode" type="text" placeholder="扫描或者输入商品条形码"/>
-    <Button class="btn"  onclick="getGoodsInfo()">添加</Button>
+    <input id="goodCount" type="text" placeholder="输入商品数量"/>
+    <Button class="btn" onclick="getGoodsInfo()">添加</Button>
+    <Button class="btn" onclick="cancleExchange()">取消交易（F6）</Button>
+    <label>当前用户：</label>
+    <label id="customer" style="color: red">普通顾客</label>
+    <Button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">会员登录</Button>
+    <Button class="btn" onclick="delGoods()">顾客不想要了</Button>
 </div>
 <table id="list2"></table>
 <!--<div id="pager2"></div>-->
 
-    <script>
-        jQuery("#list2").jqGrid(
-            {
-                url : '/getGoodsInfo',//组件创建完成之后请求数据的url
-                datatype : "local",//请求数据返回的类型。可选json,xml,txt
-                colNames: [ '条形码', '分类','商品名', '商品单价', '购买数量', '合计'],//jqGrid的列显示名字
-                colModel: [
-                    {name: 'goodsID', index: 'goodsID', width: 300, align: "center"},
-                    {name: 'goodsType', index: 'goodsType', width: 100, align: "center"},
-                    {name: 'goodsName', index: 'goodsName', width: 150, align: "center"},
-                    {name: 'goodSprice', index: 'goodSprice', width: 150, align: "center"},
-                    {name: 'goodsCount', index: 'goodsCount', width: 150, align: "center"},
-                    {name: 'sumPrice', index: 'sumPrice', width: 150, align: "center"},
-
-                ],
-                rowNum : 10,//一页显示多少条
-                rowList : [ 10, 20, 30 ],//可供用户选择一页显示多少条
-                //pager : '#pager2',//表格页脚的占位符(一般是div)的id
-                //sortname : 'id',//初始化的时候排序的字段
-               // sortorder : "desc",//排序方式,可选desc,asc
-                mtype : "get",//向后台请求数据的ajax的类型。可选post,get
-                viewrecords : true,
-                caption : "已购买商品",//表格的标题名字
-                loadComplete: function () {
-                    var rowIds = $("#list2").jqGrid('getDataIDs');
-                    var curRowData = $("#list").jqGrid('getRowData', rowIds[0]);
-                    if(curRowData.userID=="") {
-                        jQuery("#list").jqGrid("clearGridData");
-                        alert("未查询到数据")
-                    }
-                },
-            });
-        $(function() {
-        })
-/*            $.ajax({
-                url: '/getDayIncome',
-                type: "get",
-                //data: {dormiid:dormitoryID},
-                error:function (error) {
-                    alert("请重试")
-                },
-                success: function (data) {
-                    //var jsonData=JSON.parse(data);
-                    //alert(jsonData);
-                }
-            });
-        })*/
-
-        /*jQuery("#list").jqGrid({
-            url: "/getStudents",
-            datatype: "local",
-            mtype: 'GET',
-            colNames: [ '条形码', '分类','商品名', '商品单价', '购买数量', '合计'],
+<script>
+    var ratio=1;
+    jQuery("#list2").jqGrid(
+        {
+            url: '/getGoodsInfo',//组件创建完成之后请求数据的url
+            datatype: "local",//请求数据返回的类型。可选json,xml,txt
+            colNames: ['条形码', '分类', '商品名', '商品单价', '购买数量', '合计'],//jqGrid的列显示名字
             colModel: [
-                {name: 'goodsID', index: 'goodsID', width: 100, align: "center"},
+                {name: 'zxingCode', index: 'zxingCode', width: 300, align: "center"},
                 {name: 'goodsType', index: 'goodsType', width: 100, align: "center"},
                 {name: 'goodsName', index: 'goodsName', width: 150, align: "center"},
-                {name: 'goodSprice', index: 'goodSprice', width: 150, align: "center"},
-                {name: 'goodsCount', index: 'goodsCount', width: 150, align: "center"}
-
+                {name: 'price', index: 'price', width: 150, align: "center"},
+                {name: 'goodsCount', index: 'goodsCount', width: 150, align: "center"},
+                {name: 'sumPrice', index: 'sumPrice', width: 150, align: "center"}
             ],
-            cellEdit:true,
-            rownumbers:true,
-            multiselect: true,
-            multiboxonly:true,
-            loadComplete: function () {
-                var rowIds = $("#list").jqGrid('getDataIDs');
-                var curRowData = $("#list").jqGrid('getRowData', rowIds[0]);
-                if(curRowData.userID=="") {
-                    jQuery("#list").jqGrid("clearGridData");
-                    alert("未查询到数据")
-                }
-            },
-            beforeSelectRow:function beforeSelectRow()
-            {
-                $("#list").jqGrid('resetSelection');
-                return(true);
-            },
-            //sortname: 'id',
+            rowNum: 10,//一页显示多少条
+            rowList: [10, 20, 30],//可供用户选择一页显示多少条
+            //pager : '#pager2',//表格页脚的占位符(一般是div)的id
+            sortname: 'id',//初始化的时候排序的字段
+            // sortorder : "desc",//排序方式,可选desc,asc
+            mtype: "get",//向后台请求数据的ajax的类型。可选post,get
             viewrecords: true,
-            loadonce:true,
-            sortable: false,
-            rowNum: 5,
-//width: 'auto',
-            width: '1200',
-            height: '340',
-            caption: "已购买商品"
-        })
-*/
-        function getGoodsInfo() {
-            var zxingCode=$("#zxingCode").val();
-            $.ajax({
-                url: '/getGoodsInfo',
-                type: "get",
-                data: {zxingCode:zxingCode},
-                error:function (error) {
-                    alert("系统异常，请重新操作")
-                },
-                success: function (data) {
-                    //向grid增加一条数据
-                    $("#list2").jqGrid("addRowData", "1" ,{'goodsID':zxingCode, 'goodsType':"饰品","goodsName":"天使之眼","goodSprice":998,
-                        "goodsCount":2,"sumPrice":1234}, "last" );
-                }
-            });
+            loadonce: true,
+            multiselect: false,
+            multiboxonly: false,
+            caption: "已购买商品",//表格的标题名字
+            /*        loadComplete: function () {
+             /!*      var rowIds = $("#list2").getDataIDs();
+             var curRowData = $("#list2").jqGrid('getRowData', rowIds[0]);
+             if (curRowData.userID == "") {
+             jQuery("#list2").jqGrid("clearGridData");
+             alert("未查询到数据")
+             }*!/
+             },*/
+        });
+    $(function () {
+        $(function () { $('#myModal').modal('hide')});
+    })
+
+    /**
+     * 获取已经扫描的相同商品
+     */
+    function getGoodsCount(zxingCode) {
+
+        var count = $("#goodCount").val();
+        if (count == "") {
+            count = 1;
+        }
+        var flag = false;
+        var rowIds = $("#list2").getDataIDs();
+        for (var i = 0; i  /*<![CDATA[*/ < /*]]>*/ rowIds.length; i++) {
+
+            var curRowData = $("#list2").jqGrid('getRowData', rowIds[i]);
+            if (curRowData['zxingCode'] == zxingCode) {
+                flag = true;
+                var gcount = parseInt(curRowData['goodsCount']) + parseInt(count);
+                var sprice = gcount * parseFloat(curRowData['price']);
+                //汇总价格赋值
+                var tatal = $("#tatalPrice").html();
+                $("#tatalPrice").html(parseFloat(tatal) + parseFloat(curRowData['price']) * parseInt(count));
+                // alert("当前数量"+parseInt(curRowData['goodsCount'])+parseInt(count)+1);
+                $("#list2").jqGrid('setRowData', rowIds[i], {"goodsCount": gcount, "sumPrice": sprice});
+                /*$.extend(curRowData, {"goodsCount":parseInt(curRowData['goodsCount'])+count})
+                 $("#list2").jqGrid('setRowData', rowIds[i], curRowData);*/
+                return 0;
+            }
+
 
         }
-    </script>
+
+        if (!flag) {
+            return count;
+        }
+    }
+    /**
+     * 根据条形码获取商品信息
+     */
+    function getGoodsInfo() {
+        var zxingCode = $("#zxingCode").val();
+        var currentGoodsCount = getGoodsCount(zxingCode);
+        if (currentGoodsCount == 0) {
+            return;
+        }
+        var rowIds = $("#list2").getDataIDs();
+        $.ajax({
+            url: '/getGoodsInfo',
+            type: "get",
+            data: {zxingCode: zxingCode},
+            error: function (error) {
+                alert("系统异常，请重新操作")
+            },
+            success: function (data) {
+                if (data.resultCode == "100") {
+                    //向grid增加一条数据
+                    $("#list2").jqGrid("addRowData", rowIds.length, {
+                        'zxingCode': data.zxingCode, 'goodsType': data.goodsType, "goodsName": data.goodsName + " "
+                        + data.goodsVersion, "price": data.price,
+                        "goodsCount": currentGoodsCount, "sumPrice": parseFloat(data.price) * currentGoodsCount
+                    }, "last");
+
+                    //汇总价格更新
+                    var tatal = $("#tatalPrice").html();
+                    $("#tatalPrice").html(parseFloat(tatal) + parseFloat(data.price) * currentGoodsCount);
+                }
+                else {
+                    alert("未查询到商品信息，请确认是否已经入库！");
+                }
+            }
+        });
+
+    }
+
+    //删除对应商品
+    function delGoods() {
+
+    }
+function vipLogin(){
+        var vipID=$("#vipID").val();
+        if(vipID==""){
+            alert("会员ID不能为空");
+            return;
+        }
+    $.ajax({
+        url: '/vipLogin',
+        type: "get",
+        data: {identityCode: vipID},
+        error: function (error) {
+            alert("系统异常，请重新操作")
+        },
+        success: function (data) {
+            if (data.resultCode == "100") {
+                //登录成功
+                $("#customer").html(data.identityCode);
+            }
+        }})
+
+    }
+
+    /**
+     * 取消此次交易，清空页面信息
+     */
+    function cancleExchange() {
+        $("#list2").jqGrid("clearGridData");
+        $("#goodCount").val('');
+        $("#zxingCode").val('');
+        $("#customer").html('普通顾客');
+        $("#tatalPrice").html('0.00');
+    }
+
+    //确认交易
+    function confirmBusiness() {
+        //遍历jqgrid
+        var jsonArr=new Array();
+        var rowIds = $("#list2").getDataIDs();
+        for (var i = 0; i  /*<![CDATA[*/ < /*]]>*/ rowIds.length; i++) {
+
+            var curRowData = $("#list2").jqGrid('getRowData', rowIds[i]);
+            jsonArr.push(curRowData);
+        }
+        JSON.stringify(jsonArr);
+        $.ajax({
+            url: '/salesSuccess',
+            type: "post",
+            data: {identityCode: vipID},
+            error: function (error) {
+                alert("系统异常，请重新操作")
+            },
+            success: function (data) {
+                if (data.resultCode == "100") {
+                    alert("打印凭单中。。。。")
+                }
+            }})
+    }
+</script>
 
 </body>
 

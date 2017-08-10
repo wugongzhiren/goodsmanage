@@ -1,8 +1,10 @@
 package com.manage.controller;
 
 import com.manage.bean.Goods;
+import com.manage.constant.Constant;
 import com.manage.repository.GoodsRepository;
 import com.manage.zxing.ZxingEAN13EncoderHandler;
+import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,8 +25,17 @@ public class Goodsmanage {
      * @return
      */
     @RequestMapping(value = "/getGoodsInfo", method = RequestMethod.GET)
-    public Goods getGoodsInfo(@RequestParam long zxingCode){
-return goodsRepository.findByZxingCode(zxingCode);
+    public Goods getGoodsInfo(@RequestParam String zxingCode){
+Goods goods=goodsRepository.findByZxingCode(zxingCode);
+if(goods!=null) {
+    goods.setResultCode(Constant.RESULT_SUCCESS);
+    return goodsRepository.findByZxingCode(zxingCode);
+}
+else {
+    Goods goods1=new Goods();
+    goods1.setResultCode(Constant.RESULT_FAIL);
+    return goods1;
+}
     }
     /**
      * 查询所有在库商品的信息

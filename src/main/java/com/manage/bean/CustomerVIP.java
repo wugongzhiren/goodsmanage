@@ -19,6 +19,7 @@ public class CustomerVIP {
     private long score;//会员积分
     private String creatDate;//注册时间
 
+    private String resultCode;//统一处理结果码
     public CustomerVIP() {
     }
 
@@ -52,5 +53,13 @@ public class CustomerVIP {
 
     public void setCreatDate(String creatDate) {
         this.creatDate = creatDate;
+    }
+
+    public String getResultCode() {
+        return resultCode;
+    }
+
+    public void setResultCode(String resultCode) {
+        this.resultCode = resultCode;
     }
 }
