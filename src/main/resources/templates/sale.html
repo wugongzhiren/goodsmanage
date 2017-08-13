@@ -40,18 +40,37 @@
                         aria-hidden="true">×
                 </button>
                 <h4 class="modal-title" id="myModalLabel">
-                    会员登录
+                    结账
                 </h4>
             </div>
+            <!--//模态框内容-->
             <div class="modal-body">
+                <label>应付款合计：</label>
+                <label id="tatalPrice1" style="color: red">0.00</label>
+
+                <label>元</label>
+
+                <input id="payMoney" type="text" placeholder="实际收款"/>
+                现金：
+                <input type="radio" checked="checked" name="payWay" value="1" />
+                <br />
+                支付宝：
+                <input type="radio" name="payWay" value="2" />
+                微信：
+                <input type="radio" name="payWay" value="3" />
+                <label>找零：</label>
+                <label id="returnMoney" style="color: red">0.00</label>
+
+                <label>元</label>
                <input id="vipID" type="text" placeholder="扫码或者输入会员ID"/>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default"
                         data-dismiss="modal">关闭
                 </button>
                 <button type="button" class="btn btn-primary" onclick="vipLogin()">
-                   会员登录（Login）
+                    确认，并打印凭单
                 </button>
             </div>
         </div><!-- /.modal-content -->
@@ -65,7 +84,7 @@
     <label id="tatalPrice" style="color: red">0.00</label>
 
     <label>元</label>
-    <Button class="btn" onclick="monthIncome()">结账（F2）</Button>
+    <Button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">结账（F2）</Button>
 
     <input id="zxingCode" type="text" placeholder="扫描或者输入商品条形码"/>
     <input id="goodCount" type="text" placeholder="输入商品数量"/>
@@ -73,8 +92,9 @@
     <Button class="btn" onclick="cancleExchange()">取消交易（F6）</Button>
     <label>当前用户：</label>
     <label id="customer" style="color: red">普通顾客</label>
-    <Button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">会员登录</Button>
+    <!--<Button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">会员登录</Button>-->
     <Button class="btn" onclick="delGoods()">顾客不想要了</Button>
+    <Button class="btn">优惠设置</Button>
 </div>
 <table id="list2"></table>
 <!--<div id="pager2"></div>-->

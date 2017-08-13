@@ -1,69 +1,73 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title></title>
+    <link rel="stylesheet" type="text/css" href="/css/my.css"/>
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="/css/ui.jqgrid.css"/>
     <link rel="stylesheet" type="text/css" href="/css/jquery-ui.min.css"/>
-    <script src="/js/jquery-3.1.1.min.js"></script>
-    <!-- 包括所有已编译的插件 -->
-    <script src="/js/jquery-ui.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
-    <script src="/js/grid.locale-cn.js"></script>
-    <script src="/js/grid.jqueryui.js"></script>
-    <script src="/js/jquery.jqGrid.min.js"></script>
+
 
 </head>
 <body>
-<center>
-    <table id="list"></table>
-    <div id="pager"></div>
-</center>
+    <div id="head" class="bk-222">
+        <div class="width-1200 clearfix">
+            <div id="nav-list" class="float-left">
+                <nav id='head-nav' class="navbar navbar-inverse" role="navigation">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <a class="navbar-brand" href="#"> <span class="glyphicon glyphicon-shopping-cart"></span> 购物系统</a>
+                        </div>
+                        <div>
+                            <ul id="navhead-ul" class="nav navbar-nav">
+                                <li><a id="shouyin" class="font-size-16" href="#">收银</a></li>
+                                <li><a id="ruku" class="font-size-16" href="#">入库</a></li>
+                                <li><a id="kucun" class="font-size-16" href="#">库存</a></li>
+                                <li><a id="shouru" class="font-size-16" href="#">收入</a></li>
+                                <li><a id="huiyuan" class="font-size-16" href="#">会员</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            <div id="user-op" class="color-bk float-right">
+                <nav class="navbar navbar-inverse" role="navigation">
+                    <div class="container-fluid">
+                        <ul class="nav navbar-nav">
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle font-size-16" data-toggle="dropdown">
+                                    <span class="glyphicon glyphicon-user"></span> 大头娃娃桑 <b class="caret"></b>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">退出</a></li>
 
-    <script>
-        jQuery("#list").jqGrid({
-            url: "/getStudents",
-            datatype: "json",
-            mtype: 'GET',
-            colNames: [ '学号', '姓名', '班级', '宿舍ID', '用户状态'],
-            colModel: [
-                {name: 'userID', index: 'userID', width: 100, align: "center"},
-                {name: 'name', index: 'name', width: 100, align: "center"},
-                {name: 'banji', index: 'banji', width: 150, align: "center"},
-                {name: 'dormitoryID', index: 'dormitoryID', width: 150, align: "center"},
-                {name: 'status', index: 'status', width: 150, align: "center"}
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <div id="container">
+        <div id="content" class="width-1200">
 
-            ],
-            rownumbers:true,
-            multiselect: true,
-            multiboxonly:true,
-            loadComplete: function () {
-                var rowIds = $("#list").jqGrid('getDataIDs');
-                var curRowData = $("#list").jqGrid('getRowData', rowIds[0]);
-                if(curRowData.userID=="") {
-                    jQuery("#list").jqGrid("clearGridData");
-                    alert("未查询到数据")
-                }
-            },
-            beforeSelectRow:function beforeSelectRow()
-            {
-                $("#list").jqGrid('resetSelection');
-                return(true);
-            },
-            rowList: [10, 20, 30],
-            sortname: 'id',
-            viewrecords: true,
-            loadonce:true,
-            sortable: false,
-            pager: jQuery('#pager'),
-            rowNum: 5,
-            altclass: 'altRowsColor',
-//width: 'auto',
-            width: '1200',
-            height: '340',
-            caption: "宿舍学生列表"
-        })
-    </script>
+        </div>
+    </div>
+    <!--<div id="foot" class="bk-222">-->
+        <!--版权归土墩子所有-->
+    <!--</div>-->
+
+
+<script src="/js/jquery-3.1.1.min.js"></script>
+<!-- 包括所有已编译的插件 -->
+<script src="/js/jquery-ui.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/grid.locale-cn.js"></script>
+<!--<script src="./js/grid.jqueryui.js"></script>-->
+<!--<script src="./js/jquery.jqGrid.min.js"></script>-->
+<script src="/js/myjs.js"></script>
 </body>
-
 </html>

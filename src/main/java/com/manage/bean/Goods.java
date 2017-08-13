@@ -24,6 +24,8 @@ public class Goods {
     private String goodsVersion;//商品型号
     private String resultCode;
 
+    private int addCount;//非第一次入库用于商品增加进货数量
+
     private String goodsDescs;//商品说明，如今日特价9.9等
     public Goods() {
     }
@@ -99,5 +101,13 @@ public class Goods {
 
     public void setResultCode(String resultCode) {
         this.resultCode = resultCode;
+    }
+
+    public int getAddCount() {
+        return addCount;
+    }
+
+    public void setAddCount(int addCount) {
+        this.addCount = addCount;
     }
 }

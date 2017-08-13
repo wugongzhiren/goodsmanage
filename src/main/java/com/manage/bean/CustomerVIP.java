@@ -15,8 +15,9 @@ public class CustomerVIP {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;//自增ID
-    private String vipID;//会员ID
+    private String vipID;//会员ID：可能是微信的二维码
     private long score;//会员积分
+    private String phoneNum;//手机号码
     private String creatDate;//注册时间
 
     private String resultCode;//统一处理结果码
@@ -53,6 +54,14 @@ public class CustomerVIP {
 
     public void setCreatDate(String creatDate) {
         this.creatDate = creatDate;
+    }
+
+    public String getPhoneNum() {
+        return phoneNum;
+    }
+
+    public void setPhoneNum(String phoneNum) {
+        this.phoneNum = phoneNum;
     }
 
     public String getResultCode() {
