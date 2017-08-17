@@ -1,14 +1,17 @@
 package com.manage.controller;
 
 import com.manage.bean.CustomerVIP;
+import com.manage.bean.Setting;
 import com.manage.constant.Constant;
 import com.manage.repository.CustomerVIPRepository;
+import com.manage.repository.SettingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -24,7 +27,8 @@ import java.util.regex.Pattern;
 public class CustomerVIPManage {
     @Autowired
     CustomerVIPRepository repository;
-
+    @Autowired
+    SettingRepository settingRepository;
     /**
      * 创建会员账号
      *
@@ -64,12 +68,17 @@ public class CustomerVIPManage {
      */
     @RequestMapping(value = "/vipLogin", method = RequestMethod.GET)
     public CustomerVIP vipLogin(@RequestParam String identityCode) {
+
         CustomerVIP vip = repository.findByVipID(identityCode);
         if (vip == null) {
             vip = new CustomerVIP();
             vip.setResultCode(Constant.RESULT_FAIL);
             return vip;
         } else {
+            Setting setting=settingRepository.findBySetType(Constant.SETTING_SALE);
+            if(setting!=null){
+                vip.setSaleRatio(new BigDecimal(setting.getSetContent()));
+            }
             vip.setResultCode(Constant.RESULT_SUCCESS);
             return vip;
         }

@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -19,9 +20,17 @@ public class CustomerVIP {
     private long score;//会员积分
     private String phoneNum;//手机号码
     private String creatDate;//注册时间
-
+private BigDecimal saleRatio;//会员打折率
     private String resultCode;//统一处理结果码
     public CustomerVIP() {
+    }
+
+    public BigDecimal getSaleRatio() {
+        return saleRatio;
+    }
+
+    public void setSaleRatio(BigDecimal saleRatio) {
+        this.saleRatio = saleRatio;
     }
 
     public long getId() {

@@ -34,4 +34,9 @@ public class index {
     public String customerVip() {
         return "customerVip";
     }
+
+    @RequestMapping(value = "/setting", method = RequestMethod.GET)
+    public String setting() {
+        return "setting";
+    }
 }

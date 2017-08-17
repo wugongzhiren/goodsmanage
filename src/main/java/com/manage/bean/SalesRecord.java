@@ -19,17 +19,25 @@ public class SalesRecord {
     private long id;//自增ID
     private long salesId;//销售编号
     private String customerID;//顾客编号
-    private BigDecimal originPrice;//本次销售员商品原价
+    private BigDecimal originPrice;//本次销售员商品价格合计
     private int saleCount;//本次销售商品件数
     private BigDecimal favorablePrice;//本次销售优惠价格
     //private BigDecimal receiveMoney;//本次销售原价格
     private BigDecimal payMoney;//本次销售实收价格
     private String payWay;//支付方式：1；现金，2：支付宝；3：微信
     private String salsGoodDetails;//销售商品详情的JSON数据
-
+private String cashier;//收银员
     private String creatDate;//销售时间
 
     public SalesRecord() {
+    }
+
+    public String getCashier() {
+        return cashier;
+    }
+
+    public void setCashier(String cashier) {
+        this.cashier = cashier;
     }
 
     public long getId() {

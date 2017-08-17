@@ -12,11 +12,21 @@
     <link rel="stylesheet" type="text/css" href="/css/my.css"/>
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="/css/jquery-ui.min.css"/>
-
-
     <script src="/js/jquery-3.1.1.min.js"></script>
     <script type="text/javascript" src="/js/jquery.jqGrid.min.js"></script>
+    <style type="text/css">
+        .ui-jqgrid .ui-jqgrid-titlebar {
+            color: #ffffff;
+            background: #000000;
+            padding: .3em .2em .2em .3em;
+            position: relative;
+            font-size: 20px;
+            border-left: 0 none;
+            border-right: 0 none;
+            border-top: 0 none;
+        }
 
+    </style>
     <!-- 包括所有已编译的插件 -->
     <!-- <script src="/js/jquery-ui.min.js"></script>-->
     <script src="/js/bootstrap.min.js"></script>
@@ -31,8 +41,11 @@
     <!-- 在jqgrid/js/i18n下还有其他的多语言包，可以尝试更换看效果 -->
 
 </head>
-<body>
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<body style="margin: 10px;color: #ffffff;background: #000">
+<div class="mytitle">***店欢迎您再次光临</div>
+<hr/>
+<div class="modal fade" style="color: black" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -45,31 +58,51 @@
             </div>
             <!--//模态框内容-->
             <div class="modal-body">
-                <label>应付款合计：</label>
-                <label id="tatalPrice1" style="color: red">0.00</label>
+                <div>
+                    <label class="shouldPay">应付款合计：</label>
+                    <label id="tatalPrice1" style="font-size:200%;color: red">0.00</label>
+                    <label class="shouldPay">元</label>
+                </div>
+                <div class="shouldPay">
+                    实际收款：
+                    <input id="payMoney" onkeypress="actualMoney(event)" type="text" placeholder="实际收款"/>
+                    <label>元</label>
+                </div>
+                <hr/>
+                <div>
 
-                <label>元</label>
+                    <label><input type="radio" checked="checked" name="payWay" value="1"/>现金</label>
+                    <label><input type="radio" name="payWay" value="2"/>支付宝</label>
+                    <label><input type="radio" name="payWay" value="3"/>微信</label>
 
-                <input id="payMoney" type="text" placeholder="实际收款"/>
-                现金：
-                <input type="radio" checked="checked" name="payWay" value="1" />
-                <br />
-                支付宝：
-                <input type="radio" name="payWay" value="2" />
-                微信：
-                <input type="radio" name="payWay" value="3" />
-                <label>找零：</label>
-                <label id="returnMoney" style="color: red">0.00</label>
+                </div>
+                <hr/>
+                <div>
+                    <input id="vipID" type="text" onkeypress="vipLogin(event)" placeholder="扫码或者输入会员ID"/>
 
-                <label>元</label>
-               <input id="vipID" type="text" placeholder="扫码或者输入会员ID"/>
-
+                </div>
+                <hr/>
+                <div style="margin-top: 10px">
+                    <label>当前用户：</label>
+                    <label id="customer" style="color: red">普通顾客</label>
+                    <label style="margin-left: 20px">折扣：</label>
+                    <label id="saleRatio" style="color: red">无</label>
+                </div>
             </div>
             <div class="modal-footer">
+                <div class="shouldPay" style="float: left">
+                    <label>找零：</label>
+                    <label id="returnMoney" style="color: red">0.00</label>
+                    <label>元</label>
+                </div>
+
                 <button type="button" class="btn btn-default"
                         data-dismiss="modal">关闭
                 </button>
-                <button type="button" class="btn btn-primary" onclick="vipLogin()">
+                <button type="button" class="btn btn-default"
+                        onclick="clearMomalContent()">重置
+                </button>
+                <button type="button" class="btn btn-primary" onclick="confirmBusiness()">
                     确认，并打印凭单
                 </button>
             </div>
@@ -78,41 +111,78 @@
 </div><!-- /.modal -->
 
 <div>
+    <input id="cashier" type="hidden"/>
+
+    <label class="shouldPay">应付款合计：</label>
+    <label id="tatalPrice" style="font-size:200%;color: #00ff29">0.00</label>
+
+    <label class="shouldPay">元</label>
 
 
-    <label>应付款合计：</label>
-    <label id="tatalPrice" style="color: red">0.00</label>
+    <input class="zxing" style="margin-left: 30px;color: red;" id="zxingCode" type="text" onkeydown="press(event)"
+           placeholder="扫描或者输入商品条形码"/>
+    <input class="zxing" style="margin-left: 30px;color: red;" id="goodCount" type="text" placeholder="输入商品数量"/>
+    <Button id="addBt" class="btn btn-primary btn-lg" style="margin-left: 20px" onclick="getGoodsInfo()">手动添加</Button>
 
-    <label>元</label>
-    <Button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">结账（F2）</Button>
-
-    <input id="zxingCode" type="text" placeholder="扫描或者输入商品条形码"/>
-    <input id="goodCount" type="text" placeholder="输入商品数量"/>
-    <Button class="btn" onclick="getGoodsInfo()">添加</Button>
-    <Button class="btn" onclick="cancleExchange()">取消交易（F6）</Button>
-    <label>当前用户：</label>
-    <label id="customer" style="color: red">普通顾客</label>
     <!--<Button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">会员登录</Button>-->
     <Button class="btn" onclick="delGoods()">顾客不想要了</Button>
-    <Button class="btn">优惠设置</Button>
+    <a href="/setting" target="_blank" class="btn">优惠设置</a>
 </div>
-<table id="list2"></table>
+<hr/>
+<div>
+    <center>
+        <table id="list2" style="margin:0 auto"></table>
+    </center>
+</div>
 <!--<div id="pager2"></div>-->
-
+<div style="float:right;margin-top: 40px;margin-right: 60px">
+    <Button id="Jbt" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">结账（F2）</Button>
+    <Button id="cacelBt" class="btn btn-primary btn-lg" onclick="cancleExchange()">取消交易（F6）</Button>
+</div>
 <script>
-    var ratio=1;
+    //条形码回车
+    function press() {
+        //enableBt();
+        if (event.keyCode == 13) {
+            getGoodsInfo();
+        }
+    }
+    //实际付款回车
+    function actualMoney() {
+        if (event.keyCode == 13) {
+            //计算找零
+            //应付款
+            var tatalPrice1 = $("#tatalPrice1").html();
+            //实际收款
+            var payMoney = $("#payMoney").val();
+            var returnMoneyValue = parseFloat(payMoney) - parseFloat(tatalPrice1);
+            $("#returnMoney").html(returnMoneyValue.toFixed(2));
+            $("#paymoneylbl").html(payMoney);
+        }
+    }
     jQuery("#list2").jqGrid(
         {
             url: '/getGoodsInfo',//组件创建完成之后请求数据的url
             datatype: "local",//请求数据返回的类型。可选json,xml,txt
-            colNames: ['条形码', '分类', '商品名', '商品单价', '购买数量', '合计'],//jqGrid的列显示名字
+            colNames: ['条形码', '分类', '商品名', '商品单价', '打折价', '购买数量', '备注', '合计', '操作'],//jqGrid的列显示名字
             colModel: [
                 {name: 'zxingCode', index: 'zxingCode', width: 300, align: "center"},
-                {name: 'goodsType', index: 'goodsType', width: 100, align: "center"},
+                {name: 'goodsType', index: 'goodsType', hidden: true},
                 {name: 'goodsName', index: 'goodsName', width: 150, align: "center"},
                 {name: 'price', index: 'price', width: 150, align: "center"},
+                {name: 'salePrice', index: 'salePrice',  hidden: true},
                 {name: 'goodsCount', index: 'goodsCount', width: 150, align: "center"},
-                {name: 'sumPrice', index: 'sumPrice', width: 150, align: "center"}
+                {name: 'goodsDescs', index: 'goodsDescs', width: 150, align: "center"},
+                {name: 'sumPrice', index: 'sumPrice', width: 150, align: "center"},
+                {
+                    name: 'del',
+                    index: 'del',
+                    width: 150,
+                    align: "center",
+                    formatter: function (cellvalue, options, rowObject) {
+                        return "<a>删除</a>";
+                    }
+                }
             ],
             rowNum: 10,//一页显示多少条
             rowList: [10, 20, 30],//可供用户选择一页显示多少条
@@ -124,6 +194,7 @@
             loadonce: true,
             multiselect: false,
             multiboxonly: false,
+            height: 400,
             caption: "已购买商品",//表格的标题名字
             /*        loadComplete: function () {
              /!*      var rowIds = $("#list2").getDataIDs();
@@ -135,7 +206,19 @@
              },*/
         });
     $(function () {
-        $(function () { $('#myModal').modal('hide')});
+        //enableBt();
+        $('#myModal').modal('hide');
+
+        $('#myModal').on('shown.bs.modal', function () {
+            // 为应付款赋值
+            $("#tatalPrice1").html($("#tatalPrice").html());
+            $("#payMoney").focus();
+        })
+
+        $('#myModal').on('hidden.bs.modal', function () {
+            // 为应付款赋值
+            clearMomalContent();
+        })
     })
 
     /**
@@ -184,7 +267,7 @@
         }
         var rowIds = $("#list2").getDataIDs();
         $.ajax({
-            url: '/getGoodsInfo',
+            url: '/getInstoreInfo',
             type: "get",
             data: {zxingCode: zxingCode},
             error: function (error) {
@@ -201,39 +284,60 @@
 
                     //汇总价格更新
                     var tatal = $("#tatalPrice").html();
-                    $("#tatalPrice").html(parseFloat(tatal) + parseFloat(data.price) * currentGoodsCount);
+                    $("#tatalPrice").html((parseFloat(tatal) + parseFloat(data.price) * currentGoodsCount).toFixed(2));
                 }
                 else {
                     alert("未查询到商品信息，请确认是否已经入库！");
                 }
             }
         });
-
+        //马上清空准备下一次输入
+        $("#zxingCode").val("");
     }
 
     //删除对应商品
     function delGoods() {
 
     }
-function vipLogin(){
-        var vipID=$("#vipID").val();
-        if(vipID==""){
-            alert("会员ID不能为空");
-            return;
-        }
-    $.ajax({
-        url: '/vipLogin',
-        type: "get",
-        data: {identityCode: vipID},
-        error: function (error) {
-            alert("系统异常，请重新操作")
-        },
-        success: function (data) {
-            if (data.resultCode == "100") {
-                //登录成功
-                $("#customer").html(data.identityCode);
+    function vipLogin() {
+        if(event.keyCode==13) {
+            var vipID = $("#vipID").val();
+            if (vipID == "") {
+                alert("会员ID不能为空");
+                return;
             }
-        }})
+            $.ajax({
+                url: '/vipLogin',
+                type: "get",
+                data: {identityCode: vipID},
+                error: function (error) {
+                    alert("系统异常，请重新操作")
+                },
+                success: function (data) {
+                    if (data.resultCode == "100") {
+                        //登录成功
+                        if (data.saleRatio != null || data.saleRatio != "") {
+                            $("#vipID").attr("disabled", true);
+                            $("#customer").html(data.vipID);
+
+                            $("#saleRatio").html(data.saleRatio);
+                            //应付款重新赋值
+                            $("#tatalPrice1").html(($("#tatalPrice1").html() * parseFloat(data.saleRatio)).toFixed(2));
+                            $("#tatalPrice").html(($("#tatalPrice").html() * parseFloat(data.saleRatio)).toFixed(2));
+
+                            //找零重新赋值
+                            var payMoney = $("#payMoney").val();
+                            var tatalPrice1R = $("#tatalPrice1").html();
+                            var returnMoneyValue = (parseFloat(payMoney) - parseFloat(tatalPrice1R)).toFixed(2);
+                            $("#returnMoney").html(returnMoneyValue);
+                        }
+                        else {
+                            $("#saleRatio").html("无");
+                        }
+                    }
+                }
+            })
+        }
 
     }
 
@@ -244,33 +348,93 @@ function vipLogin(){
         $("#list2").jqGrid("clearGridData");
         $("#goodCount").val('');
         $("#zxingCode").val('');
-        $("#customer").html('普通顾客');
+        $("#payMoney").val('');
         $("#tatalPrice").html('0.00');
+
+
+    }
+
+    //清空模态框内容,重置
+    function clearMomalContent() {
+        $("#customer").html('普通顾客');
+        $("#vipID").val('');
+        $("#vipID").removeAttr("disabled");
+        $("#tatalPrice1").html($("#tatalPrice").html());
+        $("#payMoney").val('');
+        $("#returnMoney").html('0.00');
+
+var saleRatio=$("#saleRatio").html();
+if(saleRatio!="无") {
+    $("#tatalPrice1").html((parseFloat($("#tatalPrice").html()) / parseFloat(saleRatio)).toFixed(2));
+    $("#tatalPrice").html((parseFloat($("#tatalPrice").html()) / parseFloat(saleRatio)).toFixed(2));
+}
+else{
+    $("#tatalPrice1").html($("#tatalPrice").html());
+}
+        $('input:radio:first').attr('checked', 'true');
+//得放在后面
+        $("#saleRatio").html('无');
     }
 
     //确认交易
     function confirmBusiness() {
         //遍历jqgrid
-        var jsonArr=new Array();
+        var jsonArr = new Array();
         var rowIds = $("#list2").getDataIDs();
         for (var i = 0; i  /*<![CDATA[*/ < /*]]>*/ rowIds.length; i++) {
 
             var curRowData = $("#list2").jqGrid('getRowData', rowIds[i]);
             jsonArr.push(curRowData);
         }
-        JSON.stringify(jsonArr);
+        var saleGoodsDetails = JSON.stringify(jsonArr);
+        //会员编号，如果有的话
+        var vipID = $("#customer").html();
+        //付款方式
+        var payWay = $('input:radio:checked').val();
+        var shouldPay = $("#tatalPrice").html();
+        //实际收款
+        var payMoney = $("#payMoney").val();
+
+        //收银员
+        var cashier = $("#cashier").val();
         $.ajax({
             url: '/salesSuccess',
             type: "post",
-            data: {identityCode: vipID},
+            data: {
+                cashier: cashier,
+                vipID: vipID,
+                shouldPay: shouldPay,
+                payMoney: payMoney,
+                payWay: payWay,
+                saleGoodsDetails: saleGoodsDetails
+            },
             error: function (error) {
                 alert("系统异常，请重新操作")
             },
             success: function (data) {
-                if (data.resultCode == "100") {
-                    alert("打印凭单中。。。。")
+                if (data == "100") {
+                    cancleExchange();
                 }
-            }})
+            }
+        })
+    }
+
+    function enableBt() {
+        var zxing = $("#zxingCode").val();
+        if (zxing == "") {
+            $("#addBt").attr("disabled", true);
+        }
+        var tatalPrice = $("#tatalPrice").html();
+        if (tatalPrice == "0.00") {
+            $("#Jbt").attr("disabled", true);
+            $("#cacelBt").attr("disabled", true);
+        }
+        else {
+
+            $("#addBt").removeAttr("disabled");
+            $("#Jbt").removeAttr("disabled");
+            $("#cacelBt").removeAttr("disabled");
+        }
     }
 </script>
 

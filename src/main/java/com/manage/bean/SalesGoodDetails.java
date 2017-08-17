@@ -15,7 +15,8 @@ public class SalesGoodDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;//自增ID
-    private long goodsID;//商品在库ID
+    private long saleid;//销售编号
+    private String goodsID;//条形码
     private String goodsType;//商品分类
     private String goodsName;//商品名称
     private BigDecimal goodSprice;//商品单价
@@ -32,11 +33,19 @@ public class SalesGoodDetails {
         this.id = id;
     }
 
-    public long getGoodsID() {
+    public long getSaleid() {
+        return saleid;
+    }
+
+    public void setSaleid(long saleid) {
+        this.saleid = saleid;
+    }
+
+    public String getGoodsID() {
         return goodsID;
     }
 
-    public void setGoodsID(long goodsID) {
+    public void setGoodsID(String goodsID) {
         this.goodsID = goodsID;
     }
 

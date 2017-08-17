@@ -65,3 +65,15 @@
    height: 50px;
 
 }
+
+.mytitle{
+    font-size: 220%;
+}
+.shouldPay{
+    font-size: 200%;
+}
+
+.zxing{
+    height: 45px;
+    width: 200px;
+}

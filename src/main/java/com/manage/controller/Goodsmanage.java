@@ -24,7 +24,7 @@ public class Goodsmanage {
     private GoodsRepository goodsRepository;
 
     /**
-     * 根据商品条码查询对应商品的信息，主要是查库存
+     * 根据商品条码查询对应商品的信息，主要是查库存,收款时扫码调用
      *
      * @return
      */
@@ -33,7 +33,10 @@ public class Goodsmanage {
         Goods goods = goodsRepository.findByZxingCode(zxingCode);
         if (goods != null) {
             goods.setResultCode(Constant.RESULT_SUCCESS);
-            return goodsRepository.findByZxingCode(zxingCode);
+            if(goods.getSalePrice()!=null){
+                goods.setPrice(goods.getSalePrice());
+            }
+            return goods;
         } else {
             Goods goods1 = new Goods();
             goods1.setResultCode(Constant.RESULT_FAIL);

@@ -16,8 +16,8 @@ public class Goods {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;//自增ID
     private String zxingCode;//条形码code
-    private BigDecimal price;//商品单价
-
+    private BigDecimal price;//商品单价，原价
+    private BigDecimal salePrice;//当前商品折扣价
     private String goodsType;//商品分类
     private String goodsName;//商品名称
     private int goodsCount;//商品在库数量
@@ -27,7 +27,25 @@ public class Goods {
     private int addCount;//非第一次入库用于商品增加进货数量
 
     private String goodsDescs;//商品说明，如今日特价9.9等
+
+    private String sumPrice;//辅助字段
     public Goods() {
+    }
+
+    public String getSumPrice() {
+        return sumPrice;
+    }
+
+    public void setSumPrice(String sumPrice) {
+        this.sumPrice = sumPrice;
+    }
+
+    public BigDecimal getSalePrice() {
+        return salePrice;
+    }
+
+    public void setSalePrice(BigDecimal salePrice) {
+        this.salePrice = salePrice;
     }
 
     public String getGoodsDescs() {
