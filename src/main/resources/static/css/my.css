@@ -22,6 +22,10 @@
 .color-bk{
     color: #9d9d9d;
 }
+.info{
+    margin-left: 20px;
+    float: left;
+}
 
 .bk-222{
     background: #222;
@@ -76,4 +80,20 @@
 .zxing{
     height: 45px;
     width: 200px;
+}
+
+.labelTitle{
+    margin-top: 20px;
+    height: 40px;
+    font-weight: 400;
+    color: #757575;
+}
+.info{
+    margin-left: 80px;
+}
+.instoreBtn{
+    background: #ff6700;
+    color: white;
+    float: left;
+    margin-left: 10px;
 }

@@ -29,7 +29,17 @@ public class Goods {
     private String goodsDescs;//商品说明，如今日特价9.9等
 
     private String sumPrice;//辅助字段
+
+    private String instoreDate;//入库时间
     public Goods() {
+    }
+
+    public String getInstoreDate() {
+        return instoreDate;
+    }
+
+    public void setInstoreDate(String instoreDate) {
+        this.instoreDate = instoreDate;
     }
 
     public String getSumPrice() {

@@ -1,6 +1,7 @@
 package com.manage.zxing;
 
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.FormatException;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
@@ -19,6 +20,32 @@ import java.util.List;
 public class ZxingEAN13EncoderHandler {
     @Autowired
     NumberIndexRepository repository;
+
+    public  boolean checkStandardUPCEANChecksum(String s) throws FormatException {
+        int length = s.length();
+        if (length == 0) {
+            return false;
+        }
+
+        int sum = 0;
+        for (int i = length - 2; i >= 0; i -= 2) {
+            int digit = (int) s.charAt(i) - (int) '0';
+            if (digit < 0 || digit > 9) {
+                throw FormatException.getFormatInstance();
+            }
+            sum += digit;
+        }
+        sum *= 3;
+        for (int i = length - 1; i >= 0; i -= 2) {
+            int digit = (int) s.charAt(i) - (int) '0';
+            if (digit < 0 || digit > 9) {
+                throw FormatException.getFormatInstance();
+            }
+            sum += digit;
+        }
+        return sum % 10 == 0;
+    }
+
     /**
      * 生成条形码图片
      * @param contents 690 123456789 5  中间9位为商品在库ID
@@ -26,22 +53,28 @@ public class ZxingEAN13EncoderHandler {
      * @param height
      * @param imgPath
      */
-    public void encode(String contents, int width, int height, String imgPath) {
-        int codeWidth = 3 + // start guard
-                (7 * 6) + // left bars
-                5 + // middle guard
-                (7 * 6) + // right bars
-                3; // end guard
-        codeWidth = Math.max(codeWidth, width);
-        try {
-            BitMatrix bitMatrix = new MultiFormatWriter().encode(contents,
-                    BarcodeFormat.EAN_13, codeWidth, height, null);
+    public void encode(String contents, int width, int height, String imgPath) throws FormatException {
+        System.out.print("条码为"+contents);
+        if(checkStandardUPCEANChecksum(contents)) {
+            int codeWidth = 3 + // start guard
+                    (7 * 6) + // left bars
+                    5 + // middle guard
+                    (7 * 6) + // right bars
+                    3; // end guard
+            codeWidth = Math.max(codeWidth, width);
+            try {
+                BitMatrix bitMatrix = new MultiFormatWriter().encode(contents,
+                        BarcodeFormat.EAN_13, codeWidth, height, null);
 
-            MatrixToImageWriter
-                    .writeToPath(bitMatrix, "png", new File(imgPath).toPath());
+                MatrixToImageWriter
+                        .writeToPath(bitMatrix, "png", new File(imgPath).toPath());
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+       else {
+            System.out.print("没有通过校验");
         }
     }
 
@@ -84,7 +117,7 @@ public class ZxingEAN13EncoderHandler {
      */
     public int MakeCheckCode(String strCode12){
         //String strCode12=zxingCode12.toString();
-        List<Integer> oddNum=new ArrayList<>();//奇数
+/*        List<Integer> oddNum=new ArrayList<>();//奇数
         List<Integer>  evenNum=new ArrayList<>();//偶数
         List<Integer> num =new ArrayList<>();
         for(int i=0;i<strCode12.length();i++){
@@ -105,8 +138,20 @@ public class ZxingEAN13EncoderHandler {
         for(int m=0;m<evenNum.size();m++){
             totalEvenNum=totalEvenNum+evenNum.get(m);
         }
-        int c=totalEvenNum*3+totalOddNum;
-        int result=10-getSingleNum(c);
+        int c=totalEvenNum*3+totalOddNum;*/
+        int length = strCode12.length();
+        int sum=0;
+        for (int i = length - 1; i >= 0; i -= 2) {
+            int digit = (int) strCode12.charAt(i)- (int) '0';
+
+            sum += digit;
+        }
+        sum *= 3;
+        for (int i = length - 2; i >= 0; i -= 2) {
+            int digit = (int) strCode12.charAt(i)- (int) '0';
+            sum += digit;
+        }
+        int result=10-getSingleNum(sum);
         if(result==10){
             return 0;
         }

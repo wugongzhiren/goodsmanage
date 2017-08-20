@@ -5,6 +5,7 @@
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="/css/ui.jqgrid.css"/>
     <link rel="stylesheet" type="text/css" href="/css/jquery-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/my.css"/>
     <script src="/js/jquery-3.1.1.min.js"></script>
     <!-- 包括所有已编译的插件 -->
     <script src="/js/jquery-ui.min.js"></script>
@@ -12,25 +13,85 @@
     <script src="/js/grid.locale-cn.js"></script>
     <script src="/js/grid.jqueryui.js"></script>
     <script src="/js/jquery.jqGrid.min.js"></script>
-
+<style type="text/css">
+    .ui-jqgrid .ui-jqgrid-titlebar{
+        background: #FF6700;
+        color:white;
+        height: 50px;
+        line-height: 30px;
+        font-size: large;
+    }
+</style>
 </head>
-<body>
-商品名<input id="goodsName" type="text"/>
-商品分类<input id="goodsType" type="text"/>
-型号<input id="goodsVersion" type="text"/>
-定价<input id="price" type="text"/>
-数量<input id="goodsCount" type="text"/>
-<button onclick="instore()">
-    入库，生成条码并打印
-</button>
+<body style="background: #ff7385">
+<div style="width: 90%; background: white;margin: 40px;">
+    <div class="instoreTitle" style="margin-left:60px;margin-top: 20px;font-size: 36px;font-weight: 400;line-height: 68px;color: #b0b0b0;">
+        <h1>商品入库</h1></div>
+    <div style="height: 50px;width: 90%;margin-left: 60px;margin-top: 20px; font-size: 16px;font-weight: 400;line-height: 50px;border-left: 4px solid #ff6700;background-color: #eee;color: #333;">
+        填写商品入库信息
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="info">
+            <div class="labelTitle">商品名</div>
+            <input id="goodsName" class="form-control" style="width: 280px;" type="text"/>
+        </div>
+        <div class="info">
+            <div class="labelTitle">商品分类</div>
+            <input id="goodsType" class="form-control" style="width: 280px;" type="text"/>
+        </div>
+        <div class="info">
+            <div class="labelTitle">特征</div>
+            <input id="goodsVersion" class="form-control" style="width: 280px;" type="text"/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="info">
+            <div class="labelTitle">定价</div>
+            <input id="price" class="form-control" style="width: 280px;ime-mode:disabled;" type="text"/>
+        </div>
+        <div class="info">
+            <div class="labelTitle">数量</div>
+            <input id="goodsCount" class="form-control" style="width: 280px;ime-mode:disabled;" type="text"/>
+        </div>
+        <div class="info">
+            <div class="labelTitle"></div>
+            <button class="btn instoreBtn" onclick="instore()">
+                入库，生成条码并打印
+            </button>
+        </div>
+    </div>
 
-如果商品之前已经入库过，请查询后填入对应商品的入库数量
-<input id="goodsNameinput" type="text" placeholder="输入商品名查询商品信息,支持模糊搜索"/>
-<button onclick="reload()">查询</button>
-<button onclick="save()">保存</button>
+    <div style="height: 50px;width:  90%;margin-left: 60px;margin-top: 20px; font-size: 16px;font-weight: 400;line-height: 50px;border-left: 4px solid #ff6700;background-color: #eee;color: #333;">
+        如果商品之前已经入库过，请查询后填入对应商品的入库数量
+    </div>
+    <hr/>
+
+    <div class="row">
+
+        <input id="goodsNameinput" class="form-control" style="margin-left: 60px;width: 300px" type="text" placeholder="输入商品名查询商品信息,支持模糊搜索"/>
+
+
+        <button class="btn instoreBtn" onclick="reload()">查询</button>
+
+        <button class="btn instoreBtn" onclick="save()">保存</button>
+    </div>
+</div>
+
+<hr/>
+<center>
 <table id="goodsList"></table>
 <div id="pager"></div>
+</center>
 <script>
+$(function () {
+    $(".ui-jqgrid-titlebar-close").remove();
+})
+
+
+    function keyPress() {
+        var keyCode = event.keyCode;
+    }
     /**
      * 商品入库操作
      */
@@ -44,6 +105,26 @@
             alert('请输入完整的入库信息');
             return;
         }
+        if(goodsName.length>125||goodsVersion.length>125||goodsType.length>125){
+            alert('信息长度超过125个字符');
+            return;
+        }
+
+        var type = /^[0-9]*[1-9][0-9]*$/;
+        var re = new RegExp(type);
+        //alert(ss.match(re));
+        if (goodsCount.match(re) == null) {
+            alert("数量必须是大于零的整数!");
+            return;
+        }
+        //校验为金额
+        var isNum=/^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/;
+        var reM = new RegExp(isNum);
+        if(price.match(reM)==null){
+            alert("请输入正确的金额!");
+            return;
+        }
+
         //后台通信，保存信息到数据库
         $.ajax({
             url: '/instore',
@@ -59,18 +140,28 @@
                 alert("系统异常，请重新操作")
             },
             success: function (data) {
-                alert("操作成功")
+                if(data=="100") {
+                    $("#goodsName").val("");
+                    $("#goodsType").val("");
+                     $("#goodsVersion").val("");
+                     $("#goodsCount").val("");
+                    $("#price").val("");
+                    alert("操作成功")
+                }
+                if(data=="101") {
+                    alert("操作失败，请重试")
+                }
             }
         })
     }
 
-    var lastsel=1;
-//商品模型配置
+    var lastsel ;
+    //商品模型配置
     jQuery("#goodsList").jqGrid({
         url: "/getGoodsInfo",
         datatype: "local",
         mtype: 'GET',
-        colNames: [ '条形码', '商品名', '商品类别', '型号','单价', '数量','新增入库数量'],
+        colNames: ['条形码', '商品名', '商品类别', '型号', '单价', '数量', '新增入库数量'],
         colModel: [
             {name: 'zxingCode', index: 'zxingCode', width: 100, align: "center"},
             {name: 'goodsName', index: 'goodsName', width: 100, align: "center"},
@@ -78,69 +169,91 @@
             {name: 'goodsVersion', index: 'goodsVersion', width: 150, align: "center"},
             {name: 'price', index: 'price', width: 150, align: "center"},
             {name: 'goodsCount', index: 'goodsCount', width: 150, align: "center"},
-            {name: 'addCount', index: 'addCount', width: 150, align: "center",editable:true,editrules:{edithidden:true,required:false,number:true,minValue:1}}
+            {
+                name: 'addCount',
+                index: 'addCount',
+                width: 150,
+                align: "center",
+                editable: true
+            }
         ],
-        rownumbers:true,
+        rownumbers: true,
         multiselect: true,
-        multiboxonly:true,
-        cellEdit:true,
+        multiboxonly: false,
+        cellEdit: true,
         loadComplete: function () {
             var rowIds = $("#goodsList").jqGrid('getDataIDs');
             var curRowData = $("#goodsList").jqGrid('getRowData', rowIds[0]);
-            if(curRowData.zxingCode=="") {
+            if (curRowData.zxingCode == "") {
                 alert("未查询到数据");
             }
         },
-        beforeSelectRow:function beforeSelectRow()
-        {
+        beforeSelectRow: function beforeSelectRow() {
             $("#goodsList").jqGrid('resetSelection');
             return(true);
         },
+        onSelectRow: function(id) {
+            /*alert('1');
+            if (id !== lastSel) {
+                grid.jqGrid('saveRow', lastSel);
+                lastSel = id;
+            }
+            grid.jqGrid('editRow', id, true);
+            return true;*/
+           /* /!*<![CDATA[*!/
+            if (id && id != lastsel) {
+                /!*]]>*!/
+                jQuery('#goodsList').jqGrid('restoreRow', lastsel);
+                jQuery('#goodsList').jqGrid('editRow', id, true);
+                lastsel = id;
+            }*/
+        },
         rowList: [10, 20, 30],
         viewrecords: true,
-        loadonce:false,
+        loadonce: false,
         sortable: false,
         pager: jQuery('#pager'),
-        rowNum: 5,
+        rowNum: 10,
         altclass: 'altRowsColor',
 //width: 'auto',
-        width: '1200',
+        width: '80%',
         height: '340',
-        caption: "商品信息一览"
+        caption: "在库商品信息列表"
     })
 
 
-    $('html').bind('click', function(e) { //用于点击其他地方保存正在编辑状态下的行
-        if ( lastsel != "" ) { //if a row is selected for edit
-            if($(e.target).closest('#goodsList').length == 0) { //and the click is outside of the grid //save the row being edited and unselect the row
+    $('html').bind('click', function (e) { //用于点击其他地方保存正在编辑状态下的行
+        if (lastsel != "") { //if a row is selected for edit
+            if ($(e.target).closest('#goodsList').length == 0) { //and the click is outside of the grid //save the row being edited and unselect the row
                 jQuery('#goodsList').jqGrid('saveRow', lastsel);
                 jQuery('#goodsList').resetSelection();
-                lastsel="";
+                lastsel = "";
             }
         }
     });
 
 
     function reload() {
-       var goodsName=$("#goodsNameinput").val();
-        $("#goodsList").jqGrid('setGridParam',{
-            datatype:'json',
+        var goodsName = $("#goodsNameinput").val();
+        $("#goodsList").jqGrid('setGridParam', {
+            datatype: 'json',
             mtype: 'GET',
-            postData:{'goodsName':goodsName} //发送数据
+            postData: {'goodsName': goodsName} //发送数据
             /*page:1*/
         }).trigger("reloadGrid"); //重新载入
     }
 
     //保存已经入库过的新增商品数量
     function save() {
-        var curRowDataID=$("#goodsList").jqGrid("getGridParam","selrow");
-        if(curRowDataID==null){
+        var curRowDataID = $("#goodsList").jqGrid("getGridParam", "selrow");
+        jQuery('#goodsList').jqGrid('restoreRow', curRowDataID);
+        if (curRowDataID == null||curRowDataID.length>1) {
             alert("请选择一条数据后进行操作");
             return;
         }
-        var rowData = $("#goodsList").jqGrid("getRowData",curRowDataID);
+        var rowData = $("#goodsList").jqGrid("getRowData", curRowDataID);
         //此次新增数
-        var addCount=rowData["addCount"];
+        var addCount = rowData["addCount"];
 //验证为正整数
         var type = /^[0-9]*[1-9][0-9]*$/;
         var re = new RegExp(type);
@@ -150,7 +263,7 @@
             return;
         }
         //对应的条码
-        var zxingCode=rowData["zxingCode"];
+        var zxingCode = rowData["zxingCode"];
         $.ajax({
             url: '/addCount',
             type: "get",
@@ -162,12 +275,12 @@
                 alert("系统异常，请重新操作")
             },
             success: function (data) {
-                if(data=="100") {
+                if (data == "100") {
 
                     alert("操作成功");
                     reload();
                 }
-                else{
+                else {
                     alert("操作失败，请刷新后重试！");
                 }
             }

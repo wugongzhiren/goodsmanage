@@ -7,13 +7,13 @@ $(function(){
         if(that === 'shouyin'){
             urlLoad('#content','/sale');
         }else if(that === 'ruku'){
-            urlLoad('#content','/income');
+            urlLoad('#content','/instore');
         }else if(that === 'kucun'){
-            urlLoad('#content','/index');
+            urlLoad('#content','/goods');
         }else if(that === 'shouru'){
-            urlLoad('#content','/index');
+            urlLoad('#content','/income');
         }else if(that === 'huiyuan'){
-            urlLoad('#content','/index');
+            urlLoad('#content','/customerVip');
         }
     });
 });

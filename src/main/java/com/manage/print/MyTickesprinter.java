@@ -3,6 +3,7 @@ package com.manage.print;
 import java.awt.print.*;
 
 /**
+ * 小票打印
  * Created by Administrator on 2017/8/16.
  */
 public class MyTickesprinter {

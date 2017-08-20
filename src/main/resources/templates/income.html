@@ -14,14 +14,16 @@
 
 </head>
 <body>
-<div>
+<!--<div>
     <Button value="当天收入分析" onclick="dayIncome()">当天收入分析</Button>
     <Button value="当月收入" onclick="monthIncome()">当月收入</Button>
     <Button value="总收入分析" onclick="monthIncome()">总收入分析</Button>
-</div>
-<div id="canvasDiv">
+</div>-->
+<center>
+<div style="margin-top: 40px" id="canvasDiv">
 
 </div>
+</center>
 <script src="/js/ichart.1.2.min.js"></script>
     <script>
 
@@ -74,7 +76,7 @@
                render : 'canvasDiv',//渲染的Dom目标,canvasDiv为Dom的ID
                data: data,//绑定数据
                animation:true,//过渡动画
-               title : '收入分析',//设置标题
+               title : '当天收入统计',//设置标题
                width : 900,//设置宽度，默认单位为px
                height : 500,//设置高度，默认单位为px
                shadow:false,//激活阴影

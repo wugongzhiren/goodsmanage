@@ -39,4 +39,8 @@ public class index {
     public String setting() {
         return "setting";
     }
+    @RequestMapping(value = "/goods", method = RequestMethod.GET)
+    public String goods() {
+        return "goods";
+    }
 }
