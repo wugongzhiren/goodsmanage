@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,21 +38,17 @@ public class CustomerVIPManage {
      * @return
      */
     @RequestMapping(value = "/creatVIP", method = RequestMethod.GET)
-    public String creatVIP(@RequestParam String identityCode, @RequestParam String phoneNum) {
+    public String creatVIP(@RequestParam String identityCode) {
         CustomerVIP vip = null;
         vip = repository.findByVipID(identityCode);
         if (vip != null) {
             return Constant.RESULT_EXIST;
         }
-        vip = repository.findByPhoneNum(phoneNum);
-        if (vip != null) {
-            return Constant.RESULT_PHONEEXIST;
-        }
         vip = new CustomerVIP();
         vip.setVipID(identityCode);
-        vip.setPhoneNum(phoneNum);
         vip.setScore(0);
-        vip.setCreatDate(LocalDate.now().toString());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        vip.setCreatDate(sdf.format(new Date()));
         try {
             repository.save(vip);
             return Constant.RESULT_SUCCESS;
@@ -79,6 +77,7 @@ public class CustomerVIPManage {
             if(setting!=null){
                 vip.setSaleRatio(new BigDecimal(setting.getSetContent()));
             }
+            vip.setSaleRatio(new BigDecimal("10"));
             vip.setResultCode(Constant.RESULT_SUCCESS);
             return vip;
         }
@@ -93,29 +92,18 @@ public class CustomerVIPManage {
     @RequestMapping(value = "/getVIPInfo", method = RequestMethod.GET)
     public List<CustomerVIP> getVIPScore(@RequestParam String identityCode) {
         List<CustomerVIP> vipList = new ArrayList<>();
-        //正则表达式判断为手机号码
-        String regExp = "/^1\\d{10}$/";
-        Pattern p = Pattern.compile(regExp);
-        Matcher m = p.matcher(identityCode);
         CustomerVIP vip;
-        if (m.find()) {
-            vip=repository.findByPhoneNum(identityCode);
+        if(identityCode==""||identityCode==null){
+            return repository.findAll();
+        }
+            vip=repository.findByVipID(identityCode);
             if(vip==null){
-                return null;
+                return vipList;
             }
             vipList.add(vip);
             return vipList;
             //boolean
-        }
-        if(identityCode==""||identityCode==null){
-            return repository.findAll();
-        }
-        vip=repository.findByVipID(identityCode);
-        if(vip==null){
-            return null;
-        }
-         vipList.add(vip);
-        return vipList;
+
         //return repository.findByVipID(identityCode).getScore() + "";
     }
 

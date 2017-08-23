@@ -15,6 +15,9 @@ $(function(){
         }else if(that === 'huiyuan'){
             urlLoad('#content','/customerVip');
         }
+        else if(that ==='saleSetting'){
+            urlLoad('#content','/setting');
+        }
     });
 });
 

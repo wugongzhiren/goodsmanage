@@ -39,8 +39,9 @@ public class Goodsmanage {
         Goods goods = goodsRepository.findByZxingCode(zxingCode);
         if (goods != null) {
             goods.setResultCode(Constant.RESULT_SUCCESS);
-            if(goods.getSalePrice()!=null){
-                goods.setPrice(goods.getSalePrice());
+            //如果有促销价格，则设置为促销价格
+            if (goods.getSalePrice() != null) {
+                goods.setPrice(new BigDecimal(goods.getSalePrice()));
             }
             return goods;
         } else {
@@ -58,30 +59,29 @@ public class Goodsmanage {
     @RequestMapping(value = "/getGoodsInfo", method = RequestMethod.GET)
     public List<Goods> getGoodsInfo(@RequestParam String goodsName) {
         System.out.print(goodsName);
-            if ("".equals(goodsName) || goodsName == null) {
-                return goodsRepository.findAll();
-            } else {
+        if ("".equals(goodsName) || goodsName == null) {
+            return goodsRepository.findAll();
+        } else {
 
-                return goodsRepository.findByGoodsNameLike(goodsName);
-            }
+            return goodsRepository.findByGoodsNameLike(goodsName);
+        }
     }
 
     /**
      * 查询所有在库商品的信息
+     *
      * @param goodsName 条形码
      */
     @RequestMapping(value = "/getGoodsInfoAll", method = RequestMethod.GET)
     public List<Goods> findAllGoodsinfo(@RequestParam String goodsName) {
         if ("".equals(goodsName) || goodsName == null) {
             return goodsRepository.findAll();
-        }
-        else{
-            List<Goods> goods=new ArrayList<>();
-            Goods goods1=goodsRepository.findByZxingCode(goodsName);
-            if(goods1==null){
+        } else {
+            List<Goods> goods = new ArrayList<>();
+            Goods goods1 = goodsRepository.findByZxingCode(goodsName);
+            if (goods1 == null) {
                 return goods;
-            }
-            else {
+            } else {
                 goods.add(goodsRepository.findByZxingCode(goodsName));
                 return goods;
             }
@@ -94,18 +94,17 @@ public class Goodsmanage {
      * @return
      */
     @RequestMapping(value = "/zxingMake", method = RequestMethod.POST)
-    public String zxingMake(@RequestParam String content,@RequestParam String goodsVersion,@RequestParam String price,@RequestParam String count) throws FormatException {
-       try {
-           ZxingEAN13EncoderHandler zxingHandle = new ZxingEAN13EncoderHandler();
-           zxingHandle.encode(content, 110, 40, "d:/zxing/zxing_EAN13.png");
-           //System.out.print(zxingHandle.getSingleNum(1124));
-           Print.makeZxingPic(content, goodsVersion, price.toString());
-           Print.printCommon("d:/goodsinfo.png", null, Integer.parseInt(count));
-           return Constant.RESULT_SUCCESS;
-       }
-       catch (Exception e){
-           return Constant.RESULT_FAIL;
-       }
+    public String zxingMake(@RequestParam String content, @RequestParam String goodsVersion, @RequestParam String price, @RequestParam String count) throws FormatException {
+        try {
+            ZxingEAN13EncoderHandler zxingHandle = new ZxingEAN13EncoderHandler();
+            zxingHandle.encode(content, 110, 40, "d:/zxing/zxing_EAN13.png");
+            //System.out.print(zxingHandle.getSingleNum(1124));
+            Print.makeZxingPic(content, goodsVersion, price.toString());
+            Print.printCommon("d:/goodsinfo.png", null, Integer.parseInt(count));
+            return Constant.RESULT_SUCCESS;
+        } catch (Exception e) {
+            return Constant.RESULT_FAIL;
+        }
     }
 
     /**
@@ -123,21 +122,21 @@ public class Goodsmanage {
         //构造入库条形码
         ZxingEAN13EncoderHandler handler = new ZxingEAN13EncoderHandler();
         String zxingCode = handler.generateZxing();
-        String path="d:/zxing/";
-        File file=new File(path);
-        if(!file.exists()){
-                file.mkdirs();
+        String path = "d:/zxing/";
+        File file = new File(path);
+        if (!file.exists()) {
+            file.mkdirs();
         }
         if (Constant.RESULT_FAIL.equals(zxingCode)) {
             return Constant.RESULT_FAIL;
         }
         //生成条形码图片
-        handler.encode(zxingCode,110,40,"d:/zxing/zxing_EAN13.png");
+        handler.encode(zxingCode, 110, 40, "d:/zxing/zxing_EAN13.png");
         //打印条码
         try {
             //条码中加文字
-        Print.makeZxingPic(zxingCode,goodsVersion,price.toString());
-        Print.printCommon("d:/goodsinfo.png",null,Integer.parseInt(goodsCount));
+            Print.makeZxingPic(zxingCode, goodsVersion, price.toString());
+            Print.printCommon("d:/goodsinfo.png", null, Integer.parseInt(goodsCount));
 
             Goods goods = new Goods();
             goods.setZxingCode(zxingCode);
@@ -164,42 +163,83 @@ public class Goodsmanage {
     }
 
     /**
-     * 商品非第一次入库，增加数量
+     * 商品非第一次入库，增加数量,并且打印增加数量份数的标签
      *
      * @return
      */
     @RequestMapping(value = "/addCount", method = RequestMethod.GET)
-    public String addCount(@RequestParam String zxingCode,@RequestParam String addCount) {
-        Goods goods=goodsRepository.findByZxingCode(zxingCode);
-        if(goods!=null){
+    public String addCount(@RequestParam String zxingCode, @RequestParam String addCount, @RequestParam String price, @RequestParam String goodVersion) {
+        Goods goods = goodsRepository.findByZxingCode(zxingCode);
+        if (goods != null) {
             //更新新入库数量
-            goods.setGoodsCount(goods.getGoodsCount()+Integer.parseInt(addCount));
+            goods.setGoodsCount(goods.getGoodsCount() + Integer.parseInt(addCount));
             goodsRepository.save(goods);
+
+            //打印
+            try {
+                zxingMake(zxingCode, goodVersion, price, addCount);
+            } catch (FormatException e) {
+                e.printStackTrace();
+                return Constant.PRINT_FAIL;
+            }
             return Constant.RESULT_SUCCESS;
-        }
-        else{
+        } else {
             return Constant.RESULT_FAIL;
         }
 
     }
 
     /**
-     * 商品非第一次入库，更新商品价格
+     * 商品非第一次入库，更新商品原价格
      *
      * @return
      */
     @RequestMapping(value = "/updatePrice", method = RequestMethod.GET)
-    public String updatePrice(@RequestParam String zxingCode,@RequestParam String newprice) {
-        Goods goods=goodsRepository.findByZxingCode(zxingCode);
-        if(goods!=null){
-            //更新新入库数量
+    public String updatePrice(@RequestParam String zxingCode, @RequestParam String newprice) {
+        Goods goods = goodsRepository.findByZxingCode(zxingCode);
+        if (goods != null) {
+            //更新价格
             goods.setPrice(new BigDecimal(newprice));
             goodsRepository.save(goods);
+
+
             return Constant.RESULT_SUCCESS;
-        }
-        else{
+        } else {
             return Constant.RESULT_FAIL;
         }
+    }
+
+    /**
+     * 设置优惠价格
+     *
+     * @return
+     */
+    @RequestMapping(value = "/setSalePrice", method = RequestMethod.GET)
+    public String setSalePrice(@RequestParam String zxingCode, @RequestParam String saleprice) {
+        Goods goods = goodsRepository.findByZxingCode(zxingCode);
+        if (goods != null) {
+            goods.setSalePrice(saleprice);
+            goodsRepository.save(goods);
+        }
+        return Constant.RESULT_SUCCESS;
+
 
     }
+    /**
+     * 设置优惠价格
+     *
+     * @return
+     */
+    @RequestMapping(value = "/resumePrice", method = RequestMethod.GET)
+    public String resumePrice(@RequestParam String zxingCode) {
+        Goods goods = goodsRepository.findByZxingCode(zxingCode);
+        if (goods != null) {
+            goods.setSalePrice(null);
+            goodsRepository.save(goods);
+        }
+        return Constant.RESULT_SUCCESS;
+
+
+    }
+
 }

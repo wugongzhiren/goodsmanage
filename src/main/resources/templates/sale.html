@@ -41,8 +41,8 @@
     <!-- 在jqgrid/js/i18n下还有其他的多语言包，可以尝试更换看效果 -->
 
 </head>
-<body style="margin: 10px;color: #ffffff;background: #000">
-<div class="mytitle">***店欢迎您再次光临</div>
+<body style="margin: 10px;color: #ffffff;background: #000" >
+<div class="mytitle">默默百货店欢迎您再次光临</div>
 <hr/>
 <div class="modal fade" style="color: black" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
      aria-hidden="true">
@@ -103,7 +103,7 @@
                         onclick="clearMomalContent()">重置
                 </button>
                 <button type="button" class="btn btn-primary" onclick="confirmBusiness()">
-                    确认，并打印凭单
+                    确认，并打印凭单(F4)
                 </button>
             </div>
         </div><!-- /.modal-content -->
@@ -114,7 +114,7 @@
     <input id="cashier" type="hidden"/>
 
     <label class="shouldPay">应付款合计：</label>
-    <label id="tatalPrice" style="font-size:200%;color: #00ff29">0.00</label>
+    <label id="tatalPrice" style="font-size:250%;color: #00ff29">0.00</label>
 
     <label class="shouldPay">元</label>
 
@@ -126,7 +126,7 @@
 
     <!--<Button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">会员登录</Button>-->
     <Button class="btn" onclick="delGoods()">顾客不想要了</Button>
-    <a href="/setting" target="_blank" class="btn">优惠设置</a>
+    <a href="/customerVip" target="_blank" class="btn">会员开户</a>
 </div>
 <hr/>
 <div>
@@ -137,24 +137,46 @@
 <!--<div id="pager2"></div>-->
 <div style="float:right;margin-top: 40px;margin-right: 60px">
     <Button id="Jbt" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">结账（F2）</Button>
-    <Button id="cacelBt" class="btn btn-primary btn-lg" onclick="cancleExchange()">取消交易（F6）</Button>
+    <Button id="cacelBt" class="btn btn-primary btn-lg" onclick="cancleExchange()">取消交易（F7）</Button>
 </div>
 <script>
+
+    //按键监听
+
     //条形码回车
     function press() {
+
         //enableBt();
         if (event.keyCode == 13) {
             getGoodsInfo();
         }
+        //F2
+        if (event.keyCode == 113) {
+            $('#myModal').modal('show')
+        }
+        //f7
+        if (event.keyCode == 118) {
+            cancleExchange();
+        }
     }
     //实际付款回车
     function actualMoney() {
+        //f4
+        if (event.keyCode == 115 ) {
+            confirmBusiness();
+        }
         if (event.keyCode == 13) {
             //计算找零
             //应付款
             var tatalPrice1 = $("#tatalPrice1").html();
             //实际收款
             var payMoney = $("#payMoney").val();
+            //校验为金额
+            var isNum=/^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/;
+            var reM = new RegExp(isNum);
+            if(payMoney.match(reM)==null){
+                return;
+            }
             var returnMoneyValue = parseFloat(payMoney) - parseFloat(tatalPrice1);
             $("#returnMoney").html(returnMoneyValue.toFixed(2));
             $("#paymoneylbl").html(payMoney);
@@ -162,39 +184,32 @@
     }
     jQuery("#list2").jqGrid(
         {
-            url: '/getGoodsInfo',//组件创建完成之后请求数据的url
+            url: '/getInstoreInfo',//组件创建完成之后请求数据的url
             datatype: "local",//请求数据返回的类型。可选json,xml,txt
-            colNames: ['条形码', '分类', '商品名', '商品单价', '打折价', '购买数量', '备注', '合计', '操作'],//jqGrid的列显示名字
+            colNames: ['条形码', '分类', '商品名', '商品单价', '打折价', '购买数量', '备注','促销折扣额', '合计'],//jqGrid的列显示名字
             colModel: [
                 {name: 'zxingCode', index: 'zxingCode', width: 300, align: "center"},
                 {name: 'goodsType', index: 'goodsType', hidden: true},
                 {name: 'goodsName', index: 'goodsName', width: 150, align: "center"},
                 {name: 'price', index: 'price', width: 150, align: "center"},
-                {name: 'salePrice', index: 'salePrice',  hidden: true},
+                {name: 'salePrice', index: 'salePrice', hidden: true},
                 {name: 'goodsCount', index: 'goodsCount', width: 150, align: "center"},
-                {name: 'goodsDescs', index: 'goodsDescs', width: 150, align: "center"},
-                {name: 'sumPrice', index: 'sumPrice', width: 150, align: "center"},
-                {
-                    name: 'del',
-                    index: 'del',
-                    width: 150,
-                    align: "center",
-                    formatter: function (cellvalue, options, rowObject) {
-                        return "<a>删除</a>";
-                    }
-                }
+                {name: 'goodsDescs', index: 'goodsDescs', hidden: true},
+                {name: 'denouncePrice', index: 'denouncePrice', hidden: true},
+                {name: 'sumPrice', index: 'sumPrice', width: 150, align: "center"}
+
             ],
-            rowNum: 10,//一页显示多少条
-            rowList: [10, 20, 30],//可供用户选择一页显示多少条
+            //一页显示多少条
+            //可供用户选择一页显示多少条
             //pager : '#pager2',//表格页脚的占位符(一般是div)的id
-            sortname: 'id',//初始化的时候排序的字段
+            // 初始化的时候排序的字段
             // sortorder : "desc",//排序方式,可选desc,asc
             mtype: "get",//向后台请求数据的ajax的类型。可选post,get
             viewrecords: true,
             loadonce: true,
-            multiselect: false,
+            multiselect: true,
             multiboxonly: false,
-            height: 400,
+            height: 360,
             caption: "已购买商品",//表格的标题名字
             /*        loadComplete: function () {
              /!*      var rowIds = $("#list2").getDataIDs();
@@ -206,9 +221,11 @@
              },*/
         });
     $(function () {
+        $("#cb_list2").remove();
         //enableBt();
         $('#myModal').modal('hide');
-
+        $("#zxingCode").focus();
+        $(".ui-jqgrid-titlebar-close").remove();
         $('#myModal').on('shown.bs.modal', function () {
             // 为应付款赋值
             $("#tatalPrice1").html($("#tatalPrice").html());
@@ -218,6 +235,8 @@
         $('#myModal').on('hidden.bs.modal', function () {
             // 为应付款赋值
             clearMomalContent();
+            $("#zxingCode").focus();
+
         })
     })
 
@@ -244,6 +263,7 @@
                 $("#tatalPrice").html(parseFloat(tatal) + parseFloat(curRowData['price']) * parseInt(count));
                 // alert("当前数量"+parseInt(curRowData['goodsCount'])+parseInt(count)+1);
                 $("#list2").jqGrid('setRowData', rowIds[i], {"goodsCount": gcount, "sumPrice": sprice});
+                $("#zxingCode").val("");
                 /*$.extend(curRowData, {"goodsCount":parseInt(curRowData['goodsCount'])+count})
                  $("#list2").jqGrid('setRowData', rowIds[i], curRowData);*/
                 return 0;
@@ -261,6 +281,9 @@
      */
     function getGoodsInfo() {
         var zxingCode = $("#zxingCode").val();
+        if(zxingCode==""){
+            return;
+        }
         var currentGoodsCount = getGoodsCount(zxingCode);
         if (currentGoodsCount == 0) {
             return;
@@ -284,6 +307,8 @@
 
                     //汇总价格更新
                     var tatal = $("#tatalPrice").html();
+                    $("#zxingCode").val("");
+                    $("#goodCount").val("");
                     $("#tatalPrice").html((parseFloat(tatal) + parseFloat(data.price) * currentGoodsCount).toFixed(2));
                 }
                 else {
@@ -297,13 +322,23 @@
 
     //删除对应商品
     function delGoods() {
+        var curRowDataID = $("#list2").jqGrid("getGridParam", "selrow");
+        if (curRowDataID == null||curRowDataID.length>1) {
+            alert("请选择一条数据后进行操作");
+            return ;
+        }
+        var rowData = $("#list2").jqGrid("getRowData", curRowDataID);
+        $("#list2").jqGrid('delRowData', curRowDataID);
+        var sumPrice=rowData["sumPrice"];
+        var totalprice=$("#tatalPrice").html();
+        var afterPrice=parseFloat(totalprice)-parseFloat(sumPrice);
+        $("#tatalPrice").html(afterPrice);
 
     }
     function vipLogin() {
-        if(event.keyCode==13) {
+        if (event.keyCode == 13) {
             var vipID = $("#vipID").val();
             if (vipID == "") {
-                alert("会员ID不能为空");
                 return;
             }
             $.ajax({
@@ -316,14 +351,15 @@
                 success: function (data) {
                     if (data.resultCode == "100") {
                         //登录成功
+                        $("#payMoney").focus();
                         if (data.saleRatio != null || data.saleRatio != "") {
                             $("#vipID").attr("disabled", true);
                             $("#customer").html(data.vipID);
 
                             $("#saleRatio").html(data.saleRatio);
                             //应付款重新赋值
-                            $("#tatalPrice1").html(($("#tatalPrice1").html() * parseFloat(data.saleRatio)).toFixed(2));
-                            $("#tatalPrice").html(($("#tatalPrice").html() * parseFloat(data.saleRatio)).toFixed(2));
+                            $("#tatalPrice1").html(($("#tatalPrice1").html() * parseFloat(data.saleRatio)*0.1).toFixed(2));
+                            $("#tatalPrice").html(($("#tatalPrice").html() * parseFloat(data.saleRatio)*0.1).toFixed(2));
 
                             //找零重新赋值
                             var payMoney = $("#payMoney").val();
@@ -345,6 +381,7 @@
      * 取消此次交易，清空页面信息
      */
     function cancleExchange() {
+        $('#myModal').modal('hide');
         $("#list2").jqGrid("clearGridData");
         $("#goodCount").val('');
         $("#zxingCode").val('');
@@ -361,16 +398,17 @@
         $("#vipID").removeAttr("disabled");
         $("#tatalPrice1").html($("#tatalPrice").html());
         $("#payMoney").val('');
+        $("#payMoney").focus();
         $("#returnMoney").html('0.00');
 
-var saleRatio=$("#saleRatio").html();
-if(saleRatio!="无") {
-    $("#tatalPrice1").html((parseFloat($("#tatalPrice").html()) / parseFloat(saleRatio)).toFixed(2));
-    $("#tatalPrice").html((parseFloat($("#tatalPrice").html()) / parseFloat(saleRatio)).toFixed(2));
-}
-else{
-    $("#tatalPrice1").html($("#tatalPrice").html());
-}
+        var saleRatio = $("#saleRatio").html();
+        if (saleRatio != "无") {
+            $("#tatalPrice1").html((parseFloat($("#tatalPrice").html()) / (parseFloat(saleRatio)*0.1)).toFixed(2));
+            $("#tatalPrice").html((parseFloat($("#tatalPrice").html()) / (parseFloat(saleRatio)*0.1)).toFixed(2));
+        }
+        else {
+            $("#tatalPrice1").html($("#tatalPrice").html());
+        }
         $('input:radio:first').attr('checked', 'true');
 //得放在后面
         $("#saleRatio").html('无');
@@ -378,6 +416,11 @@ else{
 
     //确认交易
     function confirmBusiness() {
+        var shouldPay = $("#tatalPrice").html();
+
+        if(shouldPay=="0.00"||shouldPay=="0"){
+            return;
+            }
         //遍历jqgrid
         var jsonArr = new Array();
         var rowIds = $("#list2").getDataIDs();
@@ -391,10 +434,11 @@ else{
         var vipID = $("#customer").html();
         //付款方式
         var payWay = $('input:radio:checked').val();
-        var shouldPay = $("#tatalPrice").html();
+        //应付款
+
         //实际收款
         var payMoney = $("#payMoney").val();
-
+var saleRatio=$("#saleRatio").html();
         //收银员
         var cashier = $("#cashier").val();
         $.ajax({
@@ -406,7 +450,8 @@ else{
                 shouldPay: shouldPay,
                 payMoney: payMoney,
                 payWay: payWay,
-                saleGoodsDetails: saleGoodsDetails
+                saleGoodsDetails: saleGoodsDetails,
+                vipSalePrice:saleRatio
             },
             error: function (error) {
                 alert("系统异常，请重新操作")

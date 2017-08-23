@@ -1,23 +1,19 @@
 package com.manage.controller;
 
 import com.google.gson.reflect.TypeToken;
-import com.manage.bean.Goods;
-import com.manage.bean.Income;
-import com.manage.bean.SalesGoodDetails;
-import com.manage.bean.SalesRecord;
+import com.manage.bean.*;
 import com.manage.constant.Constant;
 import com.manage.factory.Factory;
 import com.manage.print.MyTickesprinter;
 import com.manage.print.TicksInfo;
-import com.manage.repository.IncomeRepository;
-import com.manage.repository.SaleManageRepository;
-import com.manage.repository.SalesDetalisRepository;
+import com.manage.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -34,6 +30,10 @@ public class Salesmanage {
     private SaleManageRepository saleManageRepository;
     @Autowired
     SalesDetalisRepository salesDetalisRepository;
+    @Autowired
+    GoodsRepository goodsRepository;
+    @Autowired
+    CustomerVIPRepository customerVIPRepository;
     /**
      * 销售一单成功后，向数据库添加一条销售记录
      *  @param cashier 收银员
@@ -42,10 +42,13 @@ public class Salesmanage {
      * @param payWay 收费方式 1；现金，2：支付宝；3：微信
      * @param saleGoodsDetails 销售商品详情JSON
      */
+    @Transactional
     @RequestMapping(value = "/salesSuccess", method = RequestMethod.POST)
     public String salesSuccess(@RequestParam String cashier,@RequestParam String vipID,@RequestParam String shouldPay,
-    @RequestParam String payMoney,@RequestParam String payWay,@RequestParam String saleGoodsDetails){
-        System.out.print("结账开始");
+    @RequestParam String payMoney,@RequestParam String payWay,@RequestParam String saleGoodsDetails,@RequestParam String vipSalePrice){
+        System.out.println("结账开始");
+        System.out.println(saleGoodsDetails);
+        System.out.println("");
         //在收入表增加一条收入记录
         Income income=incomeRepository.findByCurrentDateStr(LocalDate.now().toString());
         if(income!=null){
@@ -82,7 +85,7 @@ public class Salesmanage {
             incomeRepository.save(income);
         }
 
-        //合计价格，不是应付款
+        //合计价格，不是应付款,应该是会员打折前的合计价格
         BigDecimal originPrice=new BigDecimal(0.00);
         List<Goods> retList = Factory.getGson().fromJson(saleGoodsDetails,
                 new TypeToken<List<Goods>>() {
@@ -112,9 +115,15 @@ public class Salesmanage {
         salesRecord.setSaleCount(retList.size());
         //存入销售明细的JSON.方便以后分析销售记录
         salesRecord.setSalsGoodDetails(saleGoodsDetails);
+        BigDecimal sumDenouncePrice=new BigDecimal(0.00);//优惠价格
         try {
             saleManageRepository.save(salesRecord);
+
             for(int i=0;i<retList.size();i++){
+                if(retList.get(i).getDenouncePrice()!=null&&!"".equals(retList.get(i).getDenouncePrice())){
+                    sumDenouncePrice.add(new BigDecimal(retList.get(i).getDenouncePrice()).multiply(new BigDecimal(retList.get(i).getGoodsCount())));
+                }
+                //sumDenouncePrice
                 originPrice.add(retList.get(i).getPrice());
                 //向销售记录详细表增加记录
                 SalesGoodDetails details=new SalesGoodDetails();
@@ -125,6 +134,14 @@ public class Salesmanage {
                 details.setGoodSprice(retList.get(i).getPrice());
                 details.setGoodsCount(retList.get(i).getGoodsCount());//其实只是借用了GOOD类的GoodsCount作为购买数量
                 salesDetalisRepository.save(details);
+
+                //更新对应商品库存数量
+                Goods goods=goodsRepository.findByZxingCode(retList.get(i).getZxingCode());
+                if(goods!=null){
+                    goods.setGoodsCount(goods.getGoodsCount()-retList.get(i).getGoodsCount());
+                    goodsRepository.save(goods);
+                }
+                //goodsRepository.updateGoodsCount(retList.get(i).getGoodsCount(),retList.get(i).getZxingCode());
             }
         }
         catch (Exception e)
@@ -132,10 +149,25 @@ public class Salesmanage {
             e.printStackTrace();
             return Constant.RESULT_FAIL;
         }
+
+        //会员积分增加
+        if(!"普通顾客".equals(vipID)) {
+            CustomerVIP vip=customerVIPRepository.findByVipID(vipID);
+            if(vip!=null){
+                vip.setScore(vip.getScore()+Long.parseLong(new BigDecimal(shouldPay).multiply(new BigDecimal(100)).toString()));
+            }
+        }
         //2.打印小票
         //计算找零
         BigDecimal returnMoney=payM.subtract(new BigDecimal(shouldPay));
-        printTick(retList,cashier,saleid+"",shouldPay,null,payMoney,returnMoney.toString());
+        //计算会员折扣额
+        BigDecimal vipSalePrice1=new BigDecimal(0.00);
+
+        if((!"无".equals(vipSalePrice))&&"0".equals(vipSalePrice)){
+            //有会员折扣
+            vipSalePrice1=new BigDecimal(shouldPay).divide(new BigDecimal(vipSalePrice)).subtract(new BigDecimal(shouldPay));
+        }
+        printTick(retList,cashier,saleid+"",shouldPay,sumDenouncePrice.toString(),payMoney,returnMoney.toString(),vipSalePrice1.toString(),payWay);
         //3.返回处理结果
         System.out.print("处理结束");
         return Constant.RESULT_SUCCESS;
@@ -146,9 +178,9 @@ public class Salesmanage {
      */
     private void printTick(List<Goods> goods, String operatorName, String orderId,
                            String totalPrice, String favorablePrice,
-                           String actualCollection, String giveChange){
+                           String actualCollection, String giveChange,String vipSalePrice,String payWay){
         System.out.print("开始打印");
-        TicksInfo info=new TicksInfo(goods,operatorName,orderId,totalPrice,null,actualCollection,giveChange);
+        TicksInfo info=new TicksInfo(goods,operatorName,orderId,totalPrice,favorablePrice,actualCollection,giveChange,vipSalePrice,payWay);
         new MyTickesprinter().myprint(info);
     }
 

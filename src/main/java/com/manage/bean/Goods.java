@@ -17,7 +17,8 @@ public class Goods {
     private long id;//自增ID
     private String zxingCode;//条形码code
     private BigDecimal price;//商品单价，原价
-    private BigDecimal salePrice;//当前商品折扣价
+    private String salePrice;//当前商品折扣价
+    private String denouncePrice;//优惠了多少钱：原价-折扣价
     private String goodsType;//商品分类
     private String goodsName;//商品名称
     private int goodsCount;//商品在库数量
@@ -38,6 +39,14 @@ public class Goods {
         return instoreDate;
     }
 
+    public String getDenouncePrice() {
+        return denouncePrice;
+    }
+
+    public void setDenouncePrice(String denouncePrice) {
+        this.denouncePrice = denouncePrice;
+    }
+
     public void setInstoreDate(String instoreDate) {
         this.instoreDate = instoreDate;
     }
@@ -50,11 +59,11 @@ public class Goods {
         this.sumPrice = sumPrice;
     }
 
-    public BigDecimal getSalePrice() {
+    public String getSalePrice() {
         return salePrice;
     }
 
-    public void setSalePrice(BigDecimal salePrice) {
+    public void setSalePrice(String salePrice) {
         this.salePrice = salePrice;
     }
 

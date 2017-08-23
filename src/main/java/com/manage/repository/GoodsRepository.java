@@ -15,4 +15,7 @@ public interface GoodsRepository extends JpaRepository<Goods,Long> {
 
     @Query(value = "select * from goods u where u.goods_name like %?1%",nativeQuery = true)
     List<Goods> findByGoodsNameLike(@Param("goodsName") String goodsName);
+
+    /*@Query(value = "update goods u set u.goods_count=u.goods_count-?1 where u.zxing_code=?2 ",nativeQuery = true)
+    void updateGoodsCount(@Param("count") int count,@Param("zxing_code") String zxing_code);*/
 }

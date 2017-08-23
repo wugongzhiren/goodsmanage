@@ -12,19 +12,188 @@
     <script src="/js/grid.locale-cn.js"></script>
     <script src="/js/grid.jqueryui.js"></script>
     <script src="/js/jquery.jqGrid.min.js"></script>
-
+    <style type="text/css">
+        .ui-jqgrid .ui-jqgrid-titlebar{
+            background: #FF6700;
+            color:white;
+            height: 50px;
+            line-height: 30px;
+            font-size: large;
+        }
+    </style>
 </head>
 <body>
+<div style="width: 90%; background: white;margin: 40px;">
+    <div class="instoreTitle" style="margin-left:60px;margin-top: 20px;font-size: 36px;font-weight: 400;line-height: 68px;color: #b0b0b0;">
+        <h1>库存信息查询与条码打印</h1></div>
+</div>
+<hr/>
 <!--优惠设置DIV-->
-<input type="text" placeholder="输入会员折扣率"/>折
-
-<input type="text" placeholder="输入特价商品折扣"/>员
+<input type="text" id="saleRatio" placeholder="输入会员折扣率，如：8"/>折
+<button onclick="setSale()">确定</button>
+<input type="text" id="salePrice" placeholder="输入特价商品折扣"/>
+<button onclick="setSalePrice()">设置</button>
 当前折扣商品一览（可恢复原价）
+<input id="goodsNameinput" class="form-control" style="margin-left: 60px;width: 300px" type="text" onkeypress="reloadEnter()" placeholder="输入商品条码查询商品信息"/>
+<button onclick="reload()">查询</button>
+<button onclick="resumePrice()">恢复原价</button>
 <div>
+    <center>
+        <table id="goodsList"></table>
+        <div id="pager"></div>
+    </center>
 
 </div>
 <script>
+    //设置打折商品价格
+    function setSalePrice() {
+        var curRowDataID = $("#goodsList").jqGrid("getGridParam", "selrow");
+        if (curRowDataID == null||curRowDataID.length>1) {
+            alert("请选择一条数据后进行操作");
+            return ;
+        }
+        var rowData = $("#goodsList").jqGrid("getRowData", curRowDataID);
+            var salePrice=$("#salePrice").val();
+            //验证为金额
+            var isNum=/^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/;
+            var reM = new RegExp(isNum);
+            if(salePrice.match(reM)==null){
+                alert("请输入正确的金额!");
+                return;
+            }
 
+            $.ajax({
+                url: '/setSalePrice',
+                type: "get",
+                data: {
+                    zxingCode: rowData["zxingCode"],
+                    saleprice:salePrice
+                },
+                error: function (error) {
+                    alert("系统异常，请重新操作")
+                },
+                success: function (data) {
+                    $("#salePrice").val("");
+                    reload();
+                    alert("设置成功")
+                }})
+
+    }
+    //设置打折优惠
+    function setSale(){
+        var saleRatio=$("#saleRatio").val();
+        //验证为金额
+        var isNum=/^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/;
+        var reM = new RegExp(isNum);
+        if(saleRatio.match(reM)==null){
+            alert("请输入正确的金额!");
+            return;
+        }
+        var saleRatioNum=parseFloat(saleRatio);
+        if(saleRatioNum==0||saleRatioNum>10){
+            alert("折扣率不对，折扣率大于0且小于10!");
+        }
+        $.ajax({
+            url: '/setSaleRatio',
+            type: "get",
+            data: {
+                ratio: saleRatio
+            },
+            error: function (error) {
+                alert("系统异常，请重新操作")
+            },
+            success: function (data) {
+                $("#saleRatio").val("");
+                alert("设置成功")
+            }})
+    }
+    function checkSelgoods() {
+        var curRowDataID = $("#goodsList").jqGrid("getGridParam", "selrow");
+        jQuery('#goodsList').jqGrid('restoreRow', curRowDataID);
+        if (curRowDataID == null||curRowDataID.length>1) {
+            alert("请选择一条数据后进行操作");
+            return false;
+        }
+        return true;
+    }
+    function resumePrice() {
+        var curRowDataID = $("#goodsList").jqGrid("getGridParam", "selrow");
+        if (curRowDataID == null||curRowDataID.length>1) {
+            alert("请选择一条数据后进行操作");
+            return ;
+        }
+        var rowData = $("#goodsList").jqGrid("getRowData", curRowDataID);
+        $.ajax({
+            url: '/resumePrice',
+            type: "get",
+            data: {
+                zxingCode: rowData["zxingCode"]
+            },
+            error: function (error) {
+                alert("系统异常，请重新操作")
+            },
+            success: function (data) {
+                reload();
+                alert("设置成功")
+            }})
+
+    }
+    $(function () {
+        $(".ui-jqgrid-titlebar-close").remove();
+        $("#goodsList_cb").remove();
+    })
+    $("#goodsList").jqGrid({
+        url: "/getGoodsInfoAll",
+        datatype: "local",
+        mtype: 'GET',
+        colNames: [ '条形码', '商品名', '商品类别', '特征','单价','折扣价' ,'数量'],
+        colModel: [
+            {name: 'zxingCode', index: 'zxingCode', width: 100, align: "center"},
+            {name: 'goodsName', index: 'goodsName', width: 100, align: "center"},
+            {name: 'goodsType', index: 'goodsType', width: 150, align: "center"},
+            {name: 'goodsVersion', index: 'goodsVersion', width: 150, align: "center"},
+            {name: 'price', index: 'price', width: 150, align: "center"},
+            {name: 'salePrice', index: 'salePrice', width: 150, align: "center"},
+            {name: 'goodsCount', index: 'goodsCount', width: 150, align: "center"}
+        ],
+        rownumbers:true,
+        multiselect: true,
+        multiboxonly:true,
+        cellEdit:false,
+        loadComplete: function () {
+
+        },
+        beforeSelectRow:function beforeSelectRow()
+        {
+            $("#goodsList").jqGrid('resetSelection');
+            return(true);
+        },
+
+        viewrecords: true,
+        loadonce:false,
+        sortable: false,
+        pager: $('#pager'),
+
+        altclass: 'altRowsColor',
+//width: 'auto',
+        width: '80%',
+        height: '540',
+        caption: "商品信息一览"
+    })
+function reloadEnter() {
+    if(event.keyCode==13){
+        reload();
+    }
+}
+    function reload() {
+        var goodsName = $("#goodsNameinput").val();
+        $("#goodsList").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {'goodsName': goodsName} //发送数据
+            /*page:1*/
+        }).trigger("reloadGrid"); //重新载入
+    }
 </script>
 </body>
 

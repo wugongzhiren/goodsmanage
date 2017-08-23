@@ -12,7 +12,15 @@
     <script src="/js/grid.locale-cn.js"></script>
     <script src="/js/grid.jqueryui.js"></script>
     <script src="/js/jquery.jqGrid.min.js"></script>
-
+    <style type="text/css">
+        .ui-jqgrid .ui-jqgrid-titlebar{
+            background: #FF6700;
+            color:white;
+            height: 50px;
+            line-height: 30px;
+            font-size: large;
+        }
+    </style>
 </head>
 <body>
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -28,10 +36,8 @@
             </div>
             <!--//模态框内容-->
             <div class="modal-body">
-                <label>会员识别码</label>
-                <input id="identyID" type="text" placeholder="会员识别码"/>
-                手机号码（可选）：
-                <input id="phoneNum" type="text" placeholder="请输入手机号码（可选）" />
+                识别码：
+                <input class="form-control" id="phoneNum" type="text" placeholder="请输入手机号码或者QQ或者微信号" />
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default"
@@ -44,18 +50,26 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-
-<input id="vipID" type="text" placeholder="扫描二维码或者输入会员手机号"/>
-<button onclick="reloadList()">查询</button>
-<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">会员开户</button>
+<div style="width: 90%; background: white;margin: 40px;">
+    <div class="instoreTitle" style="margin-left:60px;margin-top: 20px;font-size: 36px;font-weight: 400;line-height: 68px;color: #b0b0b0;">
+        <h1>会员积分信息查询与新会员注册</h1></div>
+</div>
+<hr/>
+<input id="vipID" class="form-control" style="width: 300px;margin-left: 100px" type="text" placeholder="输入会员识别码"/>
+<br/>
+<div style="margin-left: 100px">
+<button class="btn instoreBtn" onclick="reloadList()">查询</button>
+<button class="btn instoreBtn" data-toggle="modal" data-target="#myModal">会员开户</button>
+</div>
+<hr/>
 <center>
     <table id="list"></table>
-    <div id="pager"></div>
 </center>
 
     <script>
 
         $(function () {
+            $(".ui-jqgrid-titlebar-close").remove();
             $('#myModal').modal('hide');
 
             $('#myModal').on('hide.bs.modal',
@@ -71,10 +85,9 @@
             url: "/getVIPInfo",
             datatype: "local",
             mtype: 'GET',
-            colNames: [ '会员识别码', '手机号码', '积分', '注册时间'],
+            colNames: [ '会员识别码',  '积分', '注册时间'],
             colModel: [
                 {name: 'vipID', index: 'vipID', width: 100, align: "center"},
-                {name: 'phoneNum', index: 'phoneNum', width: 100, align: "center"},
                 {name: 'score', index: 'score', width: 150, align: "center"},
                 {name: 'creatDate', index: 'creatDate', width: 150, align: "center"}
             ],
@@ -82,47 +95,36 @@
             multiselect: true,
             multiboxonly:true,
             loadComplete: function () {
-                var rowIds = $("#list").jqGrid('getDataIDs');
-                if(rowIds.length==0) {
-                    jQuery("#list").jqGrid("clearGridData");
-                    alert("未查询到数据")
-                }
+
             },
             beforeSelectRow:function beforeSelectRow()
             {
 
             },
-            rowList: [10, 20, 30],
             viewrecords: true,
             loadonce:false,
             sortable: false,
-            pager: jQuery('#pager'),
-            rowNum: 5,
 //width: 'auto',
-            width: '1200',
-            height: '340',
+            width: '1000',
+            height: '540',
             caption: "会员列表"
         })
 
 
         //会员开户
         function vipReg() {
-            var vipID=$("#identyID").val();
-            var phoneNum=$("#phoneNum").val();
+            var vipID=$("#phoneNum").val();
             /*<![CDATA[*/
-            if(vipID==""&phoneNum==""){
+            if(vipID==""){
                 /*]]>*/
-                alert("会员信息至少需要填写一个");
                 return;
-
             }
             //后台通信，保存信息到数据库
             $.ajax({
                 url: '/creatVIP',
                 type: "get",
                 data: {
-                    identityCode: vipID,
-                    phoneNum: phoneNum
+                    identityCode: vipID
                 },
                 error: function (error) {
                     alert("抱歉，系统异常，请刷新后重新操作")
@@ -130,15 +132,10 @@
                 success: function (data) {
                     if(data=="100") {
                         alert("操作成功");
-                        window.location.reload();
                         return;
                     }
                     if(data=="102") {
                         alert("已经注册过，请直接使用");
-                        return;
-                    }
-                    if(data=="103") {
-                        alert("手机号码已经被注册过，请更换注册方式");
                         return;
                     }
                     if(data=="101"){

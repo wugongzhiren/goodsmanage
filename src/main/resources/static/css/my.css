@@ -94,6 +94,10 @@
 .instoreBtn{
     background: #ff6700;
     color: white;
-    float: left;
-    margin-left: 10px;
+    margin-left: 5px;
+    display: inline-block;
+}
+
+#goodsNameinput,#addCount{
+    display: inline-block;
 }

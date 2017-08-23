@@ -8,5 +8,6 @@ public class Constant {
     public static String RESULT_FAIL="101";//后台处理失败
     public static String RESULT_EXIST="102";//数据记录已经存在
     public static String RESULT_PHONEEXIST="103";//手机号码已经被使用
-    public static String SETTING_SALE="104";//会员折扣率
+    public static String SETTING_SALE="104";//会员折扣率，设置类型
+    public static String PRINT_FAIL="105";//打印失败
 }

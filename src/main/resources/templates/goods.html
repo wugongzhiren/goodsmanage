@@ -29,26 +29,40 @@
 <hr/>
 <div class="row">
 
-    <input id="goodsNameinput" class="form-control" style="margin-left: 60px;width: 300px" type="text" placeholder="输入商品条码查询商品信息"/>
+
+    <input id="goodsNameinput" class="form-control" style="margin-left: 100px;width: 300px" type="text" onkeypress="reloadEnter()" placeholder="输入商品条码查询商品信息"/>
 
 
     <button class="btn instoreBtn" onclick="reload()">查询</button>
+</div>
+            <hr/>
+    <div class="row">
 
+    <input type="text" class="form-control" id="newPrice" style="margin-left: 100px;width: 300px"  placeholder="选择一行数据后输入更新后价格"/>
     <button class="btn instoreBtn" onclick="save()">保存</button>
-    <input type="text" id="count" placeholder="请输入打印数量"/>
-    <input type="text" id="newPrice" placeholder="选择一行数据后输入更新后价格"/>
+
+    </div>
+            <hr/>
+<div class="row">
+    <input type="text" class="form-control" id="count" style="margin-left: 100px;width: 300px" placeholder="请输入打印数量"/>
     <button class="btn instoreBtn" onclick="print()">打印条码</button>
 </div>
+
 <center>
     <table id="goodsList"></table>
-    <div id="pager"></div>
 </center>
 
     <script>
 
+        function reloadEnter() {
+            if(event.keyCode==13){
+                reload();
+            }
+        }
         $(function () {
             $(".ui-jqgrid-titlebar-close").remove();
             $("#goodsNameinput").focus();
+            $("#goodsList_cb").remove();
         })
         $("#goodsList").jqGrid({
             url: "/getGoodsInfoAll",
@@ -79,11 +93,10 @@
             viewrecords: true,
             loadonce:false,
             sortable: false,
-            pager: $('#pager'),
 
             altclass: 'altRowsColor',
 //width: 'auto',
-            width: '80%',
+            width: '1000',
             height: '540',
             caption: "商品信息一览"
         })
