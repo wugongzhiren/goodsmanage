@@ -85,7 +85,7 @@ public class TicksInfo implements Printable {
 
         g2.setStroke(new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 4.0f, new float[]{4.0f}, 0.0f));
 //在此图形上下文的坐标系中使用当前颜色在点 (x1, y1) 和 (x2, y2) 之间画一条线。 即绘制虚线
-        g2.drawLine((int) x, (int) (y + line), (int) x + 158, (int) (y + line));
+        g2.drawLine((int) x, (int) (y + line), (int) x + 188, (int) (y + line));
         line += heigth;
 //设置商品清单
         if (goods != null && goods.size() > 0) {
@@ -97,10 +97,10 @@ public class TicksInfo implements Printable {
                 line += heigth;
             }
         }
-        g2.drawLine((int) x, (int) (y + line), (int) x + 158, (int) (y + line));
+        g2.drawLine((int) x, (int) (y + line), (int) x + 188, (int) (y + line));
         line += heigth + 2;
         //g2.drawString("商品总数:"+totalGoodsNum+ "件",(float)x+15,(float)y+line);
-        g2.drawString("合计:" + totalPrice + " 元", (float) x + 100, (float) y + line);
+        g2.drawString("合计:" + totalPrice + " 元", (float) x + 150, (float) y + line);
         line += heigth;
         boolean flag = false;
         if (!"0".equals(favorablePrice)) {
@@ -117,7 +117,7 @@ public class TicksInfo implements Printable {
             line += heigth;
         }
         g2.drawString("实收:" +payWay+" " +actualCollection + "元", (float) x + 15, (float) y + line);
-        g2.drawString("找零:" + giveChange + "元", (float) x + 100, (float) y + line);
+        g2.drawString("找零:" + giveChange + "元", (float) x + 150, (float) y + line);
         line += heigth;
         g2.drawString("为了您的权益，钱票请当面点清", (float) x + 45, (float) y + line);
         line += heigth;

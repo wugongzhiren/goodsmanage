@@ -30,7 +30,7 @@
 <div class="row">
 
 
-    <input id="goodsNameinput" class="form-control" style="margin-left: 100px;width: 300px" type="text" onkeypress="reloadEnter()" placeholder="输入商品条码查询商品信息"/>
+    <input id="goodsNameinput" class="form-control" style="margin-left: 112px;width: 300px" type="text" onkeypress="reloadEnter()" placeholder="输入商品条码查询商品信息"/>
 
 
     <button class="btn instoreBtn" onclick="reload()">查询</button>
@@ -38,19 +38,22 @@
             <hr/>
     <div class="row">
 
-    <input type="text" class="form-control" id="newPrice" style="margin-left: 100px;width: 300px"  placeholder="选择一行数据后输入更新后价格"/>
-    <button class="btn instoreBtn" onclick="save()">保存</button>
+    <input type="text" class="form-control"  id="newPrice" style="display:inline-block;margin-left: 112px;width: 300px"  placeholder="选择一行数据后输入更新后价格"/>
+    <button style="" class="btn instoreBtn"  onclick="save()">保存</button>
 
     </div>
             <hr/>
 <div class="row">
-    <input type="text" class="form-control" id="count" style="margin-left: 100px;width: 300px" placeholder="请输入打印数量"/>
+    <input type="text" class="form-control" id="count" style="display:inline-block;margin-left: 112px;width: 300px" placeholder="请输入打印数量"/>
     <button class="btn instoreBtn" onclick="print()">打印条码</button>
 </div>
 
-<center>
-    <table id="goodsList"></table>
-</center>
+   <center style="margin-top: 30px">
+       <table id="goodsList"></table>
+   </center>
+
+
+
 
     <script>
 
