@@ -35,18 +35,28 @@ public class CustomerVIPManage {
      * 创建会员账号
      *
      * @param identityCode 会员识别码
+     * @param  vipID 手机号码
      * @return
      */
     @RequestMapping(value = "/creatVIP", method = RequestMethod.GET)
-    public String creatVIP(@RequestParam String identityCode) {
+    public String creatVIP(@RequestParam String identityCode,@RequestParam String vipID) {
         CustomerVIP vip = null;
-        vip = repository.findByVipID(identityCode);
-        if (vip != null) {
-            return Constant.RESULT_EXIST;
+        if(identityCode!=null&&!"".equals(identityCode)) {
+            vip = repository.findByVipID(identityCode);
+            if (vip != null) {
+                return Constant.RESULT_EXIST;
+            }
+        }
+        if(vipID!=null&&!"".equals(vipID)){
+            vip=repository.findByPhoneNum(vipID);
+            if (vip != null) {
+                return Constant.RESULT_EXIST;
+            }
         }
         vip = new CustomerVIP();
-        vip.setVipID(identityCode);
-        vip.setScore(0);
+        vip.setVipID("".equals(identityCode)?null:identityCode);
+        vip.setScore(new BigDecimal(0));
+        vip.setPhoneNum("".equals(vipID)?null:vipID);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         vip.setCreatDate(sdf.format(new Date()));
         try {
@@ -69,8 +79,12 @@ public class CustomerVIPManage {
 
         CustomerVIP vip = repository.findByVipID(identityCode);
         if (vip == null) {
-            vip = new CustomerVIP();
-            vip.setResultCode(Constant.RESULT_FAIL);
+            vip=repository.findByPhoneNum(identityCode);
+            if(vip == null) {
+                vip = new CustomerVIP();
+                vip.setResultCode(Constant.RESULT_FAIL);
+                return vip;
+            }
             return vip;
         } else {
             Setting setting=settingRepository.findBySetType(Constant.SETTING_SALE);
@@ -115,11 +129,11 @@ public class CustomerVIPManage {
      */
     public String addScore(String identityCode, String score) {
         try {
-            long scoreTemp = repository.findByVipID(identityCode).getScore();
-            long scoreRe = scoreTemp + Long.parseLong(score);
+           // long scoreTemp = repository.findByVipID(identityCode).getScore();
+            //long scoreRe = scoreTemp + Long.parseLong(score);
             CustomerVIP vip = new CustomerVIP();
             vip.setVipID(identityCode);
-            vip.setScore(scoreRe);
+            //vip.setScore(scoreRe);
             repository.save(vip);
             return Constant.RESULT_SUCCESS;
         } catch (Exception e) {

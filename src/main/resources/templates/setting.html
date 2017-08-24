@@ -5,6 +5,7 @@
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="/css/ui.jqgrid.css"/>
     <link rel="stylesheet" type="text/css" href="/css/jquery-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/my.css"/>
     <script src="/js/jquery-3.1.1.min.js"></script>
     <!-- 包括所有已编译的插件 -->
     <script src="/js/jquery-ui.min.js"></script>
@@ -25,19 +26,23 @@
 <body>
 <div style="width: 90%; background: white;margin: 40px;">
     <div class="instoreTitle" style="margin-left:60px;margin-top: 20px;font-size: 36px;font-weight: 400;line-height: 68px;color: #b0b0b0;">
-        <h1>库存信息查询与条码打印</h1></div>
+        <h1>会员折扣优惠与商品折扣优惠</h1></div>
 </div>
 <hr/>
 <!--优惠设置DIV-->
-<input type="text" id="saleRatio" placeholder="输入会员折扣率，如：8"/>折
-<button onclick="setSale()">确定</button>
-<input type="text" id="salePrice" placeholder="输入特价商品折扣"/>
-<button onclick="setSalePrice()">设置</button>
-当前折扣商品一览（可恢复原价）
-<input id="goodsNameinput" class="form-control" style="margin-left: 60px;width: 300px" type="text" onkeypress="reloadEnter()" placeholder="输入商品条码查询商品信息"/>
-<button onclick="reload()">查询</button>
-<button onclick="resumePrice()">恢复原价</button>
-<div>
+<div style="margin-left: 145px">
+    <input type="text" id="saleRatio" style="display: inline-block; width: 200px" class="form-control" placeholder="输入会员折扣率，如：8"/>折
+    <button class="btn instoreBtn"  onclick="setSale()">确定</button>
+    <input style="display: inline-block;width: 200px;margin-left: 30px" type="text" id="salePrice" class="form-control" placeholder="输入特价商品折扣"/>
+    <button class="btn instoreBtn" onclick="setSalePrice()">设置</button>
+</div>
+<div style="margin-left: 145px;margin-top: 20px">
+    <!--当前折扣商品一览（可恢复原价）-->
+    <input id="goodsNameinput" class="form-control" style="display: inline-block;width: 300px" type="text" onkeypress="reloadEnter()" placeholder="输入商品条码查询商品信息"/>
+    <button class="btn instoreBtn"  onclick="reload()">查询</button>
+    <button class="btn instoreBtn" onclick="resumePrice()">恢复原价</button>
+</div>
+<div style="margin-top: 30px">
     <center>
         <table id="goodsList"></table>
         <div id="pager"></div>

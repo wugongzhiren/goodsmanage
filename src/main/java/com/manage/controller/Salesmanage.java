@@ -154,7 +154,7 @@ public class Salesmanage {
         if(!"普通顾客".equals(vipID)) {
             CustomerVIP vip=customerVIPRepository.findByVipID(vipID);
             if(vip!=null){
-                vip.setScore(vip.getScore()+Long.parseLong(new BigDecimal(shouldPay).multiply(new BigDecimal(100)).toString()));
+                vip.setScore(vip.getScore().add(new BigDecimal(shouldPay)));
             }
         }
         //2.打印小票

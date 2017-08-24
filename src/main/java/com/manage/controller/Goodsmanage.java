@@ -97,7 +97,7 @@ public class Goodsmanage {
     public String zxingMake(@RequestParam String content, @RequestParam String goodsVersion, @RequestParam String price, @RequestParam String count) throws FormatException {
         try {
             ZxingEAN13EncoderHandler zxingHandle = new ZxingEAN13EncoderHandler();
-            zxingHandle.encode(content, 110, 40, "d:/zxing/zxing_EAN13.png");
+            zxingHandle.encode(content, 150, 40, "d:/zxing/zxing_EAN13.png");
             //System.out.print(zxingHandle.getSingleNum(1124));
             Print.makeZxingPic(content, goodsVersion, price.toString());
             Print.printCommon("d:/goodsinfo.png", null, Integer.parseInt(count));
@@ -117,29 +117,16 @@ public class Goodsmanage {
      * @param price
      */
     @RequestMapping(value = "/instore", method = RequestMethod.POST)
-    public String instore(@RequestParam String goodsName, @RequestParam String goodsType, @RequestParam String goodsVersion,
+    public String instore(@RequestParam String zxing,@RequestParam String goodsName, @RequestParam String goodsType, @RequestParam String goodsVersion,
                           @RequestParam String goodsCount, @RequestParam String price) throws FormatException {
-        //构造入库条形码
-        ZxingEAN13EncoderHandler handler = new ZxingEAN13EncoderHandler();
-        String zxingCode = handler.generateZxing();
-        String path = "d:/zxing/";
-        File file = new File(path);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-        if (Constant.RESULT_FAIL.equals(zxingCode)) {
-            return Constant.RESULT_FAIL;
-        }
-        //生成条形码图片
-        handler.encode(zxingCode, 110, 40, "d:/zxing/zxing_EAN13.png");
-        //打印条码
-        try {
-            //条码中加文字
-            Print.makeZxingPic(zxingCode, goodsVersion, price.toString());
-            Print.printCommon("d:/goodsinfo.png", null, Integer.parseInt(goodsCount));
+        //已经有条码了
+        if(zxing!=""&&zxing!=null){
 
             Goods goods = new Goods();
-            goods.setZxingCode(zxingCode);
+            if(goodsRepository.findByZxingCode(zxing)!=null){
+                return Constant.RESULT_EXIST;
+            }
+            goods.setZxingCode(zxing);
             //名称
             goods.setGoodsName(goodsName);
             //分类
@@ -152,13 +139,49 @@ public class Goodsmanage {
             goods.setInstoreDate(LocalDate.now().toString());
             //保存商品信息到数据库
             goodsRepository.save(goods);
-
-            //生成条码并打印
-            //encode
             return Constant.RESULT_SUCCESS;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Constant.RESULT_FAIL;
+        }else {
+            //构造入库条形码
+            ZxingEAN13EncoderHandler handler = new ZxingEAN13EncoderHandler();
+            String zxingCode = handler.generateZxing();
+            String path = "d:/zxing/";
+            File file = new File(path);
+            if (!file.exists()) {
+                file.mkdirs();
+            }
+            if (Constant.RESULT_FAIL.equals(zxingCode)) {
+                return Constant.RESULT_FAIL;
+            }
+            //生成条形码图片
+            handler.encode(zxingCode, 150, 40, "d:/zxing/zxing_EAN13.png");
+            //打印条码
+            try {
+                //条码中加文字
+                Print.makeZxingPic(zxingCode, goodsVersion, price.toString());
+                Print.printCommon("d:/goodsinfo.png", null, Integer.parseInt(goodsCount));
+
+                Goods goods = new Goods();
+                goods.setZxingCode(zxingCode);
+                //名称
+                goods.setGoodsName(goodsName);
+                //分类
+                goods.setGoodsType(goodsType);
+                //型号
+                goods.setGoodsVersion(goodsVersion);
+                //可能出现数字转化异常
+                goods.setGoodsCount(Integer.parseInt(goodsCount));
+                goods.setPrice(new BigDecimal(price));
+                goods.setInstoreDate(LocalDate.now().toString());
+                //保存商品信息到数据库
+                goodsRepository.save(goods);
+
+                //生成条码并打印
+                //encode
+                return Constant.RESULT_SUCCESS;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return Constant.RESULT_FAIL;
+            }
         }
     }
 

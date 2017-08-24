@@ -4,9 +4,7 @@
 $(function(){
     $("#navhead-ul a").click(function(){
         var that = this.id;
-        if(that === 'shouyin'){
-            urlLoad('#content','/sale');
-        }else if(that === 'ruku'){
+        if(that === 'ruku'){
             urlLoad('#content','/instore');
         }else if(that === 'kucun'){
             urlLoad('#content','/goods');
@@ -15,10 +13,16 @@ $(function(){
         }else if(that === 'huiyuan'){
             urlLoad('#content','/customerVip');
         }
-        else if(that ==='saleSetting'){
+
+    });
+
+    $("#set a").click(function() {
+        var that = this.id;
+        if(that ==='saleSetting'){
             urlLoad('#content','/setting');
         }
-    });
+    })
+
 });
 
 //加载页面

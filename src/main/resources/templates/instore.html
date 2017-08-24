@@ -33,6 +33,13 @@
     <hr/>
     <div class="row">
         <div class="info">
+            <div class="labelTitle">商品条码（可选填）</div>
+            <input id="zxing" class="form-control" onkeypress="zxingEnter()" style="width: 280px;" type="text"/>
+        </div>
+    </div>
+<hr/>
+    <div class="row">
+        <div class="info">
             <div class="labelTitle">商品名</div>
             <input id="goodsName" class="form-control" style="width: 280px;" type="text"/>
         </div>
@@ -57,7 +64,7 @@
         <div class="info">
             <div class="labelTitle"></div>
             <button class="btn instoreBtn" onclick="instore()">
-                入库，生成条码并打印
+                入库
             </button>
         </div>
     </div>
@@ -90,13 +97,17 @@ $(function () {
 })
 
 
-    function keyPress() {
+    function zxingEnter() {
         var keyCode = event.keyCode;
+        if(keyCode==13){
+            $("#goodsName").focus();
+        }
     }
     /**
      * 商品入库操作
      */
     function instore() {
+        var zxing =$("#zxing").val();
         var goodsName = $("#goodsName").val();
         var goodsType = $("#goodsType").val();
         var goodsVersion = $("#goodsVersion").val();
@@ -131,6 +142,7 @@ $(function () {
             url: '/instore',
             type: "post",
             data: {
+                zxing:zxing,
                 goodsName: goodsName,
                 goodsType: goodsType,
                 goodsVersion: goodsVersion,
@@ -143,14 +155,17 @@ $(function () {
             success: function (data) {
                 if(data=="100") {
                     $("#goodsName").val("");
-                    $("#goodsType").val("");
-                     $("#goodsVersion").val("");
+                    $("#zxing").val("");
+                    $("#goodsVersion").val("");
                      $("#goodsCount").val("");
                     $("#price").val("");
                     alert("操作成功")
                 }
                 if(data=="101") {
                     alert("操作失败，请重试")
+                }
+                if(data=="102") {
+                    alert("条码在库存中已经存在，可以重新打标签也可以仅入库数量")
                 }
             }
         })

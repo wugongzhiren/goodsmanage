@@ -5,6 +5,7 @@
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="/css/ui.jqgrid.css"/>
     <link rel="stylesheet" type="text/css" href="/css/jquery-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/my.css"/>
     <script src="/js/jquery-3.1.1.min.js"></script>
     <!-- 包括所有已编译的插件 -->
     <script src="/js/jquery-ui.min.js"></script>
@@ -36,7 +37,9 @@
             </div>
             <!--//模态框内容-->
             <div class="modal-body">
-                识别码：
+                二维码：
+                <input class="form-control" id="identyCode" onkeypress="scanEnter()" type="text" placeholder="扫描微信二维码    " />
+                识别码(选填)：
                 <input class="form-control" id="phoneNum" type="text" placeholder="请输入手机号码或者QQ或者微信号" />
             </div>
             <div class="modal-footer">
@@ -55,9 +58,9 @@
         <h1>会员积分信息查询与新会员注册</h1></div>
 </div>
 <hr/>
-<input id="vipID" class="form-control" style="width: 300px;margin-left: 100px" type="text" placeholder="输入会员识别码"/>
+<input id="vipID" class="form-control" style="width: 300px;margin-left: 150px" type="text" placeholder="输入会员识别码"/>
 <br/>
-<div style="margin-left: 100px">
+<div style="margin-left: 150px">
 <button class="btn instoreBtn" onclick="reloadList()">查询</button>
 <button class="btn instoreBtn" data-toggle="modal" data-target="#myModal">会员开户</button>
 </div>
@@ -68,6 +71,11 @@
 
     <script>
 
+        function scanEnter() {
+            if(event.keyCode==13){
+                $("#phoneNum").focus();
+            }
+        }
         $(function () {
             $(".ui-jqgrid-titlebar-close").remove();
             $('#myModal').modal('hide');
@@ -76,6 +84,13 @@
                 function() {
                 //对话框关闭时清空
                     $("#identyID").val("");
+                    $("#phoneNum").val("");
+                })
+
+            $('#myModal').on('shown.bs.modal',
+                function() {
+                    //对话框关闭时清空
+                    $("#identyCode").focus();
                     $("#phoneNum").val("");
                 })
         })
@@ -114,17 +129,20 @@
         //会员开户
         function vipReg() {
             var vipID=$("#phoneNum").val();
+            var identyCode=$("#identyCode").val();
             /*<![CDATA[*/
-            if(vipID==""){
+            if(vipID==""&&identyCode==""){
                 /*]]>*/
                 return;
             }
+
             //后台通信，保存信息到数据库
             $.ajax({
                 url: '/creatVIP',
                 type: "get",
                 data: {
-                    identityCode: vipID
+                    vipID: vipID,
+                    identityCode:identyCode
                 },
                 error: function (error) {
                     alert("抱歉，系统异常，请刷新后重新操作")
@@ -132,6 +150,7 @@
                 success: function (data) {
                     if(data=="100") {
                         alert("操作成功");
+                        $('#myModal').modal('hide')
                         return;
                     }
                     if(data=="102") {

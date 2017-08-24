@@ -42,7 +42,10 @@
 
 </head>
 <body style="margin: 10px;color: #ffffff;background: #000" >
-<div class="mytitle">默默百货店欢迎您再次光临</div>
+<div class="mytitle">默默百货店欢迎您再次光临
+    <a href="/customerVip" target="_blank" style="color:white;float: right;margin-right: 80px" class="btn">会员开户</a>
+</div>
+
 <hr/>
 <div class="modal fade" style="color: black" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
      aria-hidden="true">
@@ -65,7 +68,7 @@
                 </div>
                 <div class="shouldPay">
                     实际收款：
-                    <input id="payMoney" onkeypress="actualMoney(event)" type="text" placeholder="实际收款"/>
+                    <input id="payMoney" onkeydown="actualMoney(event)" type="text" placeholder="实际收款"/>
                     <label>元</label>
                 </div>
                 <hr/>
@@ -109,24 +112,66 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<div class="modal fade" style="color: black" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">×
+                </button>
+                <h4 class="modal-title" id="myModalLabel1">
+                    添加购买商品信息
+                </h4>
+            </div>
+            <!--//模态框内容-->
+            <div class="modal-body">
+                <div class="shouldPay">
+                    价格：
+                    <input id="addPrice"  type="text" />
+                    <label>元</label>
+                </div>
+                <div class="shouldPay">
+                    数量：
+                    <input id="addcount"  type="text" />
+                </div>
+                <hr/>
+            </div>
+            <div class="modal-footer">
+
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal">关闭
+                </button>
+                <button type="button" class="btn btn-primary" onclick="addGoodsInfo()">
+                    确认
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 <div>
     <input id="cashier" type="hidden"/>
-
+<div>
     <label class="shouldPay">应付款合计：</label>
     <label id="tatalPrice" style="font-size:250%;color: #00ff29">0.00</label>
 
     <label class="shouldPay">元</label>
+</div>
 
 
-    <input class="zxing" style="margin-left: 30px;color: red;" id="zxingCode" type="text" onkeydown="press(event)"
+    <input class="zxing" style="margin-left: 120px;color: red;font-size:14pt" id="zxingCode" type="text" onkeydown="press(event)"
            placeholder="扫描或者输入商品条形码"/>
-    <input class="zxing" style="margin-left: 30px;color: red;" id="goodCount" type="text" placeholder="输入商品数量"/>
-    <Button id="addBt" class="btn btn-primary btn-lg" style="margin-left: 20px" onclick="getGoodsInfo()">手动添加</Button>
+    <input class="zxing" style="margin-left: 30px;font-size:14pt;color: red;" id="goodCount" type="text" placeholder="输入商品数量"/>
+    <Button id="addBt" class="btn btn-primary btn-lg" style="margin-left: 20px" data-toggle="modal" data-target="#myModal1">手动添加</Button>
+        <Button id="Jbt" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">结账（F2）</Button>
+        <Button id="cacelBt" class="btn btn-primary btn-lg" onclick="cancleExchange()">取消交易（F7）</Button>
 
     <!--<Button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">会员登录</Button>-->
     <Button class="btn" onclick="delGoods()">顾客不想要了</Button>
-    <a href="/customerVip" target="_blank" class="btn">会员开户</a>
+
+
+
 </div>
 <hr/>
 <div>
@@ -135,10 +180,7 @@
     </center>
 </div>
 <!--<div id="pager2"></div>-->
-<div style="float:right;margin-top: 40px;margin-right: 60px">
-    <Button id="Jbt" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">结账（F2）</Button>
-    <Button id="cacelBt" class="btn btn-primary btn-lg" onclick="cancleExchange()">取消交易（F7）</Button>
-</div>
+
 <script>
 
     //按键监听
@@ -161,12 +203,25 @@
     }
     //实际付款回车
     function actualMoney() {
+
         //f4
         if (event.keyCode == 115 ) {
+            var tatalPrice1 = $("#tatalPrice1").html();
+            //实际收款
+            var payMoney = $("#payMoney").val();
+            //校验为金额
+            var isNum=/^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/;
+            var reM = new RegExp(isNum);
+            if(payMoney.match(reM)==null){
+                return;
+            }
+            var returnMoneyValue = parseFloat(payMoney) - parseFloat(tatalPrice1);
+            $("#returnMoney").html(returnMoneyValue.toFixed(2));
+            $("#paymoneylbl").html(payMoney);
             confirmBusiness();
         }
         if (event.keyCode == 13) {
-            //计算找零
+//计算找零
             //应付款
             var tatalPrice1 = $("#tatalPrice1").html();
             //实际收款
@@ -238,6 +293,19 @@
             $("#zxingCode").focus();
 
         })
+
+        $('#myModal1').on('shown.bs.modal', function () {
+            // 为应付款赋值
+
+            $("#addPrice").focus();
+        })
+
+        $('#myModal1').on('hidden.bs.modal', function () {
+            // 为应付款赋值
+            $("#addPrice").val("");
+            $("#addcount").val("");
+
+        })
     })
 
     /**
@@ -276,6 +344,37 @@
             return count;
         }
     }
+
+ function addGoodsInfo() {
+var price=$("#addPrice").val();
+var count=$("#addcount").val();
+//校验为金额
+     var isNum=/^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/;
+     var reM = new RegExp(isNum);
+     if(price.match(reM)==null){
+         return;
+     }
+     //校验为正整数
+     var re = /^[0-9]+$/ ;
+     var pa=new RegExp(re);
+     if(count.match(pa)==null){
+         return;
+     }
+//添加一行数据
+//向grid增加一条数据
+     var rowIds = $("#list2").getDataIDs();
+     $("#list2").jqGrid("addRowData", rowIds.length, {
+         'zxingCode': "", 'goodsType': "", "goodsName":  "商品", "price": price,
+         "goodsCount": count, "sumPrice": parseFloat(price) * count
+     }, "last");
+
+     //汇总价格更新
+     var tatal = $("#tatalPrice").html();
+     $("#zxingCode").val("");
+     $("#goodCount").val("");
+     $("#tatalPrice").html((parseFloat(tatal) + parseFloat(price) * count).toFixed(2));
+     $('#myModal1').modal('hide')
+ }
     /**
      * 根据条形码获取商品信息
      */
@@ -417,10 +516,15 @@
     //确认交易
     function confirmBusiness() {
         var shouldPay = $("#tatalPrice").html();
-
+//实际收款
+        var payMoney = $("#payMoney").val();
+        if(payMoney==""||payMoney=="0"||payMoney=="0.00"){
+            return;
+        }
         if(shouldPay=="0.00"||shouldPay=="0"){
             return;
             }
+
         //遍历jqgrid
         var jsonArr = new Array();
         var rowIds = $("#list2").getDataIDs();
@@ -436,8 +540,7 @@
         var payWay = $('input:radio:checked').val();
         //应付款
 
-        //实际收款
-        var payMoney = $("#payMoney").val();
+
 var saleRatio=$("#saleRatio").html();
         //收银员
         var cashier = $("#cashier").val();

@@ -17,7 +17,7 @@ public class CustomerVIP {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;//自增ID
     private String vipID;//会员ID：可能是微信的二维码
-    private long score;//会员积分
+    private BigDecimal score;//会员积分
     private String phoneNum;//手机号码
     private String creatDate;//注册时间
 private BigDecimal saleRatio;//会员打折率
@@ -49,11 +49,11 @@ private BigDecimal saleRatio;//会员打折率
         this.vipID = vipID;
     }
 
-    public long getScore() {
+    public BigDecimal getScore() {
         return score;
     }
 
-    public void setScore(long score) {
+    public void setScore(BigDecimal score) {
         this.score = score;
     }
 
