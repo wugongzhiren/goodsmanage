@@ -91,7 +91,7 @@ public class TicksInfo implements Printable {
         if (goods != null && goods.size() > 0) {
             for (Goods gdf : goods) {
                 g2.drawString(gdf.getGoodsName(), (float) x + 15, (float) y + line);
-                g2.drawString(gdf.getPrice().toString(), (float) x + 80, (float) y + line);
+                g2.drawString(gdf.getPrice().toString(), (float) x + 90, (float) y + line);
                 g2.drawString(gdf.getGoodsCount() + "", (float) x + 135, (float) y + line);
                 g2.drawString(gdf.getSumPrice(), (float) x + 165, (float) y + line);
                 line += heigth;
@@ -100,7 +100,7 @@ public class TicksInfo implements Printable {
         g2.drawLine((int) x, (int) (y + line), (int) x + 188, (int) (y + line));
         line += heigth + 2;
         //g2.drawString("商品总数:"+totalGoodsNum+ "件",(float)x+15,(float)y+line);
-        g2.drawString("合计:" + totalPrice + " 元", (float) x + 150, (float) y + line);
+        g2.drawString("合计:" + totalPrice + " 元", (float) x + 120, (float) y + line);
         line += heigth;
         boolean flag = false;
         if (!"0".equals(favorablePrice)) {
@@ -108,19 +108,21 @@ public class TicksInfo implements Printable {
             g2.drawString("促销优惠:" + favorablePrice + "元", (float) x + 15, (float) y + line);
             flag = true;
         }
+        System.out.print("折扣"+vipSalePrice);
+        System.out.print("折扣"+favorablePrice);
         if (!"0".equals(vipSalePrice)) {
             System.out.print("会员折扣:"+vipSalePrice);
-            g2.drawString("会员折扣:" + vipSalePrice + "元", (float) x + 100, (float) y + line);
+            g2.drawString("会员折扣:" + vipSalePrice + "元", (float) x + 120, (float) y + line);
             flag = true;
         }
         if (flag) {
             line += heigth;
         }
         g2.drawString("实收:" +payWay+" " +actualCollection + "元", (float) x + 15, (float) y + line);
-        g2.drawString("找零:" + giveChange + "元", (float) x + 150, (float) y + line);
+        g2.drawString("找零:" + giveChange + "元", (float) x + 120, (float) y + line);
         line += heigth;
         g2.drawString("为了您的权益，钱票请当面点清", (float) x + 45, (float) y + line);
-        line += heigth;
+        line =line+ heigth+30;
         g2.drawString("", (float) x + 45, (float) y + line);
         switch (pageIndex) {
             case 0:

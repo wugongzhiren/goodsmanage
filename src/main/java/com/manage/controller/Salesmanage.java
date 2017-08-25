@@ -37,7 +37,7 @@ public class Salesmanage {
     /**
      * 销售一单成功后，向数据库添加一条销售记录
      *  @param cashier 收银员
-     * @param vipID 会员编号
+     * @param vipID 会员自增编号
      * @param payMoney 实际收费
      * @param payWay 收费方式 1；现金，2：支付宝；3：微信
      * @param saleGoodsDetails 销售商品详情JSON
@@ -45,7 +45,7 @@ public class Salesmanage {
     @Transactional
     @RequestMapping(value = "/salesSuccess", method = RequestMethod.POST)
     public String salesSuccess(@RequestParam String cashier,@RequestParam String vipID,@RequestParam String shouldPay,
-    @RequestParam String payMoney,@RequestParam String payWay,@RequestParam String saleGoodsDetails,@RequestParam String vipSalePrice){
+    @RequestParam String payMoney,@RequestParam String payWay,@RequestParam String saleGoodsDetails,@RequestParam String vipSalePrice,@RequestParam String orginPrice){
         System.out.println("结账开始");
         System.out.println(saleGoodsDetails);
         System.out.println("");
@@ -115,19 +115,20 @@ public class Salesmanage {
         salesRecord.setSaleCount(retList.size());
         //存入销售明细的JSON.方便以后分析销售记录
         salesRecord.setSalsGoodDetails(saleGoodsDetails);
-        BigDecimal sumDenouncePrice=new BigDecimal(0.00);//优惠价格
+        float sumDenouncePrice=0f;//优惠价格
         try {
             saleManageRepository.save(salesRecord);
 
             for(int i=0;i<retList.size();i++){
-                if(retList.get(i).getDenouncePrice()!=null&&!"".equals(retList.get(i).getDenouncePrice())){
-                    sumDenouncePrice.add(new BigDecimal(retList.get(i).getDenouncePrice()).multiply(new BigDecimal(retList.get(i).getGoodsCount())));
-                }
+if(retList.get(i).getDenouncePrice()!=null&&!"".equals(retList.get(i).getDenouncePrice())) {
+    sumDenouncePrice = sumDenouncePrice + Float.parseFloat(retList.get(i).getDenouncePrice());
+}
                 //sumDenouncePrice
                 originPrice.add(retList.get(i).getPrice());
                 //向销售记录详细表增加记录
                 SalesGoodDetails details=new SalesGoodDetails();
                 details.setSaleid(saleid);
+                System.out.print("条码"+retList.get(i).getZxingCode());
                 details.setGoodsID(retList.get(i).getZxingCode());
                 details.setGoodsName(retList.get(i).getGoodsName());
                 details.setGoodsType(retList.get(i).getGoodsType());
@@ -152,7 +153,7 @@ public class Salesmanage {
 
         //会员积分增加
         if(!"普通顾客".equals(vipID)) {
-            CustomerVIP vip=customerVIPRepository.findByVipID(vipID);
+            CustomerVIP vip=customerVIPRepository.findOne(Long.parseLong(vipID));
             if(vip!=null){
                 vip.setScore(vip.getScore().add(new BigDecimal(shouldPay)));
             }
@@ -163,11 +164,12 @@ public class Salesmanage {
         //计算会员折扣额
         BigDecimal vipSalePrice1=new BigDecimal(0.00);
 
-        if((!"无".equals(vipSalePrice))&&"0".equals(vipSalePrice)){
+        if((!"无".equals(vipSalePrice))&&!"0".equals(vipSalePrice)){
             //有会员折扣
-            vipSalePrice1=new BigDecimal(shouldPay).divide(new BigDecimal(vipSalePrice)).subtract(new BigDecimal(shouldPay));
+            vipSalePrice1=new BigDecimal(orginPrice).subtract(new BigDecimal(shouldPay));
         }
-        printTick(retList,cashier,saleid+"",shouldPay,sumDenouncePrice.toString(),payMoney,returnMoney.toString(),vipSalePrice1.toString(),payWay);
+        System.out.print("sumDenouncePrice"+sumDenouncePrice);
+        printTick(retList,cashier,saleid+"",shouldPay,new BigDecimal(sumDenouncePrice).toString(),payMoney,returnMoney.toString(),vipSalePrice1.toString(),payWay);
         //3.返回处理结果
         System.out.print("处理结束");
         return Constant.RESULT_SUCCESS;

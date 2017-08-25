@@ -85,16 +85,17 @@ public class CustomerVIPManage {
                 vip.setResultCode(Constant.RESULT_FAIL);
                 return vip;
             }
-            return vip;
-        } else {
+        }
             Setting setting=settingRepository.findBySetType(Constant.SETTING_SALE);
             if(setting!=null){
                 vip.setSaleRatio(new BigDecimal(setting.getSetContent()));
             }
-            vip.setSaleRatio(new BigDecimal("10"));
+            else {
+                vip.setSaleRatio(new BigDecimal("10"));
+            }
             vip.setResultCode(Constant.RESULT_SUCCESS);
             return vip;
-        }
+
     }
 
     /**

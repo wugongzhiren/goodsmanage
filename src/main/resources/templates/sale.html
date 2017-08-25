@@ -100,7 +100,7 @@
                 </div>
 
                 <button type="button" class="btn btn-default"
-                        data-dismiss="modal">关闭
+                        data-dismiss="modal">关闭（Esc）
                 </button>
                 <button type="button" class="btn btn-default"
                         onclick="clearMomalContent()">重置
@@ -128,22 +128,22 @@
             <div class="modal-body">
                 <div class="shouldPay">
                     价格：
-                    <input id="addPrice"  type="text" />
+                    <input id="addPrice" onkeydown="addPrice()" type="text" />
                     <label>元</label>
                 </div>
                 <div class="shouldPay">
                     数量：
-                    <input id="addcount"  type="text" />
+                    <input id="addcount" onkeydown="addc()"  type="text" />
                 </div>
                 <hr/>
             </div>
             <div class="modal-footer">
 
                 <button type="button" class="btn btn-default"
-                        data-dismiss="modal">关闭
+                        data-dismiss="modal">关闭(ESC)
                 </button>
                 <button type="button" class="btn btn-primary" onclick="addGoodsInfo()">
-                    确认
+                    确认(Enter)
                 </button>
             </div>
         </div><!-- /.modal-content -->
@@ -160,7 +160,7 @@
 </div>
 
 
-    <input class="zxing" style="margin-left: 120px;color: red;font-size:14pt" id="zxingCode" type="text" onkeydown="press(event)"
+    <input class="zxing" style="margin-left: 100px;color: red;font-size:14pt" id="zxingCode" type="text" onkeydown="press(event)"
            placeholder="扫描或者输入商品条形码"/>
     <input class="zxing" style="margin-left: 30px;font-size:14pt;color: red;" id="goodCount" type="text" placeholder="输入商品数量"/>
     <Button id="addBt" class="btn btn-primary btn-lg" style="margin-left: 20px" data-toggle="modal" data-target="#myModal1">手动添加</Button>
@@ -170,7 +170,7 @@
     <!--<Button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">会员登录</Button>-->
     <Button class="btn" onclick="delGoods()">顾客不想要了</Button>
 
-
+<input id="originPrice" type="hidden"/>
 
 </div>
 <hr/>
@@ -183,8 +183,44 @@
 
 <script>
 
-    //按键监听
+    function addPrice() {
+        if(event.keyCode==13){
+            var price=$("#addPrice").val();
 
+            if(price==""){
+                return;
+            }
+            $("#addcount").focus();
+        }
+    }
+    function addc() {
+        if(event.keyCode==13){
+            var price=$("#addPrice").val();
+
+            if(price==""){
+                return;
+            }
+            var c=$("#addcount").val();
+            if(c==""){
+                return;
+            }
+           addGoodsInfo();
+        }
+    }
+    //按键监听
+    function disableF5(event) {
+
+        if (event) {
+            var keyCode = event.keyCode ? event.keyCode : event.which ? event.which : event.charCode;
+            if (keyCode == 116) {
+                event.keyCode = 0;
+                event.returnValue = false;
+
+                return false
+            }
+        }
+    }
+    document.onkeydown = disableF5;
     //条形码回车
     function press() {
 
@@ -206,9 +242,13 @@
 
         //f4
         if (event.keyCode == 115 ) {
+
             var tatalPrice1 = $("#tatalPrice1").html();
             //实际收款
             var payMoney = $("#payMoney").val();
+            if(payMoney==""){
+                return;
+            }
             //校验为金额
             var isNum=/^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/;
             var reM = new RegExp(isNum);
@@ -284,19 +324,18 @@
         $('#myModal').on('shown.bs.modal', function () {
             // 为应付款赋值
             $("#tatalPrice1").html($("#tatalPrice").html());
+            $("#originPrice").val($("#tatalPrice").html());
             $("#payMoney").focus();
         })
 
         $('#myModal').on('hidden.bs.modal', function () {
             // 为应付款赋值
-            clearMomalContent();
             $("#zxingCode").focus();
-
+            clearMomalContent();
         })
 
         $('#myModal1').on('shown.bs.modal', function () {
             // 为应付款赋值
-
             $("#addPrice").focus();
         })
 
@@ -304,7 +343,7 @@
             // 为应付款赋值
             $("#addPrice").val("");
             $("#addcount").val("");
-
+            $("#zxingCode").focus();
         })
     })
 
@@ -399,9 +438,8 @@ var count=$("#addcount").val();
                 if (data.resultCode == "100") {
                     //向grid增加一条数据
                     $("#list2").jqGrid("addRowData", rowIds.length, {
-                        'zxingCode': data.zxingCode, 'goodsType': data.goodsType, "goodsName": data.goodsName + " "
-                        + data.goodsVersion, "price": data.price,
-                        "goodsCount": currentGoodsCount, "sumPrice": parseFloat(data.price) * currentGoodsCount
+                        'zxingCode': data.zxingCode, 'goodsType': data.goodsType, "goodsName": data.goodsName , "price": data.price,
+                        "goodsCount": currentGoodsCount, "denouncePrice":parseFloat(data.denouncePrice)*currentGoodsCount,"sumPrice": parseFloat(data.price) * currentGoodsCount
                     }, "last");
 
                     //汇总价格更新
@@ -437,6 +475,14 @@ var count=$("#addcount").val();
     function vipLogin() {
         if (event.keyCode == 13) {
             var vipID = $("#vipID").val();
+            var shouldPay = $("#tatalPrice").html();
+            if(shouldPay=="0.00"||shouldPay=="0"){
+                return;
+            }
+            var pay=$("#payMoney").val();
+            if(pay==""){
+                return;
+            }
             if (vipID == "") {
                 return;
             }
@@ -453,12 +499,13 @@ var count=$("#addcount").val();
                         $("#payMoney").focus();
                         if (data.saleRatio != null || data.saleRatio != "") {
                             $("#vipID").attr("disabled", true);
-                            $("#customer").html(data.vipID);
+                            $("#customer").html(data.id);
 
                             $("#saleRatio").html(data.saleRatio);
                             //应付款重新赋值
-                            $("#tatalPrice1").html(($("#tatalPrice1").html() * parseFloat(data.saleRatio)*0.1).toFixed(2));
-                            $("#tatalPrice").html(($("#tatalPrice").html() * parseFloat(data.saleRatio)*0.1).toFixed(2));
+                            //alert((parseFloat($("#tatalPrice1").html()) * parseFloat(data.saleRatio)*parseFloat(0.1)));
+                            $("#tatalPrice1").html((parseFloat($("#tatalPrice1").html()) * parseFloat(data.saleRatio)*0.1).toFixed(2));
+                            $("#tatalPrice").html((parseFloat($("#tatalPrice").html()) * parseFloat(data.saleRatio)*0.1).toFixed(2));
 
                             //找零重新赋值
                             var payMoney = $("#payMoney").val();
@@ -534,7 +581,7 @@ var count=$("#addcount").val();
             jsonArr.push(curRowData);
         }
         var saleGoodsDetails = JSON.stringify(jsonArr);
-        //会员编号，如果有的话
+        //会员自增编号，如果有的话
         var vipID = $("#customer").html();
         //付款方式
         var payWay = $('input:radio:checked').val();
@@ -554,7 +601,8 @@ var saleRatio=$("#saleRatio").html();
                 payMoney: payMoney,
                 payWay: payWay,
                 saleGoodsDetails: saleGoodsDetails,
-                vipSalePrice:saleRatio
+                vipSalePrice:saleRatio,
+                orginPrice:$("#originPrice").val()
             },
             error: function (error) {
                 alert("系统异常，请重新操作")

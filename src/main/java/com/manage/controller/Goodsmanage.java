@@ -242,6 +242,7 @@ public class Goodsmanage {
         Goods goods = goodsRepository.findByZxingCode(zxingCode);
         if (goods != null) {
             goods.setSalePrice(saleprice);
+            goods.setDenouncePrice(goods.getPrice().subtract(new BigDecimal(saleprice)).toString());
             goodsRepository.save(goods);
         }
         return Constant.RESULT_SUCCESS;
