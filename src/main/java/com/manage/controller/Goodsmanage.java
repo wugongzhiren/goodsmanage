@@ -157,12 +157,12 @@ public class Goodsmanage {
                 return Constant.RESULT_FAIL;
             }
             //生成条形码图片
-            handler.encode(zxingCode, 80, 20, "d:/zxing/zxing_EAN13.png");
+            handler.encode(zxingCode, 60, 20, "d:/zxing/zxing_EAN13.png");
             //打印条码
             try {
                 //条码中加文字
-                Print.makeZxingPic(zxingCode, goodsVersion, price.toString());
-                Print.printCommon("d:/goodsinfo.png", null, Integer.parseInt(goodsCount));
+               // Print.makeZxingPic(zxingCode, goodsVersion, price.toString());
+               // Print.printCommon("d:/goodsinfo.png", null, Integer.parseInt(goodsCount));
 
                 Goods goods = new Goods();
                 goods.setZxingCode(zxingCode);

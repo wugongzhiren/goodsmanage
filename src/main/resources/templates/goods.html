@@ -172,7 +172,7 @@
                 return;
             }
             var curRowDataID = $("#goodsList").jqGrid("getGridParam", "selrow");
-            if (curRowDataID == null||curRowDataID.length>1) {
+            if (curRowDataID == null) {
                 alert("请选择一条数据后进行操作");
                 return;
             }

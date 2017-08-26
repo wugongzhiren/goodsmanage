@@ -54,7 +54,8 @@ public class ZxingEAN13EncoderHandler {
      * @param imgPath
      */
     public void encode(String contents, int width, int height, String imgPath) throws FormatException {
-        if(checkStandardUPCEANChecksum(contents)) {
+        System.out.print("条码位："+contents);
+        if(checkStandardUPCEANChecksum("00000"+contents)) {
             /*int codeWidth = 3 + // start guard
                     (7 * 6) + // left bars
                     5 + // middle guard
@@ -63,7 +64,7 @@ public class ZxingEAN13EncoderHandler {
             codeWidth = Math.max(codeWidth, width);*/
             try {
                 BitMatrix bitMatrix = new MultiFormatWriter().encode(contents,
-                        BarcodeFormat.EAN_13, width, height, null);
+                        BarcodeFormat.EAN_8, width, height, null);
 
                 MatrixToImageWriter
                         .writeToPath(bitMatrix, "png", new File(imgPath).toPath());
@@ -84,7 +85,7 @@ public class ZxingEAN13EncoderHandler {
     public String generateZxing(){
         try {
             StringBuffer buffer=new StringBuffer();
-            buffer.append("690");
+            buffer.append("6");
            /* Numindex numindex=repository.findAll().get(0);*/
             //获取序号最新值
             String strIndex=String.valueOf(DBFunctions.getNumIndex());
@@ -98,7 +99,7 @@ public class ZxingEAN13EncoderHandler {
            /* numindex.setIndexID(Integer.parseInt(indexID)+1);
             repository.save(numindex);*/
             String temp= String.valueOf(System.currentTimeMillis());
-            buffer.append(temp.substring(temp.length()-4));
+            buffer.append(temp.substring(temp.length()-1));
             buffer.append( MakeCheckCode(buffer.toString()));
             return buffer.toString();
         }
@@ -138,16 +139,17 @@ public class ZxingEAN13EncoderHandler {
             totalEvenNum=totalEvenNum+evenNum.get(m);
         }
         int c=totalEvenNum*3+totalOddNum;*/
-        int length = strCode12.length();
+        String strCode8="00000"+strCode12;
+        int length = strCode8.length();
         int sum=0;
         for (int i = length - 1; i >= 0; i -= 2) {
-            int digit = (int) strCode12.charAt(i)- (int) '0';
+            int digit = (int) strCode8.charAt(i)- (int) '0';
 
             sum += digit;
         }
         sum *= 3;
         for (int i = length - 2; i >= 0; i -= 2) {
-            int digit = (int) strCode12.charAt(i)- (int) '0';
+            int digit = (int) strCode8.charAt(i)- (int) '0';
             sum += digit;
         }
         int result=10-getSingleNum(sum);
