@@ -99,7 +99,7 @@ public class Goodsmanage {
     public String zxingMake(@RequestParam String content, @RequestParam String goodsVersion, @RequestParam String price, @RequestParam String count) throws FormatException {
         try {
             ZxingEAN13EncoderHandler zxingHandle = new ZxingEAN13EncoderHandler();
-            zxingHandle.encode(content, 80, 20, "d:/zxing/zxing_EAN13.png");
+            zxingHandle.encode(content, 60, 20, "d:/zxing/zxing_EAN13.png");
             //System.out.print(zxingHandle.getSingleNum(1124));
             MyTickesprinter print=new MyTickesprinter();
             print.mygoodsprint(new GoodsInfoPrint(price.toString(),goodsVersion,content));
