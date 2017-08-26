@@ -3,6 +3,8 @@ package com.manage.controller;
 import com.google.zxing.FormatException;
 import com.manage.bean.Goods;
 import com.manage.constant.Constant;
+import com.manage.print.GoodsInfoPrint;
+import com.manage.print.MyTickesprinter;
 import com.manage.print.Print;
 import com.manage.repository.GoodsRepository;
 import com.manage.zxing.ZxingEAN13EncoderHandler;
@@ -97,10 +99,12 @@ public class Goodsmanage {
     public String zxingMake(@RequestParam String content, @RequestParam String goodsVersion, @RequestParam String price, @RequestParam String count) throws FormatException {
         try {
             ZxingEAN13EncoderHandler zxingHandle = new ZxingEAN13EncoderHandler();
-            zxingHandle.encode(content, 80, 30, "d:/zxing/zxing_EAN13.png");
+            zxingHandle.encode(content, 80, 20, "d:/zxing/zxing_EAN13.png");
             //System.out.print(zxingHandle.getSingleNum(1124));
-            Print.makeZxingPic(content, goodsVersion, price.toString());
-            Print.printCommon("d:/goodsinfo.png", null, Integer.parseInt(count));
+            MyTickesprinter print=new MyTickesprinter();
+            print.mygoodsprint(new GoodsInfoPrint(price.toString(),goodsVersion,content));
+            //Print.makeZxingPic(content, goodsVersion, price.toString());
+           // Print.printCommon("d:/goodsinfo.png", null, Integer.parseInt(count));
             return Constant.RESULT_SUCCESS;
         } catch (Exception e) {
             return Constant.RESULT_FAIL;
@@ -153,7 +157,7 @@ public class Goodsmanage {
                 return Constant.RESULT_FAIL;
             }
             //生成条形码图片
-            handler.encode(zxingCode, 80, 30, "d:/zxing/zxing_EAN13.png");
+            handler.encode(zxingCode, 80, 20, "d:/zxing/zxing_EAN13.png");
             //打印条码
             try {
                 //条码中加文字
