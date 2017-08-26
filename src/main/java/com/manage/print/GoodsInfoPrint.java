@@ -33,8 +33,8 @@ public class GoodsInfoPrint implements Printable {
         Font font = new Font("宋体", Font.BOLD, 6); //根据指定名称、样式和磅值大小，创建一个新 Font。
         g2.setFont(font);//设置标题打印字体
         float height=font.getSize2D();
-        g2.drawString("售价：¥"+price, (int)x+20, height+2);
-        g2.drawString("售价：¥"+price, 83, height+2);
+        g2.drawString("售价：¥"+price, (int)x+20, (int)y+height+2);
+        g2.drawString("售价：¥"+price, 83, (int)y+height+2);
         font=new Font("宋体", Font.BOLD, 6);
         g2.setFont(font);//设置正文字体
         float height1=font.getSize2D();
@@ -59,6 +59,12 @@ public class GoodsInfoPrint implements Printable {
      */
     public  BufferedImage  zoomInImage(BufferedImage  originalImage){
         BufferedImage newImage = new BufferedImage(56,20,originalImage.getType());
+        Graphics g = newImage.getGraphics();
+
+        g.drawImage(originalImage, 0,0,56,20,null);
+
+        g.dispose();
+
         return newImage;
 
     }
