@@ -166,6 +166,10 @@
                 alert("请输入打印数量");
                 return;
             }
+            var rule="^[0-9]*[1-9][0-9]*$";
+            if(count.match(rule)==null){
+                alert("数量为整数");
+            }
             var curRowDataID = $("#goodsList").jqGrid("getGridParam", "selrow");
             if (curRowDataID == null||curRowDataID.length>1) {
                 alert("请选择一条数据后进行操作");
