@@ -169,6 +169,7 @@
             var rule="^[0-9]*[1-9][0-9]*$";
             if(count.match(rule)==null){
                 alert("数量为整数");
+                return;
             }
             var curRowDataID = $("#goodsList").jqGrid("getGridParam", "selrow");
             if (curRowDataID == null||curRowDataID.length>1) {
