@@ -40,8 +40,9 @@ public class GoodsInfoPrint implements Printable {
         float height1=font.getSize2D();
         g2.drawString("特征："+name, (int)x+20, height+height1+2);
         g2.drawString("特征："+name, 83, height+height1+2);
-        g2.drawImage(new Pic().loadImageLocal("D:\\zxing\\zxing_EAN13.png"), (int)x, 18, null);
-        g2.drawImage(new Pic().loadImageLocal("D:\\zxing\\zxing_EAN13.png"), 65, 18, null);
+
+        g2.drawImage(zoomInImage(new Pic().loadImageLocal("D:\\zxing\\zxing_EAN13.png")), (int)x, 18, null);
+        g2.drawImage(zoomInImage(new Pic().loadImageLocal("D:\\zxing\\zxing_EAN13.png")), 75, 18, null);
         g2.setFont(new Font("宋体", Font.PLAIN, 8));
         g2.drawString(zxingcode, (int)x+20, 48);
         g2.drawString(zxingcode, 63, 48);
@@ -52,5 +53,13 @@ public class GoodsInfoPrint implements Printable {
             default:
                 return NO_SUCH_PAGE;   //1
         }
+    }
+    /**
+     * 图片放大缩小
+     */
+    public  BufferedImage  zoomInImage(BufferedImage  originalImage){
+        BufferedImage newImage = new BufferedImage(56,20,originalImage.getType());
+        return newImage;
+
     }
 }
