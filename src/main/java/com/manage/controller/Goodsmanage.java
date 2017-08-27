@@ -5,6 +5,7 @@ import com.manage.bean.Goods;
 import com.manage.constant.Constant;
 import com.manage.print.GoodsInfoPrint;
 import com.manage.print.MyTickesprinter;
+import com.manage.print.Pic;
 import com.manage.print.Print;
 import com.manage.repository.GoodsRepository;
 import com.manage.zxing.ZxingEAN13EncoderHandler;
@@ -82,9 +83,10 @@ public class Goodsmanage {
             List<Goods> goods = new ArrayList<>();
             Goods goods1 = goodsRepository.findByZxingCode(goodsName);
             if (goods1 == null) {
-                return goods;
-            } else {
-                goods.add(goodsRepository.findByZxingCode(goodsName));
+                return goodsRepository.findByGoodsNameLike(goodsName);
+            }
+            else {
+                goods.add(goods1);
                 return goods;
             }
         }
@@ -99,11 +101,11 @@ public class Goodsmanage {
     public String zxingMake(@RequestParam String content, @RequestParam String goodsVersion, @RequestParam String price, @RequestParam String count) throws FormatException {
         try {
             ZxingEAN13EncoderHandler zxingHandle = new ZxingEAN13EncoderHandler();
-            zxingHandle.encode(content, 60, 20, "d:/zxing/zxing_EAN13.png");
+            zxingHandle.encode(content, 116, 24, "d:/zxing/zxing_EAN13.png");
             //System.out.print(zxingHandle.getSingleNum(1124));
-            MyTickesprinter print=new MyTickesprinter();
-            print.mygoodsprint(new GoodsInfoPrint(price.toString(),goodsVersion,content));
-            //Print.makeZxingPic(content, goodsVersion, price.toString());
+           // MyTickesprinter print=new MyTickesprinter();
+           // print.mygoodsprint(new GoodsInfoPrint(price.toString(),goodsVersion,content));
+            Pic.makeZxingPic(content, goodsVersion, price.toString());
            // Print.printCommon("d:/goodsinfo.png", null, Integer.parseInt(count));
             return Constant.RESULT_SUCCESS;
         } catch (Exception e) {
@@ -153,11 +155,17 @@ public class Goodsmanage {
             if (!file.exists()) {
                 file.mkdirs();
             }
+            String path1 = "d:/goodspic/";
+            File file1 = new File(path1);
+            if (!file.exists()) {
+                file.mkdirs();
+            }
             if (Constant.RESULT_FAIL.equals(zxingCode)) {
                 return Constant.RESULT_FAIL;
             }
             //生成条形码图片
-            handler.encode(zxingCode, 60, 20, "d:/zxing/zxing_EAN13.png");
+            handler.encode(zxingCode, 116, 24, "d:/zxing/zxing_EAN13.png");
+            Pic.makeZxingPic(zxingCode, goodsVersion, price.toString());
             //打印条码
             try {
                 //条码中加文字

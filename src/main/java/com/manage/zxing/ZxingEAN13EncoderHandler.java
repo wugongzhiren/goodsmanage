@@ -56,15 +56,15 @@ public class ZxingEAN13EncoderHandler {
     public void encode(String contents, int width, int height, String imgPath) throws FormatException {
         System.out.print("条码位："+contents);
         if(checkStandardUPCEANChecksum("00000"+contents)) {
-            /*int codeWidth = 3 + // start guard
+            int codeWidth = 3 + // start guard
                     (7 * 6) + // left bars
                     5 + // middle guard
                     (7 * 6) + // right bars
                     3; // end guard
-            codeWidth = Math.max(codeWidth, width);*/
+            codeWidth = Math.max(codeWidth, width);
             try {
                 BitMatrix bitMatrix = new MultiFormatWriter().encode(contents,
-                        BarcodeFormat.EAN_8, width, height, null);
+                        BarcodeFormat.EAN_8, codeWidth, height, null);
 
                 MatrixToImageWriter
                         .writeToPath(bitMatrix, "png", new File(imgPath).toPath());

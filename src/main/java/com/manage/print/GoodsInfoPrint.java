@@ -25,27 +25,30 @@ public class GoodsInfoPrint implements Printable {
                 BufferedImage.TYPE_INT_RGB);//图片大小为120*80*/
         double x = pageFormat.getImageableX();  //返回与此 PageFormat相关的 Paper对象的可成像区域左上方点的 x坐标。
         double y = pageFormat.getImageableY();
+        System.out.print("可成像区域"+x);
+        System.out.print("可成像区域"+y);
         Graphics2D g2 = (Graphics2D) graphics;
 
-        g2.setColor(Color.white);//图片背景为白色
-        g2.fillRect(0, 0, 100, 60);//背景面积及公位置
+        //g2.setColor(Color.white);//图片背景为白色
+        //g2.fillRect(0, 0, 100, 60);//背景面积及公位置
         g2.setColor(Color.black);
         Font font = new Font("宋体", Font.BOLD, 6); //根据指定名称、样式和磅值大小，创建一个新 Font。
         g2.setFont(font);//设置标题打印字体
         float height=font.getSize2D();
-        g2.drawString("售价：¥"+price, (int)x+20, (int)y+height+2);
-        g2.drawString("售价：¥"+price, 83, (int)y+height+2);
+        System.out.print("售价height"+height);
+        g2.drawString("售价：¥"+price, 0, 1);
+        g2.drawString("售价：¥"+price, 83, 1);
         font=new Font("宋体", Font.BOLD, 6);
         g2.setFont(font);//设置正文字体
         float height1=font.getSize2D();
-        g2.drawString("特征："+name, (int)x+20, height+height1+2);
-        g2.drawString("特征："+name, 83, height+height1+2);
+        g2.drawString("特征："+name, 0, height+height1+1);
+        g2.drawString("特征："+name, 83, height+height1+1);
 
-        g2.drawImage(zoomInImage(new Pic().loadImageLocal("D:\\zxing\\zxing_EAN13.png")), (int)x, 18, null);
-        g2.drawImage(zoomInImage(new Pic().loadImageLocal("D:\\zxing\\zxing_EAN13.png")), 75, 18, null);
+        g2.drawImage(new Pic().loadImageLocal("D:\\zxing\\zxing_EAN13.png"), 1, 18, null);
+        g2.drawImage(new Pic().loadImageLocal("D:\\zxing\\zxing_EAN13.png"), 80, 18, null);
         g2.setFont(new Font("宋体", Font.PLAIN, 8));
-        g2.drawString(zxingcode, (int)x+20, 48);
-        g2.drawString(zxingcode, 63, 48);
+        g2.drawString(zxingcode, 0, 38);
+        g2.drawString(zxingcode, 83, 38);
 
         switch (pageIndex) {
             case 0:
@@ -58,10 +61,10 @@ public class GoodsInfoPrint implements Printable {
      * 图片放大缩小
      */
     public  BufferedImage  zoomInImage(BufferedImage  originalImage){
-        BufferedImage newImage = new BufferedImage(56,20,originalImage.getType());
+        BufferedImage newImage = new BufferedImage(40,20,originalImage.getType());
         Graphics g = newImage.getGraphics();
 
-        g.drawImage(originalImage, 0,0,56,20,null);
+        g.drawImage(originalImage, 0,0,40,20,null);
 
         g.dispose();
 

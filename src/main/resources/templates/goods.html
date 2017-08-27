@@ -24,13 +24,13 @@
 <body>
 <div style="width: 90%; background: white;margin: 40px;">
     <div class="instoreTitle" style="margin-left:60px;margin-top: 20px;font-size: 36px;font-weight: 400;line-height: 68px;color: #b0b0b0;">
-        <h1>库存信息查询与条码打印</h1></div>
+        <h1>库存信息查询</h1></div>
 </div>
 <hr/>
 <div class="row">
 
 
-    <input id="goodsNameinput" class="form-control" style="margin-left: 112px;width: 300px" type="text" onkeypress="reloadEnter()" placeholder="输入商品条码查询商品信息"/>
+    <input id="goodsNameinput" class="form-control" style="margin-left: 112px;width: 300px" type="text" onkeypress="reloadEnter()" placeholder="输入商品条码或者商品名查询商品信息"/>
 
 
     <button class="btn instoreBtn" onclick="reload()">查询</button>
@@ -43,10 +43,10 @@
 
     </div>
             <hr/>
-<div class="row">
+<!--<div class="row">
     <input type="text" class="form-control" id="count" style="display:inline-block;margin-left: 112px;width: 300px" placeholder="请输入打印数量"/>
     <button class="btn instoreBtn" onclick="print()">打印条码</button>
-</div>
+</div>-->
 
    <center style="margin-top: 30px">
        <table id="goodsList"></table>
@@ -71,13 +71,14 @@
             url: "/getGoodsInfoAll",
             datatype: "local",
             mtype: 'GET',
-            colNames: [ '条形码', '商品名', '商品类别', '特征','单价', '数量'],
+            colNames: [ '条形码', '商品名', '商品类别', '特征','单价','折扣价', '数量'],
             colModel: [
                 {name: 'zxingCode', index: 'zxingCode', width: 100, align: "center"},
                 {name: 'goodsName', index: 'goodsName', width: 100, align: "center"},
                 {name: 'goodsType', index: 'goodsType', width: 150, align: "center"},
                 {name: 'goodsVersion', index: 'goodsVersion', width: 150, align: "center"},
                 {name: 'price', index: 'price', width: 150, align: "center"},
+                {name: 'salePrice', index: 'salePrice', width: 150, align: "center"},
                 {name: 'goodsCount', index: 'goodsCount', width: 150, align: "center"}
             ],
             rownumbers:true,
