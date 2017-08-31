@@ -36,20 +36,20 @@ g2.translate(x,y);
         g2.setFont(font);//设置标题打印字体
         float height=font.getSize2D();
         g2.drawString("¥"+price, 4, height+2);
-        g2.drawString("¥"+price, 42, height+2);
+        g2.drawString("¥"+price, 62, height+2);
         //g2.drawString("售价：¥"+price, 122, height+2);
         font=new Font("宋体", Font.PLAIN ,6);
         g2.setFont(font);//设置正文字体
         float height1=font.getSize2D();
         g2.drawString(name, 4, height+height1+4);
-        g2.drawString(name, 42, height+height1+4);
+        g2.drawString(name, 62, height+height1+4);
         //g2.drawString("特征："+name, 122, height+height1+2);
         g2.drawImage(new Pic().loadImageLocal("D:\\zxing2\\zxing.png"), 33, 6, null);
-        g2.drawImage(new Pic().loadImageLocal("D:\\zxing2\\zxing.png"), 72, 6, null);
+        g2.drawImage(new Pic().loadImageLocal("D:\\zxing2\\zxing.png"), 86, 6, null);
         //g2.drawImage(new Pic().loadImageLocal("D:\\zxing\\zxing_EAN13.png"), 125, 30, null);
         g2.setFont(new Font("宋体", Font.PLAIN, 6));
         g2.drawString(zxingcode, 4, 33);
-        g2.drawString(zxingcode, 42, 33);
+        g2.drawString(zxingcode, 62, 33);
         //g2.drawImage(new Pic().loadImageLocal("D:\\goodspic\\"+zxingcode+".jpg"), 0, 0, null);
        // g2.drawImage(new Pic().loadImageLocal("D:\\goodspic\\"+zxingcode+".jpg"), 63, 0, null);
         switch (pageIndex) {
