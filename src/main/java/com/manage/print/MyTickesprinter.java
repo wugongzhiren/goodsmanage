@@ -48,8 +48,8 @@ public class MyTickesprinter {
 
             //设置打印纸页面信息。通过Paper设置页面的空白边距和可打印区域。必须与实际打印纸张大小相符。
             Paper paper = new Paper();
-            paper.setSize(250,40);// 纸张大小125*40
-            paper.setImageableArea(0,0,250,40);// A4(595 X 842)设置打印区域，其实0，0应该是72，72，因为A4纸的默认X,Y边距是72
+            paper.setSize(125,40);// 纸张大小125*40
+            paper.setImageableArea(0,0,125,40);// A4(595 X 842)设置打印区域，其实0，0应该是72，72，因为A4纸的默认X,Y边距是72
             pf.setPaper(paper);
 
             book.append(goodsInfo,pf);
