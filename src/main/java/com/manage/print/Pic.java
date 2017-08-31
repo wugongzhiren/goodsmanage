@@ -62,6 +62,45 @@ public class Pic {
     }
 
     /**
+     * 生成条码图片测试
+     */
+    public static void makeZxingPicT(String zxingcode,String name,String price,float ratio) {
+        BufferedImage ImageNew = new BufferedImage(63, 40,
+                BufferedImage.TYPE_INT_RGB);//图片大小为120*80
+        Graphics2D g2 = (Graphics2D) ImageNew.getGraphics();
+
+        g2.setColor(Color.white);//图片背景为白色
+        g2.fillRect(0, 0, 63, 40);//背景面积及公位置
+        g2.setColor(Color.black);
+        Font font = new Font("宋体", Font.BOLD, 7); //根据指定名称、样式和磅值大小，创建一个新 Font。
+        g2.setFont(font);//设置标题打印字体
+        float height=font.getSize2D();
+        g2.drawString("售价：¥"+price, 4, height+2);
+        //g2.drawString("售价：¥"+price, 122, height+2);
+        font=new Font("宋体", Font.BOLD ,5);
+        g2.setFont(font);//设置正文字体
+        float height1=font.getSize2D();
+        g2.drawString("特征："+name, 4, height+height1+4);
+        //g2.drawString("特征："+name, 122, height+height1+2);
+        g2.drawImage(zoomInImageT(new Pic().loadImageLocal("D:\\zxing\\zxing_EAN13.png")), 5, 19, null);
+        //g2.drawImage(new Pic().loadImageLocal("D:\\zxing\\zxing_EAN13.png"), 125, 30, null);
+        g2.setFont(new Font("宋体", Font.PLAIN, 6));
+        g2.drawString(zxingcode, 18, 36);
+        //g2.drawString(zxingcode, 140, 65);
+        /*g2.setStroke(new BasicStroke(4.0f));//线条粗细
+        g2.setColor(Color.blue);//线条颜色
+       g2.drawLine(100, 100, 150, 100);//线条起点及终点位置*/
+
+        File outFile = new File("d:/goodspic/"+zxingcode+".jpg");
+        try {
+            ImageIO.write(ImageNew, "jpg", outFile);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }// 写图片
+    }
+
+    /**
      * 图片放大缩小
      */
     public static BufferedImage  zoomInImage(BufferedImage  originalImage){
@@ -69,6 +108,21 @@ public class Pic {
         Graphics g = newImage.getGraphics();
 
         g.drawImage(originalImage, -20,0,156,24,null);
+
+        g.dispose();
+
+        return newImage;
+
+    }
+
+    /**
+     * 图片放大缩小
+     */
+    public static BufferedImage  zoomInImageT(BufferedImage  originalImage){
+        BufferedImage newImage = new BufferedImage(60,12,originalImage.getType());
+        Graphics g = newImage.getGraphics();
+
+        g.drawImage(originalImage, 0,0,60,12,null);
 
         g.dispose();
 
