@@ -8,6 +8,7 @@ import java.awt.print.*;
  */
 public class MyTickesprinter {
 
+    //打印小票
     public void myprint(TicksInfo ticksInfo){
         try {
             //Book 类提供文档的表示形式，该文档的页面可以使用不同的页面格式和页面 painter
@@ -34,6 +35,8 @@ public class MyTickesprinter {
             e.printStackTrace();
         }
     }
+
+    //打印标签
     public void mygoodsprint(GoodsInfoPrint goodsInfo){
         try {
             //Book 类提供文档的表示形式，该文档的页面可以使用不同的页面格式和页面 painter
@@ -45,8 +48,8 @@ public class MyTickesprinter {
 
             //设置打印纸页面信息。通过Paper设置页面的空白边距和可打印区域。必须与实际打印纸张大小相符。
             Paper paper = new Paper();
-            paper.setSize(125,80);// 纸张大小125*50
-            paper.setImageableArea(0,0,125,80);// A4(595 X 842)设置打印区域，其实0，0应该是72，72，因为A4纸的默认X,Y边距是72
+            paper.setSize(125,40);// 纸张大小125*40
+            paper.setImageableArea(0,0,125,40);// A4(595 X 842)设置打印区域，其实0，0应该是72，72，因为A4纸的默认X,Y边距是72
             pf.setPaper(paper);
 
             book.append(goodsInfo,pf);

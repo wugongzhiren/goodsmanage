@@ -81,7 +81,7 @@
        </div>
         <div class="float-right">
             <input id="addCount" class="form-control" style="margin-left: 60px;width: 300px" type="text" placeholder="输入商品新增数量"/>
-            <button class="btn instoreBtn" onclick="save()">新增，并打印条码</button>
+            <button class="btn instoreBtn" onclick="save()">新增数量</button>
         </div>
     </div>
 </div>
@@ -89,6 +89,7 @@
 <hr/>
 <center>
 <table id="goodsList"></table>
+    <div id="pager"></div>
 </center>
 <script>
 $(function () {
@@ -199,6 +200,12 @@ $(function () {
             $("#goodsList").jqGrid('resetSelection');
             return(true);
         },
+        onPaging: function(pgButton) {      //当点击翻页按钮但还为展现数据时触发此事件, 当然这跳转栏输入页
+            //码改变页时也同样触发此事件
+            alert(pgButton);   //first_booklistpage,  prev_booklistpage,  next_booklistpage,
+                               //last_booklistpage
+
+        },
         onSelectRow: function(id) {
             /*alert('1');
             if (id !== lastSel) {
@@ -215,6 +222,11 @@ $(function () {
                 lastsel = id;
             }*/
         },
+        pager:"#pager",
+        rowNum : 10,
+        rowList : [ 10, 15,30 ],
+        jsonReader: {root:"dataList", page:"currPage", total:"totalpages",
+            records:"totalCount", repeatitems:false, id : "id"},
         viewrecords: true,
         loadonce: false,
         sortable: false,

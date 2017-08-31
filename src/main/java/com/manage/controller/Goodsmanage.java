@@ -60,8 +60,9 @@ public class Goodsmanage {
      * @return
      */
     @RequestMapping(value = "/getGoodsInfo", method = RequestMethod.GET)
-    public List<Goods> getGoodsInfo(@RequestParam String goodsName) {
-        System.out.print(goodsName);
+    public List<Goods> getGoodsInfo(@RequestParam String goodsName,@RequestParam String currPage) {
+
+        System.out.print(currPage);
         if ("".equals(goodsName) || goodsName == null) {
             return goodsRepository.findAll();
         } else {
@@ -157,16 +158,20 @@ public class Goodsmanage {
             }
             String path1 = "d:/goodspic/";
             File file1 = new File(path1);
-            if (!file.exists()) {
-                file.mkdirs();
+            if (!file1.exists()) {
+                file1.mkdirs();
             }
             if (Constant.RESULT_FAIL.equals(zxingCode)) {
                 return Constant.RESULT_FAIL;
             }
             //生成条形码图片
             handler.encode(zxingCode, 116, 24, "d:/zxing/zxing_EAN13.png");
+            //生成标签图片
             Pic.makeZxingPic(zxingCode, goodsVersion, price.toString());
+
             //打印条码
+            MyTickesprinter myTickesprinter=new MyTickesprinter();
+            myTickesprinter.mygoodsprint(new GoodsInfoPrint(zxingCode));
             try {
                 //条码中加文字
                // Print.makeZxingPic(zxingCode, goodsVersion, price.toString());
@@ -211,12 +216,12 @@ public class Goodsmanage {
             goodsRepository.save(goods);
 
             //打印
-            try {
+            /*try {
                 zxingMake(zxingCode, goodVersion, price, addCount);
             } catch (FormatException e) {
                 e.printStackTrace();
                 return Constant.PRINT_FAIL;
-            }
+            }*/
             return Constant.RESULT_SUCCESS;
         } else {
             return Constant.RESULT_FAIL;
