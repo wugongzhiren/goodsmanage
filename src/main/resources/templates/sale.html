@@ -168,7 +168,7 @@
     <Button id="addBt" class="btn btn-primary btn-lg" style="margin-left: 20px" data-toggle="modal"
             data-target="#myModal1">手动添加（F4）
     </Button>
-    <Button id="Jbt" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">结账（F2）</Button>
+    <Button id="Jbt" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">结账（F5）</Button>
     <Button id="cacelBt" class="btn btn-primary btn-lg" onclick="cancleExchange()">取消交易（F6）</Button>
 
     <!--<Button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">会员登录</Button>-->
@@ -241,8 +241,9 @@
             //F2 收款
             if (keyCode == 113) {
                 if (F4c) {
-                    $('#myModal').modal('show');
+
                 }
+
                 else {
                     //莫太快
                     $("input[name='payWay']").get(1).checked=true;
@@ -277,7 +278,7 @@
             //F5 重置
             if (keyCode == 116) {
                 if (F4c) {
-                    //$('#myModal1').modal('show');
+                    $('#myModal').modal('show');
                 }
                 else {
                     //收款
@@ -301,7 +302,9 @@
                 return false;
             }
         }
+
     }
+
     document.onkeydown = disableF5;
     //条形码回车
     function press() {
@@ -375,7 +378,7 @@
                 {name: 'salePrice', index: 'salePrice', hidden: true},
                 {name: 'goodsCount', index: 'goodsCount', width: 150, align: "center"},
                 {name: 'goodsDescs', index: 'goodsDescs', hidden: true},
-                {name: 'denouncePrice', index: 'denouncePrice', hidden: true},
+                {name: 'denouncePrice', index: 'denouncePrice',hidden: true},
                 {name: 'sumPrice', index: 'sumPrice', width: 150, align: "center"}
 
             ],
@@ -524,13 +527,23 @@
             success: function (data) {
                 if (data.resultCode == "100") {
                     //向grid增加一条数据
+                    var denouncePrice;
+                    /*<![CDATA[*/
+                    if(data.denouncePrice!=""&&data.denouncePrice!=null){
+                        /*]]>*/
+                        denouncePrice= parseFloat(data.denouncePrice) * currentGoodsCount;
+                    }
+                    else{
+                        denouncePrice="";
+                    }
+
                     $("#list2").jqGrid("addRowData", rowIds.length, {
                         'zxingCode': data.zxingCode,
                         'goodsType': data.goodsType,
                         "goodsName": data.goodsName,
                         "price": data.price,
                         "goodsCount": currentGoodsCount,
-                        "denouncePrice": parseFloat(data.denouncePrice) * currentGoodsCount,
+                        "denouncePrice": denouncePrice,
                         "sumPrice": parseFloat(data.price) * currentGoodsCount
                     }, "last");
 

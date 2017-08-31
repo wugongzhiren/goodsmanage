@@ -121,6 +121,7 @@ public class Salesmanage {
 
             for(int i=0;i<retList.size();i++){
 if(retList.get(i).getDenouncePrice()!=null&&!"".equals(retList.get(i).getDenouncePrice())) {
+
     sumDenouncePrice = sumDenouncePrice + Float.parseFloat(retList.get(i).getDenouncePrice());
 }
                 //sumDenouncePrice
@@ -168,10 +169,9 @@ if(retList.get(i).getDenouncePrice()!=null&&!"".equals(retList.get(i).getDenounc
             //有会员折扣
             vipSalePrice1=new BigDecimal(orginPrice).subtract(new BigDecimal(shouldPay));
         }
-        System.out.print("sumDenouncePrice"+sumDenouncePrice);
+
         printTick(retList,cashier,saleid+"",shouldPay,new BigDecimal(sumDenouncePrice).toString(),payMoney,returnMoney.toString(),vipSalePrice1.toString(),payWay);
         //3.返回处理结果
-        System.out.print("处理结束");
         return Constant.RESULT_SUCCESS;
     }
 

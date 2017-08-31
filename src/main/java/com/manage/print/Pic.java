@@ -107,7 +107,7 @@ public class Pic {
         BufferedImage newImage = new BufferedImage(156,24,originalImage.getType());
         Graphics g = newImage.getGraphics();
 
-        g.drawImage(originalImage, -20,0,156,24,null);
+        g.drawImage(originalImage, -22,0,156,24,null);
 
         g.dispose();
 
