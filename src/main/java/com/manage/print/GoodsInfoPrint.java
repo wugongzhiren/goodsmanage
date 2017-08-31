@@ -27,8 +27,8 @@ public class GoodsInfoPrint implements Printable {
         System.out.print("可成像区域"+y);
         Graphics2D g2 = (Graphics2D) graphics;
 g2.translate(x,y);
-        g2.drawImage(new Pic().loadImageLocal("D:\\goodspic\\"+zxingcode+".jpg"), 0, 0, null);
-        g2.drawImage(new Pic().loadImageLocal("D:\\goodspic\\"+zxingcode+".jpg"), 63, 0, null);
+        g2.drawImage(zoomInImage(new Pic().loadImageLocal("D:\\goodspic\\"+zxingcode+".jpg"),5), 0, 0, null);
+        g2.drawImage(zoomInImage(new Pic().loadImageLocal("D:\\goodspic\\"+zxingcode+".jpg"),5), 63, 0, null);
         switch (pageIndex) {
             case 0:
                 return PAGE_EXISTS;  //0
@@ -39,11 +39,13 @@ g2.translate(x,y);
     /**
      * 图片放大缩小
      */
-    public  BufferedImage  zoomInImage(BufferedImage  originalImage){
-        BufferedImage newImage = new BufferedImage(40,20,originalImage.getType());
+    public  BufferedImage  zoomInImage(BufferedImage  originalImage,int radio){
+        int width=originalImage.getWidth()/radio;
+        int height = originalImage.getHeight()/radio;
+        BufferedImage newImage = new BufferedImage(width,height,originalImage.getType());
         Graphics g = newImage.getGraphics();
 
-        g.drawImage(originalImage, 0,0,40,20,null);
+        g.drawImage(originalImage, 0,0,width,width,null);
 
         g.dispose();
 
