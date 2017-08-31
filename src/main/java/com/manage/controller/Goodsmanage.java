@@ -171,11 +171,15 @@ public class Goodsmanage {
                 return Constant.RESULT_FAIL;
             }
             //生成条形码图片
-            handler.encode(zxingCode, 116, 24, "d:/zxing/zxing_EAN13.png");
+            handler.encode2(zxingCode, 24, 24, "d:/zxing2/");
+            //handler.encode(zxingCode, 116, 24, "d:/zxing/zxing_EAN13.png");
             //handler.encode(zxingCode, 60, 24, "d:/zxing/zxing_EAN13.png");
             //生成标签图片
-            Pic.makeZxingPic(zxingCode, goodsVersion, price.toString());
-
+            Pic.makeZxingPic2(zxingCode, goodsVersion, price.toString());
+            MyTickesprinter myTickesprinter=new MyTickesprinter();
+            for(int i=0;i<Integer.parseInt(goodsCount);i++) {
+                myTickesprinter.mygoodsprint(new GoodsInfoPrint(zxingCode, goodsVersion, price));
+            }
             //打印条码
             //MyTickesprinter myTickesprinter=new MyTickesprinter();
             //myTickesprinter.mygoodsprint(new GoodsInfoPrint(zxingCode));
