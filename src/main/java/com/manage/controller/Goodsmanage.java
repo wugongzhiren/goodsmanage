@@ -102,12 +102,13 @@ public class Goodsmanage {
     public String zxingMake(@RequestParam String content, @RequestParam String goodsVersion, @RequestParam String price, @RequestParam String count) throws FormatException {
         try {
             ZxingEAN13EncoderHandler zxingHandle = new ZxingEAN13EncoderHandler();
-            zxingHandle.encode(content, 116, 24, "d:/zxing/zxing_EAN13.png");
+            //zxingHandle.encode(content, 116, 24, "d:/zxing/zxing_EAN13.png");
+            zxingHandle.encode2(content, 24, 24, "d:/zxing2/");
             //zxingHandle.encode(content, 60, 24, "d:/zxing/zxing_EAN13.png");
             //System.out.print(zxingHandle.getSingleNum(1124));
            // MyTickesprinter print=new MyTickesprinter();
            // print.mygoodsprint(new GoodsInfoPrint(price.toString(),goodsVersion,content));
-            Pic.makeZxingPic(content, goodsVersion, price.toString());
+            Pic.makeZxingPic2(content, goodsVersion, price.toString());
            // Pic.makeZxingPic(content, goodsVersion, price.toString());
            // Print.printCommon("d:/goodsinfo.png", null, Integer.parseInt(count));
             return Constant.RESULT_SUCCESS;
@@ -115,7 +116,6 @@ public class Goodsmanage {
             return Constant.RESULT_FAIL;
         }
     }
-
     /**
      * 商品第一次入库
      *

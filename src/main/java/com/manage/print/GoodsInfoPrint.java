@@ -27,8 +27,8 @@ public class GoodsInfoPrint implements Printable {
         System.out.print("可成像区域"+y);
         Graphics2D g2 = (Graphics2D) graphics;
 g2.translate(x,y);
-        g2.drawImage(zoomInImage(new Pic().loadImageLocal("D:\\goodspic\\"+zxingcode+".jpg"),5), 0, 0, null);
-        g2.drawImage(zoomInImage(new Pic().loadImageLocal("D:\\goodspic\\"+zxingcode+".jpg"),5), 63, 0, null);
+        g2.drawImage(new Pic().loadImageLocal("D:\\zxing2\\"+zxingcode+".jpg"), 0, 0, null);
+        g2.drawImage(new Pic().loadImageLocal("D:\\zxing2\\"+zxingcode+".jpg"), 63, 0, null);
         switch (pageIndex) {
             case 0:
                 return PAGE_EXISTS;  //0

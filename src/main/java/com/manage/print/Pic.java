@@ -64,28 +64,28 @@ public class Pic {
     /**
      * 生成条码图片测试
      */
-    public static void makeZxingPicT(String zxingcode,String name,String price,float ratio) {
-        BufferedImage ImageNew = new BufferedImage(63, 40,
+    public static void makeZxingPic2(String zxingcode,String name,String price) {
+        BufferedImage ImageNew = new BufferedImage(120, 40,
                 BufferedImage.TYPE_INT_RGB);//图片大小为120*80
         Graphics2D g2 = (Graphics2D) ImageNew.getGraphics();
 
         g2.setColor(Color.white);//图片背景为白色
-        g2.fillRect(0, 0, 63, 40);//背景面积及公位置
+        g2.fillRect(0, 0, 120, 40);//背景面积及公位置
         g2.setColor(Color.black);
-        Font font = new Font("宋体", Font.BOLD, 7); //根据指定名称、样式和磅值大小，创建一个新 Font。
+        Font font = new Font("宋体", Font.BOLD, 10); //根据指定名称、样式和磅值大小，创建一个新 Font。
         g2.setFont(font);//设置标题打印字体
         float height=font.getSize2D();
-        g2.drawString("售价：¥"+price, 4, height+2);
+        g2.drawString("¥"+price, 4, height+2);
         //g2.drawString("售价：¥"+price, 122, height+2);
-        font=new Font("宋体", Font.BOLD ,5);
+        font=new Font("宋体", Font.BOLD ,10);
         g2.setFont(font);//设置正文字体
         float height1=font.getSize2D();
-        g2.drawString("特征："+name, 4, height+height1+4);
+        g2.drawString(name, 4, height+height1+4);
         //g2.drawString("特征："+name, 122, height+height1+2);
-        g2.drawImage(zoomInImageT(new Pic().loadImageLocal("D:\\zxing\\zxing_EAN13.png")), 5, 19, null);
+        g2.drawImage(new Pic().loadImageLocal("D:\\zxing2\\zxing.png"), 73, 6, null);
         //g2.drawImage(new Pic().loadImageLocal("D:\\zxing\\zxing_EAN13.png"), 125, 30, null);
-        g2.setFont(new Font("宋体", Font.PLAIN, 6));
-        g2.drawString(zxingcode, 18, 36);
+        g2.setFont(new Font("宋体", Font.PLAIN, 10));
+        g2.drawString(zxingcode, 4, 35);
         //g2.drawString(zxingcode, 140, 65);
         /*g2.setStroke(new BasicStroke(4.0f));//线条粗细
         g2.setColor(Color.blue);//线条颜色

@@ -1,8 +1,6 @@
 package com.manage.zxing;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.FormatException;
-import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.*;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.manage.constant.Constant;
@@ -10,8 +8,13 @@ import com.manage.dao.DBFunctions;
 import com.manage.repository.NumberIndexRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Zxing生成条形码
@@ -78,6 +81,26 @@ public class ZxingEAN13EncoderHandler {
         }
     }
 
+    public void encode2(String contents, int width, int height, String imgPath){
+        String format = "png";// 图像类型
+        String fileName = "zxing.png";
+        Map<EncodeHintType, Object> hints = new HashMap<EncodeHintType, Object>();
+        hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+        BitMatrix bitMatrix = null;// 生成矩阵
+        try {
+            bitMatrix = new MultiFormatWriter().encode(contents,
+                    BarcodeFormat.QR_CODE, width, height, hints);
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+        Path path = FileSystems.getDefault().getPath(imgPath,fileName );
+        try {
+            MatrixToImageWriter.writeToPath(bitMatrix, format, path);// 输出图像
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("输出成功.");
+    }
     /**
      * 条形码数据采集
      * @return
