@@ -12,8 +12,12 @@ import java.awt.print.PrinterException;
  */
 public class GoodsInfoPrint implements Printable {
     private String zxingcode;
-    public GoodsInfoPrint(String zxingcode) {
+    private String price;
+    private String name;
+    public GoodsInfoPrint(String zxingcode,String name,String price) {
         this.zxingcode=zxingcode;
+        this.name=name;
+        this.price=price;
     }
 
     @Override
@@ -27,8 +31,23 @@ public class GoodsInfoPrint implements Printable {
         System.out.print("可成像区域"+y);
         Graphics2D g2 = (Graphics2D) graphics;
 g2.translate(x,y);
-        g2.drawImage(new Pic().loadImageLocal("D:\\goodspic\\"+zxingcode+".jpg"), 0, 0, null);
-        g2.drawImage(new Pic().loadImageLocal("D:\\goodspic\\"+zxingcode+".jpg"), 63, 0, null);
+        g2.setColor(Color.black);
+        Font font = new Font("宋体", Font.PLAIN, 6); //根据指定名称、样式和磅值大小，创建一个新 Font。
+        g2.setFont(font);//设置标题打印字体
+        float height=font.getSize2D();
+        g2.drawString("¥"+price, 4, height+2);
+        //g2.drawString("售价：¥"+price, 122, height+2);
+        font=new Font("宋体", Font.PLAIN ,6);
+        g2.setFont(font);//设置正文字体
+        float height1=font.getSize2D();
+        g2.drawString(name, 4, height+height1+4);
+        //g2.drawString("特征："+name, 122, height+height1+2);
+        g2.drawImage(new Pic().loadImageLocal("D:\\zxing2\\zxing.png"), 33, 6, null);
+        //g2.drawImage(new Pic().loadImageLocal("D:\\zxing\\zxing_EAN13.png"), 125, 30, null);
+        g2.setFont(new Font("宋体", Font.PLAIN, 6));
+        g2.drawString(zxingcode, 4, 35);
+        //g2.drawImage(new Pic().loadImageLocal("D:\\goodspic\\"+zxingcode+".jpg"), 0, 0, null);
+       // g2.drawImage(new Pic().loadImageLocal("D:\\goodspic\\"+zxingcode+".jpg"), 63, 0, null);
         switch (pageIndex) {
             case 0:
                 return PAGE_EXISTS;  //0

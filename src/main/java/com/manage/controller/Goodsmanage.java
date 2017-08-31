@@ -110,7 +110,7 @@ public class Goodsmanage {
            // print.mygoodsprint(new GoodsInfoPrint(price.toString(),goodsVersion,content));
             Pic.makeZxingPic2(content, goodsVersion, price.toString());
             MyTickesprinter myTickesprinter=new MyTickesprinter();
-            myTickesprinter.mygoodsprint(new GoodsInfoPrint(content));
+            myTickesprinter.mygoodsprint(new GoodsInfoPrint(content,goodsVersion,price));
            // Pic.makeZxingPic(content, goodsVersion, price.toString());
            // Print.printCommon("d:/goodsinfo.png", null, Integer.parseInt(count));
             return Constant.RESULT_SUCCESS;
