@@ -74,9 +74,9 @@
                 <hr/>
                 <div onkeypress="gotoviplogin()">
 
-                    <label><input type="radio" id="payWayinput" checked="checked" name="payWay" value="1"/>现金(F1)</label>
-                    <label><input type="radio" name="payWay" value="2"/>支付宝(F2)</label>
-                    <label><input type="radio" name="payWay" value="3"/>微信(F3)</label>
+                    <label><input type="radio" id="payWayinput" checked="checked" name="payWay" value="1"/>现金(F1切换)</label>
+                    <label><input type="radio" name="payWay" value="2"/>支付宝</label>
+                    <label><input type="radio" name="payWay" value="3"/>微信</label>
 
                 </div>
                 <hr/>
@@ -172,7 +172,7 @@
     <Button id="cacelBt" class="btn btn-primary btn-lg" onclick="cancleExchange()">取消交易（F6）</Button>
 
     <!--<Button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">会员登录</Button>-->
-    <Button class="btn" onclick="delGoods()">顾客不想要了</Button>
+    <Button class="btn" onclick="delGoods()">购物列表移除</Button>
 
     <input id="originPrice" type="hidden"/>
 
@@ -233,7 +233,22 @@
                 }
                 else {
                     //模态框
-                    $("input[name='payWay']").get(0).checked=true;
+
+                    if($("input[name='payWay']").get(0).checked){
+                        $("input[name='payWay']").get(1).checked=true;
+                        event.returnValue = false;
+                        return false;
+                    }
+                    if($("input[name='payWay']").get(1).checked){
+                        $("input[name='payWay']").get(2).checked=true;
+                        event.returnValue = false;
+                        return false;
+                    }
+                    if($("input[name='payWay']").get(2).checked){
+                        $("input[name='payWay']").get(0).checked=true;
+                        event.returnValue = false;
+                        return false;
+                    }
                 }
                 event.returnValue = false;
                 return false;
@@ -246,7 +261,7 @@
 
                 else {
                     //莫太快
-                    $("input[name='payWay']").get(1).checked=true;
+                   // $("input[name='payWay']").get(1).checked=true;
                 }
                 event.returnValue = false;
                 return false;
@@ -258,7 +273,7 @@
                 }
                 else {
                     //莫太快
-                    $("input[name='payWay']").get(2).checked=true;
+                   // $("input[name='payWay']").get(2).checked=true;
                 }
                 event.returnValue = false;
                 return false;
