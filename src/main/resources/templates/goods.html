@@ -45,7 +45,7 @@
             <hr/>
 <div class="row">
   <input type="text" class="form-control" id="count" style="display:inline-block;margin-left: 112px;width: 300px" placeholder="请输入打印数量"/>
-    <button class="btn instoreBtn" onclick="print()">生成标签</button>
+    <button class="btn instoreBtn" onclick="print()">打印标签</button>
 </div>
 
    <center style="margin-top: 30px">
@@ -119,7 +119,7 @@
         function save() {
             var curRowDataID = $("#goodsList").jqGrid("getGridParam", "selrow");
            // $('#goodsList').jqGrid("saveRow", "6");
-            if (curRowDataID == null || curRowDataID.length > 1) {
+            if (curRowDataID == null) {
                 alert("请选择一条数据后进行操作");
                 return;
             }

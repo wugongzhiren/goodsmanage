@@ -220,6 +220,7 @@ public class Goodsmanage {
      */
     @RequestMapping(value = "/addCount", method = RequestMethod.GET)
     public String addCount(@RequestParam String zxingCode, @RequestParam String addCount, @RequestParam String price, @RequestParam String goodVersion) {
+        System.out.print(zxingCode);
         Goods goods = goodsRepository.findByZxingCode(zxingCode);
         if (goods != null) {
             //更新新入库数量

@@ -24,11 +24,8 @@ public class GoodsInfoPrint implements Printable {
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
         /*BufferedImage ImageNew = new BufferedImage(240, 75,
                 BufferedImage.TYPE_INT_RGB);//图片大小为120*80*/
-        System.out.print("页号"+pageIndex);
         double x = pageFormat.getImageableX();  //返回与此 PageFormat相关的 Paper对象的可成像区域左上方点的 x坐标。
         double y = pageFormat.getImageableY();
-        System.out.print("可成像区域"+x);
-        System.out.print("可成像区域"+y);
         Graphics2D g2 = (Graphics2D) graphics;
 g2.translate(x,y);
         g2.setColor(Color.black);
@@ -41,8 +38,16 @@ g2.translate(x,y);
         font=new Font("宋体", Font.PLAIN ,6);
         g2.setFont(font);//设置正文字体
         float height1=font.getSize2D();
-        g2.drawString(name, 4, height+height1+4);
-        g2.drawString(name, 64, height+height1+4);
+        if(name.length()<=6) {
+            g2.drawString(name, 4, height + height1 + 4);
+            g2.drawString(name, 64, height + height1 + 4);
+        }
+        else{
+            g2.drawString(name.substring(0,6), 4, height + height1 + 4);
+            g2.drawString(name.substring(0,6), 64, height + height1 + 4);
+            g2.drawString(name.substring(6,name.length()), 4, height + height1+height1 + 8);
+            g2.drawString(name.substring(6,name.length()), 64, height + height1+height1 + 8);
+        }
         //g2.drawString("特征："+name, 122, height+height1+2);
         g2.drawImage(new Pic().loadImageLocal("D:\\zxing2\\zxing.png"), 33, 5, null);
         g2.drawImage(new Pic().loadImageLocal("D:\\zxing2\\zxing.png"), 90, 5, null);
