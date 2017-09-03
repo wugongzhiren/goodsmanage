@@ -3,23 +3,33 @@
 <head>
     <title></title>
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
-    <link rel="stylesheet" type="text/css" href="/css/ui.jqgrid.css"/>
-    <link rel="stylesheet" type="text/css" href="/css/jquery-ui.min.css"/>
-    <link rel="stylesheet" type="text/css" href="/css/my.css"/>
-    <script src="/js/jquery-3.1.1.min.js"></script>
-    <!-- 包括所有已编译的插件 -->
-    <script src="/js/jquery-ui.min.js"></script>
+    <!--<link rel="stylesheet" type="text/css" href="/css/ui.jqgrid.css"/>-->
+   <!-- <link rel="stylesheet" type="text/css" href="/css/jquery-ui.min.css"/>-->
+    <!-- <link rel="stylesheet" type="text/css" href="/css/ui-lightness/jquery-ui-1.8.16.custom.css"/>-->
+     <link rel="stylesheet" type="text/css" href="/css/hot-sneaks/jquery-ui-1.8.16.custom.css"/>
+     <link rel="stylesheet" type="text/css" href="/css/my.css"/>
+     <script src="/js/jquery-3.1.1.min.js"></script>
+     <!-- 包括所有已编译的插件 -->
+    <!--<script src="/js/jquery-ui.min.js"></script>-->
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/grid.locale-cn.js"></script>
-    <script src="/js/grid.jqueryui.js"></script>
+   <!-- <script src="/js/grid.jqueryui.js"></script>-->
     <script src="/js/jquery.jqGrid.min.js"></script>
     <style type="text/css">
         .ui-jqgrid .ui-jqgrid-titlebar{
             background: #FF6700;
             color:white;
             height: 50px;
-            line-height: 30px;
+            line-height: 50px;
             font-size: large;
+        }
+        th{
+            text-align: center;
+        }
+        td{
+            border-right-width:1px;
+            border-right-color:inherit;
+            border-right-style:solid;
         }
     </style>
 </head>
@@ -67,6 +77,7 @@
 <hr/>
 <center>
     <table id="list"></table>
+    <div id="pager"></div>
 </center>
 
     <script>
@@ -78,6 +89,8 @@
         }
         $(function () {
             $(".ui-jqgrid-titlebar-close").remove();
+            //$("#lui_list").remove();
+            $("#list_cb").remove();
             $('#myModal').modal('hide');
 
             $('#myModal').on('hide.bs.modal',
@@ -102,11 +115,11 @@
             mtype: 'GET',
             colNames: [ '会员识别码',  '积分', '注册时间'],
             colModel: [
-                {name: 'vipID', index: 'vipID', width: 100, align: "center"},
-                {name: 'score', index: 'score', width: 150, align: "center"},
-                {name: 'creatDate', index: 'creatDate', width: 150, align: "center"}
+                {name: 'vipID', index: 'vipID', width: 300, align: "left"},
+                {name: 'score', index: 'score', width: 50, align: "center"},
+                {name: 'creatDate', index: 'creatDate', width: 50, align: "center"}
             ],
-            rownumbers:true,
+            rownumbers:false,
             multiselect: true,
             multiboxonly:true,
             loadComplete: function () {
@@ -114,15 +127,19 @@
             },
             beforeSelectRow:function beforeSelectRow()
             {
-
+                $("#list").jqGrid('resetSelection');
+                return(true);
             },
             viewrecords: true,
-            loadonce:false,
+            loadonce:true,
             sortable: false,
 //width: 'auto',
-            width: '1000',
-            height: '540',
-            caption: "会员列表"
+            width: '1200',
+            height: '560',
+            caption: "会员列表",
+            pager:'#pager',
+            rowNum:10,
+            rowList:[10,30,50],
         })
 
 

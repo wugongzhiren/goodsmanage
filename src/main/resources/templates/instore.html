@@ -3,23 +3,45 @@
 <head>
     <title></title>
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
+    <!--<link rel="stylesheet" type="text/css" href="/css/ui.jqgrid.css"/>-->
+    <!-- <link rel="stylesheet" type="text/css" href="/css/jquery-ui.min.css"/>-->
+    <!-- <link rel="stylesheet" type="text/css" href="/css/ui-lightness/jquery-ui-1.8.16.custom.css"/>-->
+    <link rel="stylesheet" type="text/css" href="/css/hot-sneaks/jquery-ui-1.8.16.custom.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/my.css"/>
+    <script src="/js/jquery-3.1.1.min.js"></script>
+    <!-- 包括所有已编译的插件 -->
+    <!--<script src="/js/jquery-ui.min.js"></script>-->
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/grid.locale-cn.js"></script>
+    <!-- <script src="/js/grid.jqueryui.js"></script>-->
+    <script src="/js/jquery.jqGrid.min.js"></script>
+
+    <!--<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="/css/ui.jqgrid.css"/>
     <link rel="stylesheet" type="text/css" href="/css/jquery-ui.min.css"/>
     <link rel="stylesheet" type="text/css" href="/css/my.css"/>
     <script src="/js/jquery-3.1.1.min.js"></script>
-    <!-- 包括所有已编译的插件 -->
+    &lt;!&ndash; 包括所有已编译的插件 &ndash;&gt;
     <script src="/js/jquery-ui.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/grid.locale-cn.js"></script>
     <script src="/js/grid.jqueryui.js"></script>
-    <script src="/js/jquery.jqGrid.min.js"></script>
+    <script src="/js/jquery.jqGrid.min.js"></script>-->
 <style type="text/css">
     .ui-jqgrid .ui-jqgrid-titlebar{
         background: #FF6700;
         color:white;
         height: 50px;
-        line-height: 30px;
+        line-height: 50px;
         font-size: large;
+    }
+    th{
+        text-align: center;
+    }
+    td{
+        border-right-width:1px;
+        border-right-color:inherit;
+        border-right-style:solid;
     }
 </style>
 </head>
@@ -93,6 +115,7 @@
 </center>
 <script>
 $(function () {
+    $("#lui_goodsList").remove();
     $(".ui-jqgrid-titlebar-close").remove();
     $("#goodsList_cb").remove();
 })
@@ -178,14 +201,14 @@ $(function () {
         mtype: 'GET',
         colNames: ['条形码', '商品名', '商品类别', '特征', '单价', '库存数量'],
         colModel: [
-            {name: 'zxingCode', index: 'zxingCode', width: 100, align: "center"},
-            {name: 'goodsName', index: 'goodsName', width: 100, align: "center"},
-            {name: 'goodsType', index: 'goodsType', width: 150, align: "center"},
+            {name: 'zxingCode', index: 'zxingCode', width: 200, align: "center"},
+            {name: 'goodsName', index: 'goodsName', width: 150, align: "center"},
+            {name: 'goodsType', index: 'goodsType', width: 100, align: "center"},
             {name: 'goodsVersion', index: 'goodsVersion', width: 150, align: "center"},
             {name: 'price', index: 'price', width: 150, align: "center"},
-            {name: 'goodsCount', index: 'goodsCount', width: 150, align: "center"}
+            {name: 'goodsCount', index: 'goodsCount', width: 100, align: "center"}
         ],
-        rownumbers: true,
+        rownumbers: false,
         multiselect: true,
         multiboxonly: false,
         cellEdit: false,
@@ -199,12 +222,6 @@ $(function () {
         beforeSelectRow: function beforeSelectRow() {
             $("#goodsList").jqGrid('resetSelection');
             return(true);
-        },
-        onPaging: function(pgButton) {      //当点击翻页按钮但还为展现数据时触发此事件, 当然这跳转栏输入页
-            //码改变页时也同样触发此事件
-            alert(pgButton);   //first_booklistpage,  prev_booklistpage,  next_booklistpage,
-                               //last_booklistpage
-
         },
         onSelectRow: function(id) {
             /*alert('1');
@@ -223,17 +240,15 @@ $(function () {
             }*/
         },
         pager:"#pager",
-        rowNum : 10,
-        rowList : [ 10, 15,30 ],
-        jsonReader: {root:"dataList", page:"currPage", total:"totalpages",
-            records:"totalCount", repeatitems:false, id : "id"},
+        rowNum : 30,
+        rowList : [ 10,30 ],
         viewrecords: true,
-        loadonce: false,
+        loadonce: true,
         sortable: false,
         altclass: 'altRowsColor',
 //width: 'auto',
-        width: '90%',
-        height: '3000',
+        width: '100%',
+        height: '700',
         caption: "在库商品信息列表"
     })
 
