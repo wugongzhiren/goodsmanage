@@ -33,6 +33,8 @@
 <div style="margin-left: 145px">
     <input type="text" id="saleRatio" style="display: inline-block; width: 200px" class="form-control" placeholder="输入会员折扣率，如：8"/>折
     <button class="btn instoreBtn"  onclick="setSale()">确定</button>
+    <input type="text" id="vipPrice" style="display: inline-block; width: 200px" class="form-control" placeholder="输入会员价"/>
+    <button class="btn instoreBtn"  onclick="setVipPrice()">确定</button>
     <input style="display: inline-block;width: 200px;margin-left: 30px" type="text" id="salePrice" class="form-control" placeholder="输入特价商品折扣"/>
     <button class="btn instoreBtn" onclick="setSalePrice()">设置</button>
 </div>
@@ -52,7 +54,7 @@
     //设置打折商品价格
     function setSalePrice() {
         var curRowDataID = $("#goodsList").jqGrid("getGridParam", "selrow");
-        if (curRowDataID == null||curRowDataID.length>1) {
+        if (curRowDataID == null) {
             alert("请选择一条数据后进行操作");
             return ;
         }
@@ -81,6 +83,40 @@
                     reload();
                     alert("设置成功")
                 }})
+
+    }
+    
+    function setVipPrice() {
+        var curRowDataID = $("#goodsList").jqGrid("getGridParam", "selrow");
+        if (curRowDataID == null) {
+            alert("请选择一条数据后进行操作");
+            return ;
+        }
+        var rowData = $("#goodsList").jqGrid("getRowData", curRowDataID);
+        var vipPrice=$("#vipPrice").val();
+        //验证为金额
+        var isNum=/^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/;
+        var reM = new RegExp(isNum);
+        if(vipPrice.match(reM)==null){
+            alert("请输入正确的金额!");
+            return;
+        }
+
+        $.ajax({
+            url: '/setVipPrice',
+            type: "get",
+            data: {
+                zxingCode: rowData["zxingCode"],
+                saleprice:vipPrice
+            },
+            error: function (error) {
+                alert("系统异常，请重新操作")
+            },
+            success: function (data) {
+                $("#salePrice").val("");
+                reload();
+                alert("设置成功")
+            }})
 
     }
     //设置打折优惠

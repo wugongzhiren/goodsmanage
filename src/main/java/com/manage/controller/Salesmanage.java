@@ -87,6 +87,7 @@ public class Salesmanage {
 
         //合计价格，不是应付款,应该是会员打折前的合计价格
         BigDecimal originPrice=new BigDecimal(0.00);
+        System.out.print(saleGoodsDetails);
         List<Goods> retList = Factory.getGson().fromJson(saleGoodsDetails,
                 new TypeToken<List<Goods>>() {
                 }.getType());

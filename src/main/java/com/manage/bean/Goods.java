@@ -18,13 +18,14 @@ public class Goods {
     private String zxingCode;//条形码code
     private BigDecimal price;//商品单价，原价
     private String salePrice;//当前商品折扣价
-    private String denouncePrice;//优惠了多少钱：原价-折扣价
+    private String denouncePrice;//优惠了多少钱：原价-特价
+    private  String vipDenouncePrice;//原价-会员折扣价（折扣或者会员价）
     private String goodsType;//商品分类
     private String goodsName;//商品名称
     private int goodsCount;//商品在库数量
     private String goodsVersion;//商品型号
     private String resultCode;
-
+private String vipPrice;//会员价
     private int addCount;//非第一次入库用于商品增加进货数量
 
     private String goodsDescs;//商品说明，如今日特价9.9等
@@ -33,6 +34,22 @@ public class Goods {
 
     private String instoreDate;//入库时间
     public Goods() {
+    }
+
+    public String getVipDenouncePrice() {
+        return vipDenouncePrice;
+    }
+
+    public void setVipDenouncePrice(String vipDenouncePrice) {
+        this.vipDenouncePrice = vipDenouncePrice;
+    }
+
+    public String getVipPrice() {
+        return vipPrice;
+    }
+
+    public void setVipPrice(String vipPrice) {
+        this.vipPrice = vipPrice;
     }
 
     public String getInstoreDate() {

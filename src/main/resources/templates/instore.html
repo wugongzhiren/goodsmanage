@@ -84,13 +84,20 @@
             <input id="goodsCount" class="form-control" style="width: 280px;ime-mode:disabled;" type="text"/>
         </div>
         <div class="info">
+            <div class="labelTitle">会员价</div>
+            <input id="vipPrice" class="form-control" style="width: 280px;ime-mode:disabled;" type="text"/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="info">
             <div class="labelTitle"></div>
             <button class="btn instoreBtn" onclick="instore()">
                 入库,生成商品标签
             </button>
         </div>
-    </div>
 
+    </div>
+<hr/>
     <div style="height: 50px;width:  90%;margin-left: 60px;margin-top: 20px; font-size: 16px;font-weight: 400;line-height: 50px;border-left: 4px solid #ff6700;background-color: #eee;color: #333;">
         如果商品之前已经入库过，请查询后填入对应商品的入库数量
     </div>
@@ -137,6 +144,7 @@ $(function () {
         var goodsVersion = $("#goodsVersion").val();
         var goodsCount = $("#goodsCount").val();
         var price = $("#price").val();
+        var vipPrice=$("#vipPrice").val();
         if (goodsName == "" || goodsVersion == "" || goodsCount == "" || price == "" || goodsType == "") {
             alert('请输入完整的入库信息');
             return;
@@ -160,6 +168,10 @@ $(function () {
             alert("请输入正确的金额!");
             return;
         }
+        if(vipPrice.match(reM)==null){
+            alert("请输入正确的金额!");
+            return;
+        }
 
         //后台通信，保存信息到数据库
         $.ajax({
@@ -171,7 +183,8 @@ $(function () {
                 goodsType: goodsType,
                 goodsVersion: goodsVersion,
                 goodsCount: goodsCount,
-                price: price
+                price: price,
+                vipPrice:vipPrice
             },
             error: function (error) {
                 alert("系统异常，请重新操作")
@@ -183,6 +196,7 @@ $(function () {
                     $("#goodsVersion").val("");
                      $("#goodsCount").val("");
                     $("#price").val("");
+                    $("#vipPrice").val("");
                     alert("操作成功")
                 }
                 if(data=="101") {
@@ -199,13 +213,14 @@ $(function () {
         url: "/getGoodsInfo",
         datatype: "local",
         mtype: 'GET',
-        colNames: ['条形码', '商品名', '商品类别', '特征', '单价', '库存数量'],
+        colNames: ['条形码', '商品名', '商品类别', '特征', '单价','会员价', '库存数量'],
         colModel: [
             {name: 'zxingCode', index: 'zxingCode', width: 200, align: "center"},
             {name: 'goodsName', index: 'goodsName', width: 150, align: "center"},
             {name: 'goodsType', index: 'goodsType', width: 100, align: "center"},
             {name: 'goodsVersion', index: 'goodsVersion', width: 150, align: "center"},
             {name: 'price', index: 'price', width: 150, align: "center"},
+            {name: 'vipPrice', index: 'vipPrice', width: 150, align: "center"},
             {name: 'goodsCount', index: 'goodsCount', width: 100, align: "center"}
         ],
         rownumbers: false,

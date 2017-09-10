@@ -31,40 +31,73 @@ public class CustomerVIPManage {
     CustomerVIPRepository repository;
     @Autowired
     SettingRepository settingRepository;
+
     /**
      * 创建会员账号
      *
      * @param identityCode 会员识别码
-     * @param  vipID 手机号码
+     * @param vipID        手机号码
      * @return
      */
-    @RequestMapping(value = "/creatVIP", method = RequestMethod.GET)
-    public String creatVIP(@RequestParam String identityCode,@RequestParam String vipID) {
+    @RequestMapping(value = "/creatVIP", method = RequestMethod.POST)
+    public String creatVIP(@RequestParam String identityCode, @RequestParam String vipID, @RequestParam String vipName, @RequestParam String vipSex
+            , @RequestParam String vipCard, @RequestParam String diff) {
         CustomerVIP vip = null;
-        if(identityCode!=null&&!"".equals(identityCode)) {
-            vip = repository.findByVipID(identityCode);
+        vip = repository.findByVipID(identityCode);
+        if ("E".equals(diff)) {
             if (vip != null) {
-                return Constant.RESULT_EXIST;
+                vip.setPhoneNum(vipID);
+                vip.setVipCard(vipCard);
+                vip.setVipName(vipName);
+                if (vipCard != null && !"".equals(vipCard)) {
+                    vip.setBirthdate(vipCard.substring(6, 10) + "-" + vipCard.substring(10, 12) + "-" + vipCard.substring(12, 14));
+                }
+                if ("1".equals(vipSex)) {
+                    vip.setVipSex("男");
+                } else {
+                    vip.setVipSex("女");
+                }
+                repository.save(vip);
             }
-        }
-        if(vipID!=null&&!"".equals(vipID)){
-            vip=repository.findByPhoneNum(vipID);
-            if (vip != null) {
-                return Constant.RESULT_EXIST;
-            }
-        }
-        vip = new CustomerVIP();
-        vip.setVipID("".equals(identityCode)?null:identityCode);
-        vip.setScore(new BigDecimal(0));
-        vip.setPhoneNum("".equals(vipID)?null:vipID);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        vip.setCreatDate(sdf.format(new Date()));
-        try {
-            repository.save(vip);
             return Constant.RESULT_SUCCESS;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Constant.RESULT_FAIL;
+        } else {
+
+            if (identityCode != null && !"".equals(identityCode)) {
+
+                if (vip != null) {
+                    return Constant.RESULT_EXIST;
+                }
+            }
+            if (vipID != null && !"".equals(vipID)) {
+                vip = repository.findByPhoneNum(vipID);
+                if (vip != null) {
+                    return Constant.RESULT_PHONEEXIST;
+                }
+            }
+            vip = new CustomerVIP();
+            vip.setVipID("".equals(identityCode) ? null : identityCode);
+            vip.setScore(new BigDecimal(0));
+            vip.setPhoneNum("".equals(vipID) ? null : vipID);
+            vip.setVipName("".equals(vipName) ? null : vipName);
+            if ("1".equals(vipSex)) {
+                vip.setVipSex("男");
+            } else {
+                vip.setVipSex("女");
+            }
+            if (vipCard != null && !"".equals(vipCard)) {
+                vip.setBirthdate(vipCard.substring(6, 10) + "-" + vipCard.substring(10, 12) + "-" + vipCard.substring(12, 14));
+            }
+            vip.setVipCard("".equals(vipCard) ? null : vipCard);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            vip.setStatus("有效");
+            vip.setCreatDate(sdf.format(new Date()));
+            try {
+                repository.save(vip);
+                return Constant.RESULT_SUCCESS;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return Constant.RESULT_FAIL;
+            }
         }
     }
 
@@ -79,22 +112,21 @@ public class CustomerVIPManage {
 
         CustomerVIP vip = repository.findByVipID(identityCode);
         if (vip == null) {
-            vip=repository.findByPhoneNum(identityCode);
-            if(vip == null) {
+            vip = repository.findByPhoneNum(identityCode);
+            if (vip == null) {
                 vip = new CustomerVIP();
                 vip.setResultCode(Constant.RESULT_FAIL);
                 return vip;
             }
         }
-            Setting setting=settingRepository.findBySetType(Constant.SETTING_SALE);
-            if(setting!=null){
-                vip.setSaleRatio(new BigDecimal(setting.getSetContent()));
-            }
-            else {
-                vip.setSaleRatio(new BigDecimal("10"));
-            }
-            vip.setResultCode(Constant.RESULT_SUCCESS);
-            return vip;
+        Setting setting = settingRepository.findBySetType(Constant.SETTING_SALE);
+        if (setting != null) {
+            vip.setSaleRatio(new BigDecimal(setting.getSetContent()));
+        } else {
+            vip.setSaleRatio(new BigDecimal("10"));
+        }
+        vip.setResultCode(Constant.RESULT_SUCCESS);
+        return vip;
 
     }
 
@@ -108,18 +140,66 @@ public class CustomerVIPManage {
     public List<CustomerVIP> getVIPScore(@RequestParam String identityCode) {
         List<CustomerVIP> vipList = new ArrayList<>();
         CustomerVIP vip;
-        if(identityCode==""||identityCode==null){
+        if (identityCode == "" || identityCode == null) {
             return repository.findAll();
         }
-            vip=repository.findByVipID(identityCode);
-            if(vip==null){
-                return vipList;
-            }
-            vipList.add(vip);
+        vip = repository.findByVipID(identityCode);
+        if (vip == null) {
             return vipList;
-            //boolean
+        }
+        vipList.add(vip);
+        return vipList;
+        //boolean
 
         //return repository.findByVipID(identityCode).getScore() + "";
+    }
+
+    /**
+     * 更新
+     *
+     * @param identityCode 会员识别码
+     * @return
+     */
+    @RequestMapping(value = "/updateVIP", method = RequestMethod.GET)
+    public String updateVIP(@RequestParam String identityCode) {
+        CustomerVIP vip = null;
+        vip = repository.findByVipID(identityCode);
+        if (vip != null) {
+            vip.setStatus("无效");
+            repository.save(vip);
+        }
+        return Constant.RESULT_SUCCESS;
+        //boolean
+
+        //return repository.findByVipID(identityCode).getScore() + "";
+    }
+
+    /**
+     * 禁用会员
+     *
+     * @param identityCode 会员识别码或者手机号码
+     * @return
+     */
+    @RequestMapping(value = "/stopUse", method = RequestMethod.GET)
+    public String stopUse(@RequestParam String identityCode, @RequestParam String diff) {
+        CustomerVIP vip = repository.findByVipID(identityCode);
+        //无效化
+        if ("1".equals(diff)) {
+            if (vip != null) {
+                vip.setStatus("无效");
+                repository.save(vip);
+                return Constant.RESULT_SUCCESS;
+            }
+            else{
+                return Constant.RESULT_FAIL;
+            }
+        } else {
+            vip.setStatus("有效");
+            repository.save(vip);
+            return Constant.RESULT_SUCCESS;
+        }
+
+
     }
 
     /**
@@ -130,7 +210,7 @@ public class CustomerVIPManage {
      */
     public String addScore(String identityCode, String score) {
         try {
-           // long scoreTemp = repository.findByVipID(identityCode).getScore();
+            // long scoreTemp = repository.findByVipID(identityCode).getScore();
             //long scoreRe = scoreTemp + Long.parseLong(score);
             CustomerVIP vip = new CustomerVIP();
             vip.setVipID(identityCode);

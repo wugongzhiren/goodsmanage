@@ -131,7 +131,7 @@ public class Goodsmanage {
      */
     @RequestMapping(value = "/instore", method = RequestMethod.POST)
     public String instore(@RequestParam String zxing,@RequestParam String goodsName, @RequestParam String goodsType, @RequestParam String goodsVersion,
-                          @RequestParam String goodsCount, @RequestParam String price) throws FormatException {
+                          @RequestParam String goodsCount, @RequestParam String price,@RequestParam String vipPrice) throws FormatException {
         //已经有条码了
         if(zxing!=""&&zxing!=null){
 
@@ -149,6 +149,7 @@ public class Goodsmanage {
             //可能出现数字转化异常
             goods.setGoodsCount(Integer.parseInt(goodsCount));
             goods.setPrice(new BigDecimal(price));
+            goods.setVipPrice(vipPrice);
             goods.setInstoreDate(LocalDate.now().toString());
             //保存商品信息到数据库
             goodsRepository.save(goods);
@@ -177,17 +178,11 @@ public class Goodsmanage {
             //生成标签图片
             Pic.makeZxingPic2(zxingCode, goodsVersion, price.toString());
             MyTickesprinter myTickesprinter=new MyTickesprinter();
+            //打印标签
             for(int i=0;i<Integer.parseInt(goodsCount);i++) {
                 myTickesprinter.mygoodsprint(new GoodsInfoPrint(zxingCode, goodsVersion, price));
             }
-            //打印条码
-            //MyTickesprinter myTickesprinter=new MyTickesprinter();
-            //myTickesprinter.mygoodsprint(new GoodsInfoPrint(zxingCode));
             try {
-                //条码中加文字
-               // Print.makeZxingPic(zxingCode, goodsVersion, price.toString());
-               // Print.printCommon("d:/goodsinfo.png", null, Integer.parseInt(goodsCount));
-
                 Goods goods = new Goods();
                 goods.setZxingCode(zxingCode);
                 //名称
@@ -199,6 +194,7 @@ public class Goodsmanage {
                 //可能出现数字转化异常
                 goods.setGoodsCount(Integer.parseInt(goodsCount));
                 goods.setPrice(new BigDecimal(price));
+                goods.setVipPrice(vipPrice);
                 goods.setInstoreDate(LocalDate.now().toString());
                 //保存商品信息到数据库
                 goodsRepository.save(goods);
@@ -278,8 +274,25 @@ public class Goodsmanage {
 
 
     }
+
     /**
-     * 设置优惠价格
+     * 设置会员价格
+     *
+     * @return
+     */
+    @RequestMapping(value = "/setVipPrice", method = RequestMethod.GET)
+    public String setVipPrice(@RequestParam String zxingCode, @RequestParam String saleprice) {
+        Goods goods = goodsRepository.findByZxingCode(zxingCode);
+        if (goods != null) {
+            goods.setVipPrice(saleprice);
+            //goods.setDenouncePrice(goods.getPrice().subtract(new BigDecimal(saleprice)).toString());
+            goodsRepository.save(goods);
+        }
+        return Constant.RESULT_SUCCESS;
+    }
+
+    /**
+     * 恢复原价格
      *
      * @return
      */

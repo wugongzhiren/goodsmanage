@@ -20,9 +20,55 @@ public class CustomerVIP {
     private BigDecimal score;//会员积分
     private String phoneNum;//手机号码
     private String creatDate;//注册时间
-private BigDecimal saleRatio;//会员打折率
+    private BigDecimal saleRatio;//会员打折率
+    private String vipName;//姓名
+    private String vipSex;//性别
+    private String birthdate;//出生日期
+    private String vipCard;//身份证号码
+
+    private String status;//状态，有效，无效
     private String resultCode;//统一处理结果码
     public CustomerVIP() {
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getVipName() {
+        return vipName;
+    }
+
+    public void setVipName(String vipName) {
+        this.vipName = vipName;
+    }
+
+    public String getVipSex() {
+        return vipSex;
+    }
+
+    public void setVipSex(String vipSex) {
+        this.vipSex = vipSex;
+    }
+
+    public String getBirthdate() {
+        return birthdate;
+    }
+
+    public void setBirthdate(String birthdate) {
+        this.birthdate = birthdate;
+    }
+
+    public String getVipCard() {
+        return vipCard;
+    }
+
+    public void setVipCard(String vipCard) {
+        this.vipCard = vipCard;
     }
 
     public BigDecimal getSaleRatio() {

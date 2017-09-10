@@ -103,7 +103,7 @@ border: none;
             url: "/getGoodsInfoAll",
             datatype: "local",
             mtype: 'GET',
-            colNames: [ '条形码', '商品名', '商品类别', '特征','单价','折扣价', '数量'],
+            colNames: [ '条形码', '商品名', '商品类别', '特征','原价','折扣价','会员价', '数量'],
             colModel: [
                 {name: 'zxingCode', index: 'zxingCode', width: 150, align: "center"},
                 {name: 'goodsName', index: 'goodsName', width: 150, align: "center"},
@@ -111,6 +111,7 @@ border: none;
                 {name: 'goodsVersion', index: 'goodsVersion', width: 150, align: "center"},
                 {name: 'price', index: 'price', width: 150, align: "center"},
                 {name: 'salePrice', index: 'salePrice', width: 150, align: "center"},
+                {name: 'vipPrice', index: 'vipPrice', width: 150, align: "center"},
                 {name: 'goodsCount', index: 'goodsCount', width: 100, align: "center"}
             ],
             rownumbers:false,

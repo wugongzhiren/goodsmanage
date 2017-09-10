@@ -4,32 +4,34 @@
     <title></title>
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
     <!--<link rel="stylesheet" type="text/css" href="/css/ui.jqgrid.css"/>-->
-   <!-- <link rel="stylesheet" type="text/css" href="/css/jquery-ui.min.css"/>-->
+    <!-- <link rel="stylesheet" type="text/css" href="/css/jquery-ui.min.css"/>-->
     <!-- <link rel="stylesheet" type="text/css" href="/css/ui-lightness/jquery-ui-1.8.16.custom.css"/>-->
-     <link rel="stylesheet" type="text/css" href="/css/hot-sneaks/jquery-ui-1.8.16.custom.css"/>
-     <link rel="stylesheet" type="text/css" href="/css/my.css"/>
-     <script src="/js/jquery-3.1.1.min.js"></script>
-     <!-- 包括所有已编译的插件 -->
+    <link rel="stylesheet" type="text/css" href="/css/hot-sneaks/jquery-ui-1.8.16.custom.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/my.css"/>
+    <script src="/js/jquery-3.1.1.min.js"></script>
+    <!-- 包括所有已编译的插件 -->
     <!--<script src="/js/jquery-ui.min.js"></script>-->
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/grid.locale-cn.js"></script>
-   <!-- <script src="/js/grid.jqueryui.js"></script>-->
+    <!-- <script src="/js/grid.jqueryui.js"></script>-->
     <script src="/js/jquery.jqGrid.min.js"></script>
     <style type="text/css">
-        .ui-jqgrid .ui-jqgrid-titlebar{
+        .ui-jqgrid .ui-jqgrid-titlebar {
             background: #FF6700;
-            color:white;
+            color: white;
             height: 50px;
             line-height: 50px;
             font-size: large;
         }
-        th{
+
+        th {
             text-align: center;
         }
-        td{
-            border-right-width:1px;
-            border-right-color:inherit;
-            border-right-style:solid;
+
+        td {
+            border-right-width: 1px;
+            border-right-color: inherit;
+            border-right-style: solid;
         }
     </style>
 </head>
@@ -48,9 +50,18 @@
             <!--//模态框内容-->
             <div class="modal-body">
                 二维码：
-                <input class="form-control" id="identyCode" onkeypress="scanEnter()" type="text" placeholder="扫描微信二维码    " />
-                识别码(选填)：
-                <input class="form-control" id="phoneNum" type="text" placeholder="请输入手机号码或者QQ或者微信号" />
+                <input class="form-control" id="identyCode" onkeypress="scanEnter()" type="text"
+                       placeholder="扫描微信二维码    "/>
+                手机号码：
+                <input class="form-control" maxlength="11" id="phoneNum" type="text" placeholder="请输入手机号码"/>
+                姓名(选填)：
+                <input class="form-control" maxlength="10" id="vipName" type="text" placeholder="请输入姓名"/>
+                性别(选填)：
+                <label><input type="radio" checked="checked" name="vipSex" value="1"/>男</label>
+                <label><input type="radio" name="vipSex" value="2"/>女</label>
+                <br/>
+                身份证(选填)：
+                <input class="form-control" id="vipCard" maxlength="18" type="text" placeholder="请输入身份证号码"/>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default"
@@ -64,15 +75,20 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <div style="width: 90%; background: white;margin: 40px;">
-    <div class="instoreTitle" style="margin-left:60px;margin-top: 20px;font-size: 36px;font-weight: 400;line-height: 68px;color: #b0b0b0;">
+    <div class="instoreTitle"
+         style="margin-left:60px;margin-top: 20px;font-size: 36px;font-weight: 400;line-height: 68px;color: #b0b0b0;">
         <h1>会员积分信息查询与新会员注册</h1></div>
 </div>
 <hr/>
 <input id="vipID" class="form-control" style="width: 300px;margin-left: 150px" type="text" placeholder="输入会员识别码"/>
 <br/>
 <div style="margin-left: 150px">
-<button class="btn instoreBtn" onclick="reloadList()">查询</button>
-<button class="btn instoreBtn" data-toggle="modal" data-target="#myModal">会员开户</button>
+    <button class="btn instoreBtn" onclick="reloadList()">查询</button>
+    <button class="btn instoreBtn" data-toggle="modal" data-target="#myModal">会员开户</button>
+    <button class="btn instoreBtn" onclick="editInfo()">编辑</button>
+    <button class="btn instoreBtn" onclick="stopUse()">禁用</button>
+    <button class="btn instoreBtn" onclick="resumeUse()">恢复使用</button>
+    <button class="btn instoreBtn" onclick="deluse()">删除</button>
 </div>
 <hr/>
 <center>
@@ -80,119 +96,197 @@
     <div id="pager"></div>
 </center>
 
-    <script>
-
-        function scanEnter() {
-            if(event.keyCode==13){
-                $("#phoneNum").focus();
-            }
+<script>
+    var diff="A";
+    //用户信息编辑
+    function editInfo() {
+        var curRowDataID = $("#list").jqGrid("getGridParam", "selrow");
+        // $('#goodsList').jqGrid("saveRow", "6");
+        if (curRowDataID == null) {
+            alert("请选择一条数据后进行操作");
+            return;
         }
-        $(function () {
-            $(".ui-jqgrid-titlebar-close").remove();
-            //$("#lui_list").remove();
-            $("#list_cb").remove();
-            $('#myModal').modal('hide');
+        var rowData = $("#list").jqGrid("getRowData", curRowDataID);
+        var identyCode = rowData["vipID"];
+        var phone = rowData["phoneNum"];
+        var name = rowData["vipName"];
+        var sex = rowData["vipSex"];
+        var idcard = rowData["vipCard"];
+        //模态框赋值
+        $("#identyCode").val(identyCode);
+        $("#identyCode").attr("disabled",true);
+        $("#phoneNum").val(phone);
+        $("#vipName").val(name);
+        $("#vipCard").val(idcard);
+        $("input[name='vipSex']").get(0).checked = true;
+        if (sex == "男") {
+            $("input[name='vipSex']").get(0).checked = true;
+        }
+        if (sex == "女") {
+            $("input[name='vipSex']").get(1).checked = true;
+        }
+        else {
+            $("input[name='vipSex']").get(0).checked = true;
+        }
+        diff="E";
+        $('#myModal').modal('show');
+        //后台通信，保存信息到数据库
+    }
+    //禁用
+    function stopUse() {
+        var curRowDataID = $("#list").jqGrid("getGridParam", "selrow");
+        // $('#goodsList').jqGrid("saveRow", "6");
+        if (curRowDataID == null) {
+            alert("请选择一条数据后进行操作");
+            return;
+        }
+        var rowData = $("#list").jqGrid("getRowData", curRowDataID);
+        var identyCode = rowData["vipID"];
+        //后台通信，保存信息到数据库
+        $.ajax({
+            url: '/stopUse',
+            type: "get",
+            data: {
+                identityCode: identyCode,
+            },
+            error: function (error) {
+                alert("抱歉，系统异常，请刷新后重新操作")
+            },
+            success: function (data) {
+                reloadList();
+            }});
+    }
+    function scanEnter() {
+        if (event.keyCode == 13) {
+            $("#phoneNum").focus();
+        }
+    }
+    $(function () {
+        $(".ui-jqgrid-titlebar-close").remove();
+        //$("#lui_list").remove();
+        $("#list_cb").remove();
+        $('#myModal').modal('hide');
 
-            $('#myModal').on('hide.bs.modal',
-                function() {
+        $('#myModal').on('hide.bs.modal',
+            function () {
                 //对话框关闭时清空
-                    $("#identyID").val("");
-                    $("#phoneNum").val("");
-                })
-
-            $('#myModal').on('shown.bs.modal',
-                function() {
-                    //对话框关闭时清空
-                    $("#identyCode").focus();
-                    $("#phoneNum").val("");
-                })
-        })
-
-
-        jQuery("#list").jqGrid({
-            url: "/getVIPInfo",
-            datatype: "local",
-            mtype: 'GET',
-            colNames: [ '会员识别码',  '积分', '注册时间'],
-            colModel: [
-                {name: 'vipID', index: 'vipID', width: 300, align: "left"},
-                {name: 'score', index: 'score', width: 50, align: "center"},
-                {name: 'creatDate', index: 'creatDate', width: 50, align: "center"}
-            ],
-            rownumbers:false,
-            multiselect: true,
-            multiboxonly:true,
-            loadComplete: function () {
-
-            },
-            beforeSelectRow:function beforeSelectRow()
-            {
-                $("#list").jqGrid('resetSelection');
-                return(true);
-            },
-            viewrecords: true,
-            loadonce:true,
-            sortable: false,
-//width: 'auto',
-            width: '1200',
-            height: '560',
-            caption: "会员列表",
-            pager:'#pager',
-            rowNum:10,
-            rowList:[10,30,50],
-        })
-
-
-        //会员开户
-        function vipReg() {
-            var vipID=$("#phoneNum").val();
-            var identyCode=$("#identyCode").val();
-            /*<![CDATA[*/
-            if(vipID==""&&identyCode==""){
-                /*]]>*/
-                return;
-            }
-
-            //后台通信，保存信息到数据库
-            $.ajax({
-                url: '/creatVIP',
-                type: "get",
-                data: {
-                    vipID: vipID,
-                    identityCode:identyCode
-                },
-                error: function (error) {
-                    alert("抱歉，系统异常，请刷新后重新操作")
-                },
-                success: function (data) {
-                    if(data=="100") {
-                        alert("操作成功");
-                        $('#myModal').modal('hide')
-                        return;
-                    }
-                    if(data=="102") {
-                        alert("已经注册过，请直接使用");
-                        return;
-                    }
-                    if(data=="101"){
-                        alert("操作失败")
-                        return;
-                    }
-                }
+                $("#identyCode").val("");
+                $("#phoneNum").val("");
+                $("#vipName").val("");
+                $("input[name='vipSex']").get(0).checked = true;
+                $("#vipCard").val("");
+                $("#identyCode").removeAttr("disabled");
             })
+
+        $('#myModal').on('shown.bs.modal',
+            function () {
+                //对话框关闭时清空
+                $("#identyCode").focus();
+            })
+    })
+
+
+    jQuery("#list").jqGrid({
+        url: "/getVIPInfo",
+        datatype: "local",
+        mtype: 'GET',
+        colNames: ['会员识别码', '手机号码', '姓名', '积分', '性别', '出生日期', '身份证', '使用状态', '注册时间'],
+        colModel: [
+            {name: 'vipID', index: 'vipID', hidden: true},
+            {name: 'phoneNum', index: 'phoneNum', width: 50, align: "center"},
+            {name: 'vipName', index: 'vipName', width: 50, align: "center"},
+            {name: 'score', index: 'score', width: 50, align: "center"},
+            {name: 'vipSex', index: 'vipSex', width: 50, align: "center"},
+            {name: 'birthdate', index: 'birthdate', width: 50, align: "center"},
+            {name: 'vipCard', index: 'vipCard', width: 100, align: "center"},
+            {name: 'status', index: 'status', width: 100, align: "center"},
+            {name: 'creatDate', index: 'creatDate', width: 100, align: "center"}
+        ],
+        rownumbers: false,
+        multiselect: true,
+        multiboxonly: true,
+        loadComplete: function () {
+
+        },
+        beforeSelectRow: function beforeSelectRow() {
+            $("#list").jqGrid('resetSelection');
+            return (true);
+        },
+        viewrecords: true,
+        loadonce: true,
+        sortable: false,
+//width: 'auto',
+        width: '1200',
+        height: '560',
+        caption: "会员列表",
+        pager: '#pager',
+        rowNum: 10,
+        rowList: [10, 30, 50],
+    })
+
+
+    //会员开户
+    function vipReg() {
+        var vipID = $("#phoneNum").val();
+        var identyCode = $("#identyCode").val();
+        var vipName = $("#vipName").val();
+        var vipSex = $('input:radio:checked').val();
+        ;
+        var vipCard = $("#vipCard").val();
+        /*<![CDATA[*/
+        if (vipID == "" && identyCode == "") {
+            /*]]>*/
+            return;
         }
 
-        //会员列表重新加载
-        function reloadList() {
-            var vipid=$("#vipID").val();
-            $("#list").jqGrid('setGridParam',{
-                datatype:'json',
-                mtype: 'GET',
-                postData:{'identityCode':vipid} //发送数据
-                /*page:1*/
-            }).trigger("reloadGrid"); //重新载入
-        }
-    </script>
+        //后台通信，保存信息到数据库
+        $.ajax({
+            url: '/creatVIP',
+            type: "post",
+            data: {
+                vipID: vipID,
+                identityCode: identyCode,
+                vipName: vipName,
+                vipSex: vipSex,
+                vipCard: vipCard,
+                diff:diff
+            },
+            error: function (error) {
+                alert("抱歉，系统异常，请刷新后重新操作")
+            },
+            success: function (data) {
+                if (data == "100") {
+                    alert("操作成功");
+                    $('#myModal').modal('hide')
+                    return;
+                }
+                if (data == "102") {
+                    alert("已经注册过，请直接使用");
+                    return;
+                }
+                if (data == "103") {
+                    alert("手机号码已经被使用过，请更换");
+                    return;
+                }
+                if (data == "101") {
+                    alert("操作失败")
+                    return;
+                }
+            }
+        })
+    }
+
+    //会员列表重新加载
+    function reloadList() {
+        var vipid = $("#vipID").val();
+        $("#list").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {'identityCode': vipid} //发送数据
+            /*page:1*/
+        }).trigger("reloadGrid"); //重新载入
+    }
+</script>
 </body>
 
 </html>

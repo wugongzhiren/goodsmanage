@@ -384,16 +384,18 @@
         {
             url: '/getInstoreInfo',//组件创建完成之后请求数据的url
             datatype: "local",//请求数据返回的类型。可选json,xml,txt
-            colNames: ['条形码', '分类', '商品名', '商品单价', '打折价', '购买数量', '备注', '促销折扣额', '合计'],//jqGrid的列显示名字
+            colNames: ['条形码', '分类', '商品名', '原价', '促销价','会员价', '购买数量', '备注', '促销折扣额','会员折扣额', '合计'],//jqGrid的列显示名字
             colModel: [
                 {name: 'zxingCode', index: 'zxingCode', width: 300, align: "center"},
                 {name: 'goodsType', index: 'goodsType', hidden: true},
                 {name: 'goodsName', index: 'goodsName', width: 150, align: "center"},
                 {name: 'price', index: 'price', width: 150, align: "center"},
                 {name: 'salePrice', index: 'salePrice', hidden: true},
+                {name: 'vipPrice', index: 'vipPrice', width: 150, align: "center"},
                 {name: 'goodsCount', index: 'goodsCount', width: 150, align: "center"},
                 {name: 'goodsDescs', index: 'goodsDescs', hidden: true},
                 {name: 'denouncePrice', index: 'denouncePrice',hidden: true},
+                {name: 'vipDenouncePrice', index: 'vipDenouncePrice',hidden: true},
                 {name: 'sumPrice', index: 'sumPrice', width: 150, align: "center"}
 
             ],
