@@ -92,10 +92,13 @@
         <div class="info">
             <div class="labelTitle"></div>
             <button class="btn instoreBtn" onclick="instore()">
-                入库,生成商品标签
+                入库，生成商品标签
             </button>
         </div>
-
+        <div class="info">
+            <div class="labelTitle"></div>
+            <label><input id="printFlag" type="checkbox" value="1" />打印条码</label>
+        </div>
     </div>
 <hr/>
     <div style="height: 50px;width:  90%;margin-left: 60px;margin-top: 20px; font-size: 16px;font-weight: 400;line-height: 50px;border-left: 4px solid #ff6700;background-color: #eee;color: #333;">
@@ -138,6 +141,13 @@ $(function () {
      * 商品入库操作
      */
     function instore() {
+        var printFlag= $("#printFlag").get(0).checked;
+        if(printFlag){
+            printFlag=1;
+        }
+        else{
+            printFlag=0;
+        }
         var zxing =$("#zxing").val();
         var goodsName = $("#goodsName").val();
         var goodsType = $("#goodsType").val();
@@ -184,7 +194,8 @@ $(function () {
                 goodsVersion: goodsVersion,
                 goodsCount: goodsCount,
                 price: price,
-                vipPrice:vipPrice
+                vipPrice:vipPrice,
+                printFlag:printFlag
             },
             error: function (error) {
                 alert("系统异常，请重新操作")

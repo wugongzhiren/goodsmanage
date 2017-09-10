@@ -131,7 +131,7 @@ public class Goodsmanage {
      */
     @RequestMapping(value = "/instore", method = RequestMethod.POST)
     public String instore(@RequestParam String zxing,@RequestParam String goodsName, @RequestParam String goodsType, @RequestParam String goodsVersion,
-                          @RequestParam String goodsCount, @RequestParam String price,@RequestParam String vipPrice) throws FormatException {
+                          @RequestParam String goodsCount, @RequestParam String price,@RequestParam String vipPrice,@RequestParam String printFlag) throws FormatException {
         //已经有条码了
         if(zxing!=""&&zxing!=null){
 
@@ -155,32 +155,35 @@ public class Goodsmanage {
             goodsRepository.save(goods);
             return Constant.RESULT_SUCCESS;
         }else {
-            //构造入库条形码
             ZxingEAN13EncoderHandler handler = new ZxingEAN13EncoderHandler();
             String zxingCode = handler.generateZxing();
-            String path = "d:/zxing/";
-            File file = new File(path);
-            if (!file.exists()) {
-                file.mkdirs();
-            }
-            String path1 = "d:/goodspic/";
-            File file1 = new File(path1);
-            if (!file1.exists()) {
-                file1.mkdirs();
-            }
-            if (Constant.RESULT_FAIL.equals(zxingCode)) {
-                return Constant.RESULT_FAIL;
-            }
-            //生成条形码图片
-            handler.encode2(zxingCode, 24, 24, "d:/zxing2/");
-            //handler.encode(zxingCode, 116, 24, "d:/zxing/zxing_EAN13.png");
-            //handler.encode(zxingCode, 60, 24, "d:/zxing/zxing_EAN13.png");
-            //生成标签图片
-            Pic.makeZxingPic2(zxingCode, goodsVersion, price.toString());
-            MyTickesprinter myTickesprinter=new MyTickesprinter();
-            //打印标签
-            for(int i=0;i<Integer.parseInt(goodsCount);i++) {
-                myTickesprinter.mygoodsprint(new GoodsInfoPrint(zxingCode, goodsVersion, price));
+            System.out.print(printFlag);
+            if("1".equals(printFlag)) {
+                //构造入库条形码
+                String path = "d:/zxing/";
+                File file = new File(path);
+                if (!file.exists()) {
+                    file.mkdirs();
+                }
+                String path1 = "d:/goodspic/";
+                File file1 = new File(path1);
+                if (!file1.exists()) {
+                    file1.mkdirs();
+                }
+                if (Constant.RESULT_FAIL.equals(zxingCode)) {
+                    return Constant.RESULT_FAIL;
+                }
+                //生成条形码图片
+                handler.encode2(zxingCode, 24, 24, "d:/zxing2/");
+                //handler.encode(zxingCode, 116, 24, "d:/zxing/zxing_EAN13.png");
+                //handler.encode(zxingCode, 60, 24, "d:/zxing/zxing_EAN13.png");
+                //生成标签图片
+                Pic.makeZxingPic2(zxingCode, goodsVersion, price.toString());
+                MyTickesprinter myTickesprinter = new MyTickesprinter();
+                //打印标签
+                for (int i = 0; i < (Integer.parseInt(goodsCount)/2+1); i++) {
+                    myTickesprinter.mygoodsprint(new GoodsInfoPrint(zxingCode, goodsVersion, price));
+                }
             }
             try {
                 Goods goods = new Goods();

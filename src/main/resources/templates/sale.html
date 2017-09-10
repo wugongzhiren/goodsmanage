@@ -602,10 +602,10 @@
             if (shouldPay == "0.00" || shouldPay == "0") {
                 return;
             }
-            var pay = $("#payMoney").val();
+           /* var pay = $("#payMoney").val();
             if (pay == "") {
                 return;
-            }
+            }*/
             if (vipID == "") {
                 return;
             }
@@ -631,10 +631,10 @@
                             $("#tatalPrice").html((parseFloat($("#tatalPrice").html()) * parseFloat(data.saleRatio) * 0.1).toFixed(2));
 
                             //找零重新赋值
-                            var payMoney = $("#payMoney").val();
+                            /*var payMoney = $("#payMoney").val();
                             var tatalPrice1R = $("#tatalPrice1").html();
                             var returnMoneyValue = (parseFloat(payMoney) - parseFloat(tatalPrice1R)).toFixed(2);
-                            $("#returnMoney").html(returnMoneyValue);
+                            $("#returnMoney").html(returnMoneyValue);*/
                         }
                         else {
                             $("#saleRatio").html("无");
