@@ -1,5 +1,6 @@
 package com.manage.controller;
 
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.manage.bean.*;
 import com.manage.constant.Constant;
@@ -50,38 +51,38 @@ public class Salesmanage {
         System.out.println(saleGoodsDetails);
         System.out.println("");
         //在收入表增加一条收入记录
-        Income income=incomeRepository.findByCurrentDateStr(LocalDate.now().toString());
-        if(income!=null){
+       List<Income> income=incomeRepository.findByCurrentDateStr(LocalDate.now().toString());
+        if(income!=null&&income.size()>0){
             if ("1".equals(payWay)){
                 //现金付款
-                income.setCashMoney(income.getCashMoney()==null?new BigDecimal(shouldPay):income.getCashMoney().add(new BigDecimal(shouldPay)));
+                income.get(0).setCashMoney(income.get(0).getCashMoney()==null?new BigDecimal(shouldPay):income.get(0).getCashMoney().add(new BigDecimal(shouldPay)));
             }
             if ("2".equals(payWay)){
                 //支付宝付款
-                income.setPayBabyMoney(income.getPayBabyMoney()==null?new BigDecimal(shouldPay):income.getPayBabyMoney().add(new BigDecimal(shouldPay)));
+                income.get(0).setPayBabyMoney(income.get(0).getPayBabyMoney()==null?new BigDecimal(shouldPay):income.get(0).getPayBabyMoney().add(new BigDecimal(shouldPay)));
             }
             if ("3".equals(payWay)){
                 //微信付款
-                income.setWeChatMoney(income.getWeChatMoney()==null?new BigDecimal(shouldPay):income.getWeChatMoney().add(new BigDecimal(shouldPay)));
+                income.get(0).setWeChatMoney(income.get(0).getWeChatMoney()==null?new BigDecimal(shouldPay):income.get(0).getWeChatMoney().add(new BigDecimal(shouldPay)));
             }
-            incomeRepository.save(income);
+            incomeRepository.save(income.get(0));
         }
         else {
-            income=new Income();
+            Income incomebean=new Income();
             if ("1".equals(payWay)){
                 //现金付款
-                income.setCashMoney(new BigDecimal(shouldPay));
+                incomebean.setCashMoney(new BigDecimal(shouldPay));
             }
             if ("2".equals(payWay)){
                 //支付宝付款
-                income.setPayBabyMoney(new BigDecimal(shouldPay));
+                incomebean.setPayBabyMoney(new BigDecimal(shouldPay));
             }
             if ("3".equals(payWay)){
                 //微信付款
-                income.setWeChatMoney(new BigDecimal(shouldPay));
+                incomebean.setWeChatMoney(new BigDecimal(shouldPay));
 
             }
-            income.setCurrentDateStr(LocalDate.now().toString());
+            incomebean.setCurrentDateStr(LocalDate.now().toString());
             incomeRepository.save(income);
         }
 
@@ -192,15 +193,33 @@ if(retList.get(i).getDenouncePrice()!=null&&!"".equals(retList.get(i).getDenounc
      */
     @RequestMapping(value = "/getDayIncome", method = RequestMethod.GET)
     public Income getDayIncome(){
-System.out.print("测试");
         LocalDate todaydate=LocalDate.now();
-        System.out.print(todaydate.toString());
-        Income income=incomeRepository.findByCurrentDateStr(todaydate.toString());
-if(income==null) {
-    return null;
+        Income result=new Income();
+        BigDecimal cash=new BigDecimal(0);
+        BigDecimal payBaby=new BigDecimal(0);
+        BigDecimal wechat=new BigDecimal(0);
+        List<Income> income=incomeRepository.findByCurrentDateStr(todaydate.toString());
+if(income!=null &&income.size()>0) {
+    for(int i=0;i<income.size();i++){
+        if(income.get(i).getCashMoney()!=null){
+            cash=cash.add(income.get(i).getCashMoney());
+        }
+        if(income.get(i).getPayBabyMoney()!=null){
+            payBaby=payBaby.add(income.get(i).getPayBabyMoney());
+        }
+        if(income.get(i).getWeChatMoney()!=null){
+            wechat=wechat.add(income.get(i).getWeChatMoney());
+        }
+    }
+    result.setCashMoney(cash);
+    result.setPayBabyMoney(payBaby);
+    result.setWeChatMoney(wechat);
+    result.setId(income.get(0).getId());
+    result.setCurrentDateStr(todaydate.toString());
+    return result;
 }
 else {
-    return income;
+    return null;
 }
     }
 }
