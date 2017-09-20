@@ -3,6 +3,7 @@ package com.manage.controller;
 import com.google.zxing.FormatException;
 import com.manage.bean.Goods;
 import com.manage.constant.Constant;
+import com.manage.factory.Factory;
 import com.manage.print.GoodsInfoPrint;
 import com.manage.print.MyTickesprinter;
 import com.manage.print.Pic;
@@ -43,9 +44,9 @@ public class Goodsmanage {
         if (goods != null) {
             goods.setResultCode(Constant.RESULT_SUCCESS);
             //如果有促销价格，则设置为促销价格
-            if (goods.getSalePrice() != null) {
+          /*  if (goods.getSalePrice() != null) {
                 goods.setPrice(new BigDecimal(goods.getSalePrice()));
-            }
+            }*/
             return goods;
         } else {
             Goods goods1 = new Goods();
@@ -198,7 +199,9 @@ public class Goodsmanage {
                 goods.setGoodsCount(Integer.parseInt(goodsCount));
                 goods.setPrice(new BigDecimal(price));
                 goods.setVipPrice(vipPrice);
-                goods.setInstoreDate(LocalDate.now().toString());
+                //设置会员打折额
+                goods.setVipDenouncePrice(new BigDecimal(price).subtract(new BigDecimal(vipPrice)).toString());
+                goods.setInstoreDate(new Factory().getDate());
                 //保存商品信息到数据库
                 goodsRepository.save(goods);
 
@@ -288,7 +291,7 @@ public class Goodsmanage {
         Goods goods = goodsRepository.findByZxingCode(zxingCode);
         if (goods != null) {
             goods.setVipPrice(saleprice);
-            //goods.setDenouncePrice(goods.getPrice().subtract(new BigDecimal(saleprice)).toString());
+            goods.setVipDenouncePrice(goods.getPrice().subtract(new BigDecimal(saleprice)).toString());
             goodsRepository.save(goods);
         }
         return Constant.RESULT_SUCCESS;
@@ -300,11 +303,33 @@ public class Goodsmanage {
      * @return
      */
     @RequestMapping(value = "/resumePrice", method = RequestMethod.GET)
-    public String resumePrice(@RequestParam String zxingCode) {
+    public String resumePrice(@RequestParam String zxingCode,@RequestParam String flag) {
         Goods goods = goodsRepository.findByZxingCode(zxingCode);
         if (goods != null) {
             goods.setSalePrice(null);
+            goods.setDenouncePrice(null);
+            if("1".equals(flag)){
+                goods.setVipPrice(null);
+                goods.setVipDenouncePrice(null);
+            }
             goodsRepository.save(goods);
+        }
+        return Constant.RESULT_SUCCESS;
+
+
+    }
+
+
+    /**
+     * 删除商品
+     *
+     * @return
+     */
+    @RequestMapping(value = "/delGoods", method = RequestMethod.GET)
+    public String delGoods(@RequestParam String zxingCode) {
+        Goods goods = goodsRepository.findByZxingCode(zxingCode);
+        if (goods != null) {
+            goodsRepository.delete(goods);
         }
         return Constant.RESULT_SUCCESS;
 

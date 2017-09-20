@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class TicksInfo implements Printable {
     private List<Goods> goods = new ArrayList<Goods>(); //商品列表
-    private String operatorName; //操作员
+    private String vipID; //会员ID
     private String orderId; //订单编号
     private String totalPrice; //总金额
     private String favorablePrice;//优惠金额
@@ -25,15 +25,16 @@ public class TicksInfo implements Printable {
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private String saleDate;
     private String payWay;
-
-    public TicksInfo(List<Goods> goods, String operatorName, String orderId, String totalPrice, String favorablePrice, String actualCollection, String giveChange, String vipSalePrice,String payWay) {
+private String shouldPay;
+    public TicksInfo(List<Goods> goods, String vipID, String orderId, String totalPrice, String favorablePrice, String actualCollection,String shouldPay, String giveChange, String vipSalePrice,String payWay) {
         this.goods = goods;
-        this.operatorName = operatorName;
+        this.vipID = vipID;
         this.orderId = orderId;
 
         this.totalPrice = totalPrice;
         this.favorablePrice = favorablePrice;
         this.actualCollection = actualCollection;
+        this.shouldPay=shouldPay;
         this.giveChange = giveChange;
         this.vipSalePrice = vipSalePrice;
         Date currentTime = new Date();
@@ -88,19 +89,27 @@ public class TicksInfo implements Printable {
         g2.drawLine((int) x, (int) (y + line), (int) x + 188, (int) (y + line));
         line += heigth;
 //设置商品清单
+        System.out.println("商品列表长度："+goods.size());
         if (goods != null && goods.size() > 0) {
             for (Goods gdf : goods) {
                 g2.drawString(gdf.getGoodsName(), (float) x + 15, (float) y + line);
-                g2.drawString(gdf.getPrice().toString(), (float) x + 90, (float) y + line);
+                System.out.println("商品名："+gdf.getGoodsName());
+                g2.drawString((Float.parseFloat(gdf.getSumPrice())/Float.parseFloat(gdf.getGoodsCount()+""))+"", (float) x + 90, (float) y + line);
+                System.out.println("商品单价："+(Float.parseFloat(gdf.getSumPrice())/Float.parseFloat(gdf.getGoodsCount()+""))+"");
                 g2.drawString(gdf.getGoodsCount() + "", (float) x + 135, (float) y + line);
+                System.out.println("商品数量："+gdf.getGoodsCount() + "");
                 g2.drawString(gdf.getSumPrice(), (float) x + 165, (float) y + line);
+                System.out.println("合计："+gdf.getSumPrice());
                 line += heigth;
             }
         }
         g2.drawLine((int) x, (int) (y + line), (int) x + 188, (int) (y + line));
         line += heigth + 2;
         //g2.drawString("商品总数:"+totalGoodsNum+ "件",(float)x+15,(float)y+line);
-        g2.drawString("合计:" + totalPrice + " 元", (float) x + 120, (float) y + line);
+        g2.drawString("应付款:" + shouldPay + " 元", (float) x + 15, (float) y + line);
+        System.out.println("应付款："+shouldPay);
+        System.out.println("总计："+totalPrice);
+        g2.drawString("总计:" + totalPrice + " 元", (float) x + 120, (float) y + line);
         line += heigth;
         boolean flag = false;
         if (!"0".equals(favorablePrice)) {
@@ -108,9 +117,8 @@ public class TicksInfo implements Printable {
             g2.drawString("促销优惠:" + favorablePrice + "元", (float) x + 15, (float) y + line);
             flag = true;
         }
-        System.out.print("折扣"+vipSalePrice);
-        System.out.print("折扣"+favorablePrice);
-        if (!"0".equals(vipSalePrice)) {
+        System.out.print("会员ID:"+vipID);
+        if (!"普通顾客".equals(vipID)) {
             System.out.print("会员折扣:"+vipSalePrice);
             g2.drawString("会员折扣:" + vipSalePrice + "元", (float) x + 120, (float) y + line);
             flag = true;
@@ -121,9 +129,12 @@ public class TicksInfo implements Printable {
         g2.drawString("实收:" +payWay+" " +actualCollection + "元", (float) x + 15, (float) y + line);
         g2.drawString("找零:" + giveChange + "元", (float) x + 120, (float) y + line);
         line += heigth;
+        System.out.println("实收："+actualCollection);
+        System.out.println("找零："+giveChange);
         g2.drawString("为了您的权益，钱票请当面点清", (float) x + 45, (float) y + line);
         line =line+ heigth+30;
         g2.drawString("", (float) x + 45, (float) y + line);
+        System.out.print("页码:"+pageIndex);
         switch (pageIndex) {
             case 0:
                 return PAGE_EXISTS;  //0

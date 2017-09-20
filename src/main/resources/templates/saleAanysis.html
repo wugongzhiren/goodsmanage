@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
+    <!--<link rel="stylesheet" type="text/css" href="/css/ui.jqgrid.css"/>-->
+    <!-- <link rel="stylesheet" type="text/css" href="/css/jquery-ui.min.css"/>-->
+    <!-- <link rel="stylesheet" type="text/css" href="/css/ui-lightness/jquery-ui-1.8.16.custom.css"/>-->
+    <link rel="stylesheet" type="text/css" href="/css/hot-sneaks/jquery-ui-1.8.16.custom.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/my.css"/>
+    <script src="/js/jquery-3.1.1.min.js"></script>
+    <!-- 包括所有已编译的插件 -->
+    <!--<script src="/js/jquery-ui.min.js"></script>-->
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/grid.locale-cn.js"></script>
+    <!-- <script src="/js/grid.jqueryui.js"></script>-->
+    <script src="/js/jquery.jqGrid.min.js"></script>
+    <style type="text/css">
+        .ui-jqgrid .ui-jqgrid-titlebar {
+            background: #FF6700;
+            color: white;
+            height: 50px;
+            line-height: 50px;
+            font-size: large;
+        }
+
+        th {
+            text-align: center;
+        }
+
+        td {
+            border-right-width: 1px;
+            border-right-color: inherit;
+            border-right-style: solid;
+        }
+    </style>
+</head>
+<body>
+<div style="width: 90%; background: white;margin: 40px;">
+    <div class="instoreTitle" style="margin-left:60px;margin-top: 20px;font-size: 36px;font-weight: 400;line-height: 68px;color: #b0b0b0;">
+        <h1>销售记录查看</h1></div>
+</div>
+<hr/>
+<!--优惠设置DIV-->
+<div style="margin-left: 145px;margin-top: 20px">
+    <!--当前折扣商品一览（可恢复原价）-->
+    <button class="btn instoreBtn"  onclick="reload()">查询</button>
+</div>
+<div style="margin-top: 30px">
+    <center>
+        <table id="saleList"></table>
+    </center>
+
+</div>
+<script>
+    $(function () {
+        $(".ui-jqgrid-titlebar-close").remove();
+        $("#saleList_cb").remove();
+    })
+    $("#saleList").jqGrid({
+        url: "/getSaleInfoAll",
+        datatype: "local",
+        mtype: 'GET',
+        colNames: [ '销售编号', '顾客编号', '实际收款','付款方式','销售时间' ],
+        colModel: [
+            {name: 'salesId', index: 'salesId', width: 200, align: "center"},
+            {name: 'customerID', index: 'customerID', width: 100, align: "center"},
+            {name: 'payMoney', index: 'payMoney', width: 150, align: "center"},
+            {name: 'payWay', index: 'payWay', width: 150, align: "center"},
+            {name: 'creatDate', index: 'creatDate', width: 150, align: "center"}
+        ],
+        rownumbers:false,
+        multiselect: true,
+        multiboxonly:true,
+        cellEdit:false,
+        loadComplete: function () {
+
+        },
+        beforeSelectRow:function beforeSelectRow()
+        {
+            $("#saleList").jqGrid('resetSelection');
+            return(true);
+        },
+
+        viewrecords: true,
+        loadonce:true,
+        sortable: false,
+        pager: $('#pager'),
+
+        altclass: 'altRowsColor',
+        width: '80%',
+        height: '500',
+        caption: "销售记录一览"
+    })
+    function reload() {
+        $("#saleList").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET', //发送数据
+            /*page:1*/
+        }).trigger("reloadGrid"); //重新载入
+    }
+</script>
+</body>
+
+</html>

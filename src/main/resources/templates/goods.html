@@ -65,6 +65,7 @@ border: none;
 
 
     <button class="btn instoreBtn" onclick="reload()">查询</button>
+    <button class="btn instoreBtn" onclick="delGoodsInfo()">删除</button>
 </div>
             <hr/>
     <div class="row">
@@ -88,6 +89,31 @@ border: none;
 
 
     <script>
+
+        function delGoodsInfo() {
+            var curRowDataID = $("#goodsList").jqGrid("getGridParam", "selrow");
+            // $('#goodsList').jqGrid("saveRow", "6");
+            if (curRowDataID == null) {
+                alert("请选择一条数据后进行操作");
+                return;
+            }
+            var rowData = $("#goodsList").jqGrid("getRowData", curRowDataID);
+            var zxingCode = rowData["zxingCode"];
+            //后台通信，保存信息到数据库
+            $.ajax({
+                url: '/delGoods',
+                type: "get",
+                data: {
+                    zxingCode: zxingCode,
+                },
+                error: function (error) {
+                    alert("抱歉，系统异常，请刷新后重新操作")
+                },
+                success: function (data) {
+                    alert("删除成功");
+                    reload();
+                }});
+        }
 
         function reloadEnter() {
             if(event.keyCode==13){

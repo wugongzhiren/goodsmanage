@@ -119,6 +119,11 @@ public class CustomerVIPManage {
                 return vip;
             }
         }
+        if("无效".equals(vip.getStatus())){
+            vip = new CustomerVIP();
+            vip.setResultCode(Constant.RESULT_FAIL);
+            return vip;
+        }
         Setting setting = settingRepository.findBySetType(Constant.SETTING_SALE);
         if (setting != null) {
             vip.setSaleRatio(new BigDecimal(setting.getSetContent()));
@@ -160,13 +165,12 @@ public class CustomerVIPManage {
      * @param identityCode 会员识别码
      * @return
      */
-    @RequestMapping(value = "/updateVIP", method = RequestMethod.GET)
+    @RequestMapping(value = "/deluse", method = RequestMethod.GET)
     public String updateVIP(@RequestParam String identityCode) {
         CustomerVIP vip = null;
         vip = repository.findByVipID(identityCode);
         if (vip != null) {
-            vip.setStatus("无效");
-            repository.save(vip);
+            repository.delete(vip);
         }
         return Constant.RESULT_SUCCESS;
         //boolean
@@ -175,7 +179,7 @@ public class CustomerVIPManage {
     }
 
     /**
-     * 禁用会员
+     * 禁用和恢复会员使用权
      *
      * @param identityCode 会员识别码或者手机号码
      * @return

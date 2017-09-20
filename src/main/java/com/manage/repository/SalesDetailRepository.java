@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * Created by Administrator on 2017/4/23.
  */
-public interface SalesDetalisRepository extends JpaRepository<SalesGoodDetails,Long> {
+public interface SalesDetailRepository extends JpaRepository<SalesGoodDetails,Long> {
 
 }

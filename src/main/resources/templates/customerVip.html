@@ -86,8 +86,8 @@
     <button class="btn instoreBtn" onclick="reloadList()">查询</button>
     <button class="btn instoreBtn" data-toggle="modal" data-target="#myModal">会员开户</button>
     <button class="btn instoreBtn" onclick="editInfo()">编辑</button>
-    <button class="btn instoreBtn" onclick="stopUse()">禁用</button>
-    <button class="btn instoreBtn" onclick="resumeUse()">恢复使用</button>
+    <button class="btn instoreBtn" id="1" onclick="stopUse(this)">禁用</button>
+    <button class="btn instoreBtn" id="2" onclick="stopUse(this)">恢复使用</button>
     <button class="btn instoreBtn" onclick="deluse()">删除</button>
 </div>
 <hr/>
@@ -132,8 +132,8 @@
         $('#myModal').modal('show');
         //后台通信，保存信息到数据库
     }
-    //禁用
-    function stopUse() {
+
+    function deluse() {
         var curRowDataID = $("#list").jqGrid("getGridParam", "selrow");
         // $('#goodsList').jqGrid("saveRow", "6");
         if (curRowDataID == null) {
@@ -144,10 +144,38 @@
         var identyCode = rowData["vipID"];
         //后台通信，保存信息到数据库
         $.ajax({
+            url: '/deluse',
+            type: "get",
+            data: {
+                identityCode: identyCode,
+            },
+            error: function (error) {
+                alert("抱歉，系统异常，请刷新后重新操作")
+            },
+            success: function (data) {
+                alert("删除成功");
+                reloadList();
+            }});
+    }
+    //禁用
+    function stopUse(ob) {
+        var curRowDataID = $("#list").jqGrid("getGridParam", "selrow");
+        // $('#goodsList').jqGrid("saveRow", "6");
+        if (curRowDataID == null) {
+            alert("请选择一条数据后进行操作");
+            return;
+        }
+        var rowData = $("#list").jqGrid("getRowData", curRowDataID);
+        var identyCode = rowData["vipID"];
+        var diff=$(ob).attr("id");
+        alert(diff);
+        //后台通信，保存信息到数据库
+        $.ajax({
             url: '/stopUse',
             type: "get",
             data: {
                 identityCode: identyCode,
+                diff:diff
             },
             error: function (error) {
                 alert("抱歉，系统异常，请刷新后重新操作")
@@ -257,7 +285,8 @@
             success: function (data) {
                 if (data == "100") {
                     alert("操作成功");
-                    $('#myModal').modal('hide')
+                    $('#myModal').modal('hide');
+                    reloadList();
                     return;
                 }
                 if (data == "102") {

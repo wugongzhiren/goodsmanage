@@ -19,15 +19,31 @@ public class SalesRecord {
     private long id;//自增ID
     private long salesId;//销售编号
     private String customerID;//顾客编号
-    private BigDecimal originPrice;//本次销售员商品价格合计
     private int saleCount;//本次销售商品件数
-    private BigDecimal favorablePrice;//本次销售优惠价格
-    //private BigDecimal receiveMoney;//本次销售原价格
+    private BigDecimal favorablePrice;//本次销售特殊优惠价格
+    private BigDecimal vipFavorablePrice;//本次销售会员优惠价格
+    private BigDecimal price;//本次销售合计原价格
     private BigDecimal payMoney;//本次销售实收价格
     private String payWay;//支付方式：1；现金，2：支付宝；3：微信
     private String salsGoodDetails;//销售商品详情的JSON数据
 private String cashier;//收银员
     private String creatDate;//销售时间
+
+    public BigDecimal getVipFavorablePrice() {
+        return vipFavorablePrice;
+    }
+
+    public void setVipFavorablePrice(BigDecimal vipFavorablePrice) {
+        this.vipFavorablePrice = vipFavorablePrice;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
 
     public SalesRecord() {
     }
@@ -64,13 +80,6 @@ private String cashier;//收银员
         this.customerID = customerID;
     }
 
-    public BigDecimal getOriginPrice() {
-        return originPrice;
-    }
-
-    public void setOriginPrice(BigDecimal originPrice) {
-        this.originPrice = originPrice;
-    }
 
     public int getSaleCount() {
         return saleCount;

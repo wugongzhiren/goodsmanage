@@ -12,7 +12,10 @@ $(function(){
             urlLoad('#content','/income');
         }else if(that === 'huiyuan'){
             urlLoad('#content','/customerVip');
+        }else if(that === 'saleAanysis'){
+            urlLoad('#content','/saleAanysis');
         }
+
 
     });
 
