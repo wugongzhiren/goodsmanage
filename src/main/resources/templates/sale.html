@@ -503,9 +503,11 @@
         var currentRatio=$("#currentRatio").val();
         var isNum=/^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/;
         var reM = new RegExp(isNum);
-        if(currentRatio.match(reM)==null){
-            alert("请输入正确的打折数值!");
-            return;
+        if(currentRatio!="") {
+            if (currentRatio.match(reM) == null) {
+                alert("请输入正确的打折数值!");
+                return;
+            }
         }
 
         if(parseFloat(currentRatio==0)||parseFloat(currentRatio)>10){
