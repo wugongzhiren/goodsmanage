@@ -49,6 +49,7 @@
 <div style="margin-top: 30px">
     <center>
         <table id="saleList"></table>
+        <div id="pager"></div>
     </center>
 
 </div>
@@ -86,10 +87,11 @@
         loadonce:true,
         sortable: false,
         pager: $('#pager'),
-
+        rowNum : 20,
+        rowList : [ 10,30 ],
         altclass: 'altRowsColor',
-        width: '80%',
-        height: '500',
+        width: '100%',
+        height: '1200',
         caption: "销售记录一览"
     })
     function reload() {

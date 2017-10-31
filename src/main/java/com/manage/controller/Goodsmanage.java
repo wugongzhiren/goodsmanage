@@ -104,6 +104,10 @@ public class Goodsmanage {
         try {
             ZxingEAN13EncoderHandler zxingHandle = new ZxingEAN13EncoderHandler();
             //zxingHandle.encode(content, 116, 24, "d:/zxing/zxing_EAN13.png");
+/*            File file=new File("\"d:/zxing2/\"");
+            if(!file.exists()){
+                file.createNewFile();
+            }*/
             zxingHandle.encode2(content, 24, 24, "d:/zxing2/");
             //zxingHandle.encode(content, 60, 24, "d:/zxing/zxing_EAN13.png");
             //System.out.print(zxingHandle.getSingleNum(1124));
